@@ -26,8 +26,8 @@ export default {
   data() {
     return {
       baseLayer: {
-        zoom: 15,
-        center: latLng(61.5317 / 5.1073),
+        zoom: 10,
+        center: latLng(61.174, 6.4586),
         url:
           "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
         attribution: `
