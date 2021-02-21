@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app style="overflow: hidden">
     <v-main
       :style="[
         contentDrawer && $vuetify.breakpoint.smAndDown

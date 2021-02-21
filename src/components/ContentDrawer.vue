@@ -9,33 +9,46 @@
       :permanent="contentDrawer"
       :bottom="$vuetify.breakpoint.smAndDown"
       color="accent lighten-5"
+      class="mt-16"
     >
+      <Content />
     </v-navigation-drawer>
     <v-bottom-sheet
+      v-if="$vuetify.breakpoint.smAndDown"
       ref="bottomSheet"
       v-model="contentDrawer"
       hide-overlay
       persistent
       no-click-animation
     >
-      <v-bottom-navigation
-        v-if="$vuetify.breakpoint.smAndDown"
-        class="accent lighten-5"
-      >
-      </v-bottom-navigation>
+      <v-card>
+        <v-card-title> AudioControls </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text class="bottomContent px-0">
+          <Content v-if="content" />
+        </v-card-text>
+      </v-card>
     </v-bottom-sheet>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
+import Content from "./Content";
+
 export default {
   name: "ContentDrawer",
+  components: {
+    Content,
+  },
   data() {
     return {
       drawerRightWidth: 480,
     };
   },
   computed: {
+    ...mapGetters(["currentUUID", "content"]),
     contentDrawer: {
       get() {
         return this.$store.getters.contentDrawer;
@@ -60,15 +73,33 @@ export default {
     onClickOutside() {
       return true;
     },
+    updateBottomSheetHeight() {
+      const vm = this;
+      this.$nextTick(() => {
+        if (vm.$refs.bottomSheet.$refs.dialog) {
+          vm.bottomSheetHeight = vm.$refs.bottomSheet.$refs.dialog.clientHeight;
+        }
+      });
+    },
   },
   updated() {
-    const vm = this;
-    this.$nextTick(() => {
-      if (vm.$refs.bottomSheet.$refs.dialog) {
-        vm.bottomSheetHeight = vm.$refs.bottomSheet.$refs.dialog.clientHeight;
-      }
-    });
+    this.updateBottomSheetHeight();
     this.$store.dispatch("drawerRightWidth", this.drawerRightWidth);
+  },
+  watch: {
+    currentUUID() {
+      this.updateBottomSheetHeight();
+    },
   },
 };
 </script>
+
+<style scoped>
+>>> .v-bottom-sheet.v-dialog {
+  max-height: 60% !important;
+}
+.bottomContent {
+  height: 400px;
+  overflow: auto;
+}
+</style>

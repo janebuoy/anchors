@@ -1,0 +1,363 @@
+{
+	"type": "FeatureCollection",
+	"features": [
+		{
+			"type": "Feature",
+			"id": 1,
+			"uuid": "98b28306-89d0-4169-9411-1a5a0ebc3d6f",
+			"common_name": "parkhotel",
+			"properties": {
+				"title": "Parkhotel",
+				"zoom": 17,
+				"flyTo": true,
+				"flyToOptions": {
+					"duration": 0.3,
+					"easeLinearity": 0.2
+				}
+			},
+			"layers": [
+				"route",
+				"scenes"
+			],
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					8.822178772735596,
+					53.089333510194315
+				]
+			},
+			"content": {
+				"title": "Parkhotel",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi porta lorem mollis aliquam ut porttitor.",
+				"resources": [
+					{
+						"id": 0,
+						"title": "Audio File",
+						"subtitle": "Scelerisque eu ultrices vitae auctor eu aliquet lectus proin nibh adipiscing tristique risus nec",
+						"src": "",
+						"type": "audio",
+						"length": 1
+					},
+					{
+						"id": 1,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					},
+					{
+						"id": 2,
+						"title": " Raster Map Scene",
+						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
+						"target": 0,
+						"type": "map"
+					},
+					{
+						"id": 3,
+						"title": "Audio File",
+						"subtitle": "Integer feugiat scelerisque varius morbi enim nunc faucibus viverra accumsan in nisl",
+						"src": "",
+						"type": "audio",
+						"length": 4
+					},
+					{
+						"id": 4,
+						"title": "Timeline",
+						"subtitle": "Volutpat odio facilisis mauris sit amet massa tristique risus nec feugiat",
+						"type": "timeline"
+					}
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": 2,
+			"uuid": "421e3408-dddc-4395-9879-57e85c0d8025",
+			"common_name": "marie_bergmann_bruecke",
+			"properties": {
+				"title": "Marie-Bergmann-Brücke",
+				"zoom": 17,
+				"flyTo": true,
+				"flyToOptions": {
+					"duration": 0.3,
+					"easeLinearity": 0.2
+				}
+			},
+			"layers": [
+				"route",
+				"scenes"
+			],
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					8.82899522781372,
+					53.093392665341845
+				]
+			},
+			"content": {
+				"title": "Marie-Bergmann-Brücke",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi porta lorem mollis aliquam ut porttitor.",
+				"resources": [
+					{
+						"id": 0,
+						"title": "Audio File",
+						"subtitle": "Scelerisque eu ultrices vitae auctor eu aliquet lectus proin nibh adipiscing tristique risus nec",
+						"src": "",
+						"type": "audio",
+						"length": 1
+					},
+					{
+						"id": 1,
+						"title": " Pattern Map Scene",
+						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
+						"target": 0,
+						"type": "map"
+					},
+					{
+						"id": 2,
+						"title": "Audio File",
+						"subtitle": "Integer feugiat scelerisque varius morbi enim nunc faucibus viverra accumsan in nisl",
+						"src": "",
+						"type": "audio",
+						"length": 4
+					},
+					{
+						"id": 3,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					}
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": 3,
+			"uuid": "51e35b44-b965-4040-9e18-bdc451d3ddf6",
+			"common_name": "meierei",
+			"properties": {
+				"title": "Meierei",
+				"zoom": 17,
+				"flyTo": true,
+				"flyToOptions": {
+					"duration": 0.3,
+					"easeLinearity": 0.2
+				}
+			},
+			"layers": [
+				"route",
+				"scenes"
+			],
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					8.830454349517822,
+					53.09791527291419
+				]
+			},
+			"content": {
+				"title": "Meierei (long content list)",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi porta lorem mollis aliquam ut porttitor.",
+				"resources": [
+					{
+						"id": 0,
+						"title": "Audio File",
+						"subtitle": "Scelerisque eu ultrices vitae auctor eu aliquet lectus proin nibh adipiscing tristique risus nec",
+						"src": "",
+						"type": "audio",
+						"length": 1
+					},
+					{
+						"id": 1,
+						"title": " Pattern Map Scene",
+						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
+						"target": 0,
+						"type": "map"
+					},
+					{
+						"id": 2,
+						"title": "Audio File",
+						"subtitle": "Integer feugiat scelerisque varius morbi enim nunc faucibus viverra accumsan in nisl",
+						"src": "",
+						"type": "audio",
+						"length": 4
+					},
+					{
+						"id": 3,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					},
+					{
+						"id": 4,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					},
+					{
+						"id": 5,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					},
+					{
+						"id": 6,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					},
+					{
+						"id": 7,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					}
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": 4,
+			"uuid": "1784ac3c-4656-45a9-8e79-3743608b46fb",
+			"common_name": "tiergehege",
+			"properties": {
+				"title": "Tiergehege",
+				"zoom": 17,
+				"flyTo": true,
+				"flyToOptions": {
+					"duration": 0.3,
+					"easeLinearity": 0.2
+				}
+			},
+			"layers": [
+				"route",
+				"scenes"
+			],
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					8.82624864578247,
+					53.09602174725757
+				]
+			},
+			"content": {
+				"title": "Tiergehege",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi porta lorem mollis aliquam ut porttitor.",
+				"resources": [
+					{
+						"id": 0,
+						"title": "Audio File",
+						"subtitle": "Scelerisque eu ultrices vitae auctor eu aliquet lectus proin nibh adipiscing tristique risus nec",
+						"src": "",
+						"type": "audio",
+						"length": 1
+					},
+					{
+						"id": 1,
+						"title": " Pattern Map Scene",
+						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
+						"target": 0,
+						"type": "map"
+					},
+					{
+						"id": 2,
+						"title": "Audio File",
+						"subtitle": "Integer feugiat scelerisque varius morbi enim nunc faucibus viverra accumsan in nisl",
+						"src": "",
+						"type": "audio",
+						"length": 4
+					},
+					{
+						"id": 3,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					},
+					{
+						"id": 4,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					}
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": 5,
+			"uuid": "f1e85814-7a52-40cc-9cc2-9d6743be9767",
+			"common_name": "dyckhoffpavillon",
+			"properties": {
+				"title": "Dyckhoffpavillon",
+				"zoom": 17,
+				"flyTo": true,
+				"flyToOptions": {
+					"duration": 0.3,
+					"easeLinearity": 0.2
+				}
+			},
+			"layers": [
+				"route",
+				"scenes"
+			],
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					8.82051944732666,
+					53.09189790988945
+				]
+			},
+			"content": {
+				"title": "Dyckhoffpavillon",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi porta lorem mollis aliquam ut porttitor.",
+				"resources": [
+					{
+						"id": 0,
+						"title": "Audio File",
+						"subtitle": "Scelerisque eu ultrices vitae auctor eu aliquet lectus proin nibh adipiscing tristique risus nec",
+						"src": "",
+						"type": "audio",
+						"length": 1
+					},
+					{
+						"id": 1,
+						"title": " Pattern Map Scene",
+						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
+						"target": 0,
+						"type": "map"
+					},
+					{
+						"id": 2,
+						"title": "Audio File",
+						"subtitle": "Integer feugiat scelerisque varius morbi enim nunc faucibus viverra accumsan in nisl",
+						"src": "",
+						"type": "audio",
+						"length": 4
+					},
+					{
+						"id": 3,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					},
+					{
+						"id": 4,
+						"title": "Gallery",
+						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
+						"type": "gallery",
+						"target": 0
+					}
+				]
+			}
+		}
+	]
+}
