@@ -5,7 +5,11 @@
     </v-card>
     <v-list three-line class="white">
       <v-list-item-group color="accent" mandatory :value="resourceID">
-        <v-list-item v-for="item in resources" :key="item.id">
+        <v-list-item
+          v-for="item in resources"
+          :key="item.id"
+          @click.stop="openItemByID(item.id)"
+        >
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
           </v-list-item-icon>
@@ -20,13 +24,17 @@
             </v-icon>
             <!-- Show pause icon on active audio Item -->
             <v-icon
-              v-if="item.type === 'audio' && isPlaying && currentAudioID === id"
+              v-if="
+                item.type === 'audio' && isPlaying && currentItem.id === item.id
+              "
             >
               mdi-pause
             </v-icon>
             <!-- Show play icon on inactive audio Items -->
             <v-icon
-              v-if="item.type === 'audio' && isPlaying && currentAudioID !== id"
+              v-if="
+                item.type === 'audio' && isPlaying && currentItem.id !== item.id
+              "
             >
               mdi-play
             </v-icon>
@@ -39,6 +47,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { eventBus } from "../main.js";
 
 export default {
   name: "Content",
@@ -48,7 +57,51 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["content", "resources"]),
+    ...mapGetters([
+      "content",
+      "resources",
+      "currentItem",
+      "prevAudioID",
+      "nextAudioID",
+      "isPlaying",
+    ]),
+  },
+  methods: {
+    openItemByID(id) {
+      const item = this.resources.filter((a) => a.id === id)[0];
+      // Prevent Update if item equals already stored item
+      if (item !== this.currentItem) {
+        this.$store.dispatch("updateContentItem", item);
+      }
+      switch (item.type) {
+        case "audio":
+          eventBus.$emit("toggleAudio");
+          break;
+        case "map":
+          console.log("map");
+          break;
+        case "gallery":
+          console.log("gallery");
+          break;
+        case "timeline":
+          console.log("timeline");
+          break;
+      }
+    },
+  },
+  created() {
+    // Intial laod of first list item, if currentItem is still null
+    if (this.currentItem === null) {
+      const item = this.resources.filter((a) => a.id === 0)[0];
+      this.$store.dispatch("updateContentItem", item);
+    }
+
+    eventBus.$on("prevAudio", () => {
+      this.openItemByID(this.prevAudioID);
+    });
+    eventBus.$on("nextAudio", () => {
+      this.openItemByID(this.nextAudioID);
+    });
   },
 };
 </script>

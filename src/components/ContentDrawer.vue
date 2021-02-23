@@ -11,7 +11,8 @@
       color="accent lighten-5"
       class="mt-16"
     >
-      <Content />
+      <Content v-if="content" />
+      <AudioPlayer v-if="currentItem" />
     </v-navigation-drawer>
     <v-bottom-sheet
       v-if="$vuetify.breakpoint.smAndDown"
@@ -22,7 +23,7 @@
       no-click-animation
     >
       <v-card>
-        <v-card-title> AudioControls </v-card-title>
+        <AudioPlayer v-if="currentItem" />
         <v-divider></v-divider>
         <v-card-text class="bottomContent px-0">
           <Content v-if="content" />
@@ -36,19 +37,22 @@
 import { mapGetters } from "vuex";
 
 import Content from "./Content";
+import AudioPlayer from "./AudioPlayer";
 
 export default {
   name: "ContentDrawer",
   components: {
     Content,
+    AudioPlayer,
   },
   data() {
     return {
       drawerRightWidth: 480,
+      contentKey: 0,
     };
   },
   computed: {
-    ...mapGetters(["currentUUID", "content"]),
+    ...mapGetters(["currentUUID", "content", "currentItem"]),
     contentDrawer: {
       get() {
         return this.$store.getters.contentDrawer;
@@ -76,7 +80,7 @@ export default {
     updateBottomSheetHeight() {
       const vm = this;
       this.$nextTick(() => {
-        if (vm.$refs.bottomSheet.$refs.dialog) {
+        if (vm.$refs.bottomSheet) {
           vm.bottomSheetHeight = vm.$refs.bottomSheet.$refs.dialog.clientHeight;
         }
       });

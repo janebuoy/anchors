@@ -10,6 +10,10 @@ import 'leaflet/dist/leaflet.css'
 
 Vue.config.productionTip = false
 
+export const eventBus = new Vue();
+
+window.player = null;
+
 new Vue({
 	router,
 	store,

@@ -4,6 +4,7 @@
     :zoom="baseLayer.zoom"
     :center="baseLayer.center"
     class="overflow-hidden"
+    style="z-index: 100"
   >
     <l-tile-layer
       ref="baseLayer"
