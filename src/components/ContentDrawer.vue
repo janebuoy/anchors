@@ -8,11 +8,12 @@
       :width="drawerRightWidth"
       :permanent="contentDrawer"
       :bottom="$vuetify.breakpoint.smAndDown"
-      color="accent lighten-5"
-      class="mt-16"
+      class="pt-16"
     >
-      <Content v-if="content" />
-      <AudioPlayer v-if="currentItem" />
+      <div class="nav-wrapper overflow-hidden">
+        <Content v-if="content" class="overflow-y-auto" />
+        <AudioPlayer v-if="currentItem" class="mt-auto" />
+      </div>
     </v-navigation-drawer>
     <v-bottom-sheet
       v-if="$vuetify.breakpoint.smAndDown"
@@ -105,5 +106,10 @@ export default {
 .bottomContent {
   height: 400px;
   overflow: auto;
+}
+.nav-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 </style>

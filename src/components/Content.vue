@@ -88,20 +88,32 @@ export default {
           break;
       }
     },
+    openInitalItem(string) {
+      if (this.currentItem === null && string === "created") {
+        const item = this.resources.filter((a) => a.id === 0)[0];
+        this.$store.dispatch("updateContentItem", item);
+      } else if (string === "watch") {
+        // open first Item on the list and reset ID to 0
+        const item = this.resources.filter((a) => a.id === 0)[0];
+        this.resourceID = 0;
+        this.$store.dispatch("updateContentItem", item);
+      }
+    },
   },
   created() {
-    // Intial laod of first list item, if currentItem is still null
-    if (this.currentItem === null) {
-      const item = this.resources.filter((a) => a.id === 0)[0];
-      this.$store.dispatch("updateContentItem", item);
-    }
-
+    // Intial load of first list item, if currentItem is still null
+    this.openInitalItem("created");
     eventBus.$on("prevAudio", () => {
       this.openItemByID(this.prevAudioID);
     });
     eventBus.$on("nextAudio", () => {
       this.openItemByID(this.nextAudioID);
     });
+  },
+  watch: {
+    content() {
+      this.openInitalItem("watch");
+    },
   },
 };
 </script>

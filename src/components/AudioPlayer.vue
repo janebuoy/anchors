@@ -4,7 +4,7 @@
       <v-btn
         icon
         @click.stop="prevAudio()"
-        :disabled="prevAudioID === false || !hasAudioSrc"
+        :disabled="prevAudioID === false || !localSrc"
       >
         <v-icon>mdi-skip-previous</v-icon>
       </v-btn>
@@ -12,17 +12,11 @@
         icon
         class="mr-1"
         @click.stop="seekBackwards()"
-        :disabled="!hasAudioSrc"
+        :disabled="!localSrc"
       >
         <v-icon>mdi-replay</v-icon>
       </v-btn>
-      <v-btn
-        fab
-        color="accent"
-        class="mt-n2"
-        @click.stop="toggleAudio()"
-        :disabled="!hasAudioSrc"
-      >
+      <v-btn fab color="accent" class="mt-n2" @click.stop="toggleAudio()">
         <v-icon large class="white--text" v-if="!isPlaying">mdi-play</v-icon>
         <v-icon v-else large class="white--text">mdi-pause</v-icon>
       </v-btn>
@@ -30,14 +24,14 @@
         icon
         @click.stop="seekForwards()"
         class="ml-1"
-        :disabled="!hasAudioSrc"
+        :disabled="!localSrc"
       >
         <v-icon class="mirror">mdi-replay</v-icon>
       </v-btn>
       <v-btn
         icon
         @click.stop="nextAudio()"
-        :disabled="nextAudioID === false || !hasAudioSrc"
+        :disabled="nextAudioID === false || !localSrc"
       >
         <v-icon>mdi-skip-next</v-icon>
       </v-btn>
@@ -58,11 +52,10 @@
         track-fill-color="accent lighten-1"
         thumb-color="accent lighten-1"
         :label="elaspedTime"
-        :disabled="!hasAudioSrc"
       />
       <p
         class="mb-n2 ml-n2"
-        :class="[hasAudioSrc ? 'audio--text' : null]"
+        :class="[localSrc ? 'duration-label' : null]"
         style="margin-top: -5px"
       >
         {{ minutes }}:{{ seconds }}
@@ -97,9 +90,6 @@ export default {
     windowWidth() {
       return this.$vuetify.breakpoint.width;
     },
-    hasAudioSrc() {
-      return this.currentAudioSrc !== null ? true : false;
-    },
     elapsedMinutes() {
       let mins = Math.floor(this.currentTime / 60);
       if (mins < 10) {
@@ -121,6 +111,8 @@ export default {
       let mins = Math.floor((this.duration - this.currentTime) / 60);
       if (mins < 10 && mins > 0) {
         mins = 0 + String(mins);
+      } else if (mins === 0) {
+        mins = "00";
       }
       return mins;
     },
@@ -144,17 +136,21 @@ export default {
   },
   methods: {
     toggleAudio() {
+      console.log("triggered");
       // If nothing is playing, load Audio of selected item and play
       if (!this.isPlaying) {
         this.loadAudio();
         this.playAudio();
+        console.log("tick 1");
         // If something is playing and selected item is different, load that item's source
       } else if (this.isPlaying && this.localSrc !== this.currentItem.src) {
         this.loadAudio();
         this.playAudio();
+        console.log("tick 2");
         // If selected item is already playing, pause
       } else if (this.localSrc === this.currentItem.src) {
         this.pauseAudio();
+        console.log("tick 3");
       }
     },
     playAudio() {
@@ -225,6 +221,7 @@ export default {
         window.player.addEventListener("loadedmetadata", function () {
           vm.duration = Math.round(this.duration);
         });
+        window.player.addEventListener("ended", this.loadAudio);
       }
     },
   },
@@ -250,5 +247,28 @@ export default {
     };
     this.$store.dispatch("saveAudioState", payload);
   },
+  watch: {
+    currentItem() {
+      this.loadAudio();
+    },
+  },
 };
 </script>
+
+<style scss scoped>
+.disabledSliderLabel {
+  color: rgba(224, 224, 224, 0.28) !important;
+}
+.duration-label {
+  color: #e0e0e0 !important;
+}
+.mirror {
+  transform: scale(-1, 1);
+}
+>>> .theme--dark.v-label {
+  color: #e0e0e0 !important;
+}
+>>> .theme--dark.v-label--is-disabled {
+  color: rgba(224, 224, 224, 0.28) !important;
+}
+</style>
