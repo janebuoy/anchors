@@ -14,19 +14,29 @@ import mdi_numeric_8 from "../assets/svg/numeric-8-circle-bg.svg"
 import mdi_numeric_9 from "../assets/svg/numeric-9-circle-bg.svg"
 import mdi_numeric_10 from "../assets/svg/numeric-10-circle-bg.svg"
 
+import axios from "axios";
+const ax = axios.create({
+	baseURL: process.env.BASE_URL,
+});
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
 		global: {
+			scenes: {
+				url: "data/json/scenes.json",
+				data: null,
+			},
 			bottomSheetHeight: null,
 			drawerRightWidth: null,
-			drawerLeft: null,
-			contentDrawer: null
+			drawerLeft: false,
+			contentDrawer: false
 		},
 		map: {
 			title: null,
 			currentUUID: null,
+			nextID: null,
 			activeLayers: ['route', 'scenes'],
 			icons: [
 				mdi_numeric_0,
@@ -57,6 +67,13 @@ export default new Vuex.Store({
 	},
 	actions: {
 		// * Global Actions
+		fetchScenes(context) {
+			ax.get(context.state.global.scenes.url)
+				.then(response => response.data)
+				.then(scenes => {
+					context.commit('setScenes', scenes)
+				})
+		},
 		bottomSheetHeight(context, payload) {
 			context.commit('bottomSheetHeight', payload)
 		},
@@ -86,6 +103,9 @@ export default new Vuex.Store({
 	},
 	mutations: {
 		// * Global Mutations
+		setScenes: (state, payload) => {
+			state.global.scenes.data = payload
+		},
 		bottomSheetHeight: (state, payload) => {
 			state.global.bottomSheetHeight = payload
 		},
@@ -105,6 +125,7 @@ export default new Vuex.Store({
 		// * Map Mutations
 		updateState: (state, payload) => {
 			state.map.currentUUID = payload.uuid
+			state.map.nextID = payload.nextID
 			state.map.title = payload.title
 			state.map.activeLayers = payload.layers
 			state.content.object = payload.content
@@ -123,6 +144,9 @@ export default new Vuex.Store({
 	},
 	getters: {
 		// * Global Getters
+		scenes: state => {
+			return state.global.scenes
+		},
 		bottomSheetHeight: state => {
 			return state.global.bottomSheetHeight
 		},
@@ -144,6 +168,12 @@ export default new Vuex.Store({
 		},
 		currentUUID: state => {
 			return state.map.currentUUID
+		},
+		nextID: state => {
+			return state.map.nextID
+		},
+		noOfScenes: state => {
+			return state.global.scenes.data.features.length
 		},
 		// * Content Getters
 		content: state => {

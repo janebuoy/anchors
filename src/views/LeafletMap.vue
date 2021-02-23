@@ -16,7 +16,7 @@
       ref="routeLayer"
       :key="'route'"
       v-if="isActiveLayer(activeLayers, 'route')"
-      :geojson="JSONLayers.route.src"
+      :geojson="JSONLayers.route.data"
       :options-style="styleRoute"
     />
     <!-- STOP NUMBERS -->
@@ -24,9 +24,12 @@
       v-if="isActiveLayer(activeLayers, 'scenes')"
       :key="'scenes'"
       ref="stopsLayer"
-      :geojson="JSONLayers.scenes.src"
+      :geojson="scenes.data"
       :options="optionsScenes"
     />
+    <l-control position="bottomright" v-if="currentItem">
+      <ToggleContentDrawerBtn />
+    </l-control>
   </l-map>
 </template>
 
@@ -36,9 +39,12 @@ const ax = axios.create({
   baseURL: process.env.BASE_URL,
 });
 import { mapGetters } from "vuex";
+import { eventBus } from "../main.js";
 import L from "leaflet";
 import { latLng, icon } from "leaflet";
-import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
+import { LMap, LTileLayer, LGeoJson, LControl } from "vue2-leaflet";
+
+import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
   name: "LeafletMap",
@@ -46,6 +52,8 @@ export default {
     LMap,
     LTileLayer,
     LGeoJson,
+    LControl,
+    ToggleContentDrawerBtn,
   },
   data() {
     return {
@@ -64,11 +72,7 @@ export default {
       JSONLayers: {
         route: {
           url: "data/json/route.json",
-          src: null,
-        },
-        scenes: {
-          url: "data/json/scenes.json",
-          src: null,
+          data: null,
         },
       },
       colors: this.$vuetify.theme.themes.light,
@@ -76,12 +80,17 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "scenes",
       "activeLayers",
       "markerIcons",
       "currentUUID",
+      "currentItem",
       "bottomSheetHeight",
       "contentDrawer",
     ]),
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
     optionsScenes() {
       return {
         onEachFeature: this.onEachFeatureScenes,
@@ -97,7 +106,7 @@ export default {
     },
     pointToLayerScenes() {
       return (feature, latlng) => {
-        const points = this.JSONLayers.scenes.src.features;
+        const points = this.scenes.data.features;
         // Match getMainScenes IDs with ID of given feature
         const id = points.map((a) => a.id === feature.id).indexOf(true) + 1;
         const markerIcon = icon({
@@ -120,6 +129,30 @@ export default {
         dashArray: "0.7 6",
       };
     },
+    nextID() {
+      let index;
+      // set (next) index to 0 if no scene is selected yet
+      if (this.currentUUID === null) {
+        index = 0;
+        // Otherwise find index of currently selected UUID
+      } else {
+        index = this.scenes.data.features.findIndex(
+          (s) => s.uuid === this.currentUUID
+        );
+        // set index to 0 if last scene is reached
+        if (index === this.scenes.data.features.length - 1) {
+          index = 0;
+          // otherwise add 1 to index
+        } else {
+          index++;
+        }
+      }
+      return index;
+    },
+    nextUUID() {
+      // Return UUID of next Scene
+      return this.scenes.data.features[this.nextID].uuid;
+    },
   },
   methods: {
     isActiveLayer(array, payload) {
@@ -132,7 +165,7 @@ export default {
     },
     openScene(uuid) {
       // Filter out single feature per UUID from scenes
-      const feature = this.JSONLayers.scenes.src.features.filter(
+      const feature = this.scenes.data.features.filter(
         (a) => a.uuid === uuid
       )[0];
       this.setCoords(feature);
@@ -140,6 +173,7 @@ export default {
       this.$store.dispatch("toggleContentDrawer", true);
       const payload = {
         uuid: feature.uuid,
+        nextID: this.nextID,
         common_name: feature.common_name,
         title: feature.properties.title,
         layers: feature.layers,
@@ -188,7 +222,7 @@ export default {
       for (let layer in this.JSONLayers) {
         ax.get(this.JSONLayers[layer].url)
           .then((response) => {
-            this.JSONLayers[layer].src = response.data;
+            this.JSONLayers[layer].data = response.data;
           })
           .catch((err) => {
             console.log(err);
@@ -198,12 +232,17 @@ export default {
   },
   mounted() {
     // Assign the Leaflet mapObject to map
-    if (this.JSONLayers.route && this.JSONLayers.scenes) {
+    if (this.JSONLayers.route && this.scenes) {
       this.map = this.$refs.lmap.mapObject;
     }
   },
   created() {
     this.fetchJSONLayers();
+    this.$store.dispatch("fetchScenes");
+    eventBus.$on("openNextScene", () => {
+      this.openScene(this.nextUUID);
+    });
+    eventBus.$on("openScene", this.openScene);
   },
   watch: {
     // Watch for map height size changes
@@ -212,6 +251,9 @@ export default {
     },
     // Watch for contentDrawer changes
     contentDrawer() {
+      this.recentreMap();
+    },
+    isMobile() {
       this.recentreMap();
     },
   },

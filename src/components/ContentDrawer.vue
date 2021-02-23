@@ -64,7 +64,11 @@ export default {
     },
     bottomSheetHeight: {
       get() {
-        return this.$refs.bottomSheet.$refs.dialog.clientHeight;
+        if (this.$vuetify.breakpoint.smAndDown) {
+          return this.$refs.bottomSheet.$refs.dialog.clientHeight;
+        } else {
+          return null;
+        }
       },
       set(v) {
         return this.$store.dispatch("bottomSheetHeight", v);
@@ -79,12 +83,13 @@ export default {
       return true;
     },
     updateBottomSheetHeight() {
-      const vm = this;
-      this.$nextTick(() => {
-        if (vm.$refs.bottomSheet) {
+      // Make sure the refs are available, otherwise vue might throw errors
+      if (this.$refs.bottomSheet && this.$refs.bottomSheet.$refs.dialog) {
+        const vm = this;
+        this.$nextTick(() => {
           vm.bottomSheetHeight = vm.$refs.bottomSheet.$refs.dialog.clientHeight;
-        }
-      });
+        });
+      }
     },
   },
   updated() {

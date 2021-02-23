@@ -4,7 +4,7 @@
       <v-card-title class="py-4">{{ content.title }}</v-card-title>
     </v-card>
     <v-list three-line class="white">
-      <v-list-item-group color="accent" mandatory :value="resourceID">
+      <v-list-item-group color="accent" mandatory v-model="resourceID">
         <v-list-item
           v-for="item in resources"
           :key="item.id"

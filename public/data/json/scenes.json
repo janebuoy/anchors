@@ -157,7 +157,7 @@
 				]
 			},
 			"content": {
-				"title": "Meierei (long content list)",
+				"title": "Meierei",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi porta lorem mollis aliquam ut porttitor.",
 				"resources": [
 					{
@@ -185,34 +185,6 @@
 					},
 					{
 						"id": 3,
-						"title": "Gallery",
-						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
-						"type": "gallery",
-						"target": 0
-					},
-					{
-						"id": 4,
-						"title": "Gallery",
-						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
-						"type": "gallery",
-						"target": 0
-					},
-					{
-						"id": 5,
-						"title": "Gallery",
-						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
-						"type": "gallery",
-						"target": 0
-					},
-					{
-						"id": 6,
-						"title": "Gallery",
-						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
-						"type": "gallery",
-						"target": 0
-					},
-					{
-						"id": 7,
 						"title": "Gallery",
 						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
 						"type": "gallery",
@@ -279,13 +251,6 @@
 						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
 						"type": "gallery",
 						"target": 0
-					},
-					{
-						"id": 4,
-						"title": "Gallery",
-						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
-						"type": "gallery",
-						"target": 0
 					}
 				]
 			}
@@ -344,13 +309,6 @@
 					},
 					{
 						"id": 3,
-						"title": "Gallery",
-						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
-						"type": "gallery",
-						"target": 0
-					},
-					{
-						"id": 4,
 						"title": "Gallery",
 						"subtitle": "Lectus arcu bibendum at varius vel neque egestas congue quisque semper feugiat nibh sed",
 						"type": "gallery",

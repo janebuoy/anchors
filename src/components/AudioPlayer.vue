@@ -16,7 +16,13 @@
       >
         <v-icon>mdi-replay</v-icon>
       </v-btn>
-      <v-btn fab color="accent" class="mt-n2" @click.stop="toggleAudio()">
+      <v-btn
+        fab
+        color="accent"
+        class="mt-n2"
+        @click.stop="toggleAudio()"
+        ref="playButton"
+      >
         <v-icon large class="white--text" v-if="!isPlaying">mdi-play</v-icon>
         <v-icon v-else large class="white--text">mdi-pause</v-icon>
       </v-btn>
@@ -136,21 +142,17 @@ export default {
   },
   methods: {
     toggleAudio() {
-      console.log("triggered");
       // If nothing is playing, load Audio of selected item and play
       if (!this.isPlaying) {
         this.loadAudio();
         this.playAudio();
-        console.log("tick 1");
         // If something is playing and selected item is different, load that item's source
       } else if (this.isPlaying && this.localSrc !== this.currentItem.src) {
         this.loadAudio();
         this.playAudio();
-        console.log("tick 2");
         // If selected item is already playing, pause
       } else if (this.localSrc === this.currentItem.src) {
         this.pauseAudio();
-        console.log("tick 3");
       }
     },
     playAudio() {
@@ -221,7 +223,6 @@ export default {
         window.player.addEventListener("loadedmetadata", function () {
           vm.duration = Math.round(this.duration);
         });
-        window.player.addEventListener("ended", this.loadAudio);
       }
     },
   },
@@ -250,6 +251,8 @@ export default {
   watch: {
     currentItem() {
       this.loadAudio();
+      // Set focus to play button
+      // this.$refs.playButton.$el.focus();
     },
   },
 };

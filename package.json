@@ -3,8 +3,8 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"serve": "vue-cli-service serve",
-		"build": "vue-cli-service build",
+		"serve": "VUE_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) VUE_APP_GIT_COMMIT_HASH=$(git rev-parse --short HEAD) vue-cli-service serve",
+		"build": "VUE_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) VUE_APP_GIT_COMMIT_HASH=$(git rev-parse --short HEAD) vue-cli-service build",
 		"lint": "vue-cli-service lint"
 	},
 	"dependencies": {

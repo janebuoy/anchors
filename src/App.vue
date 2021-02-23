@@ -13,7 +13,7 @@
       <router-view />
     </v-main>
     <AppBar />
-    <DrawerLeft />
+    <DrawerLeft v-if="scenes.data" />
     <ContentDrawer />
   </v-app>
 </template>
@@ -33,7 +33,12 @@ export default {
     ContentDrawer,
   },
   computed: {
-    ...mapGetters(["bottomSheetHeight", "contentDrawer", "drawerRightWidth"]),
+    ...mapGetters([
+      "bottomSheetHeight",
+      "contentDrawer",
+      "drawerRightWidth",
+      "scenes",
+    ]),
     bottomSheetHeightPx() {
       return this.bottomSheetHeight + "px";
     },
