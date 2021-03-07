@@ -3,6 +3,7 @@
     ref="lmap"
     :zoom="baseLayer.zoom"
     :center="baseLayer.center"
+    :options="mapOptions"
     class="overflow-hidden"
     style="z-index: 100"
   >
@@ -19,6 +20,14 @@
       :geojson="JSONLayers.route.data"
       :options-style="styleRoute"
     />
+    <!-- ACTION BOUNDS -->
+    <l-geo-json
+      v-if="isActiveLayer(activeLayers, 'scenes') && useActionBounds === true"
+      :key="'bounds'"
+      ref="stationsLayer"
+      :geojson="scenes.data"
+      :options="optionsStopBounds"
+    />
     <!-- STOP NUMBERS -->
     <l-geo-json
       v-if="isActiveLayer(activeLayers, 'scenes')"
@@ -30,6 +39,8 @@
     <l-control position="bottomright" v-if="currentItem">
       <ToggleContentDrawerBtn />
     </l-control>
+    <l-control-zoom position="topleft"></l-control-zoom>
+    <LocateControl ref="locateControl" :options="locateControl.options" />
   </l-map>
 </template>
 
@@ -42,8 +53,15 @@ import { mapGetters } from "vuex";
 import { eventBus } from "../main.js";
 import L from "leaflet";
 import { latLng, icon } from "leaflet";
-import { LMap, LTileLayer, LGeoJson, LControl } from "vue2-leaflet";
+import {
+  LMap,
+  LTileLayer,
+  LGeoJson,
+  LControl,
+  LControlZoom,
+} from "vue2-leaflet";
 
+import LocateControl from "@/components/LocateControl";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -53,10 +71,18 @@ export default {
     LTileLayer,
     LGeoJson,
     LControl,
+    LControlZoom,
     ToggleContentDrawerBtn,
+    LocateControl,
   },
   data() {
     return {
+      mapOptions: {
+        zoomControl: false,
+        minZoom: 1,
+        maxZoom: 18,
+        zoomSnap: 0.2,
+      },
       baseLayer: {
         zoom: 15,
         center: latLng(53.0933, 8.8249),
@@ -75,6 +101,17 @@ export default {
           data: null,
         },
       },
+      locateControl: {
+        object: Object,
+        options: {
+          keepCurrentZoomLevel: true,
+          returnToPrevBounds: false,
+          drawCircle: true,
+          color: "secondary",
+          icon: "mdi mdi-map-marker",
+          iconLoading: "mdi mdi-loading mdi-spin",
+        },
+      },
       colors: this.$vuetify.theme.themes.light,
       markerIconColors: [],
       stopKeyIndex: 0,
@@ -90,6 +127,7 @@ export default {
       "currentItem",
       "bottomSheetHeight",
       "contentDrawer",
+      "useActionBounds",
     ]),
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
@@ -98,6 +136,12 @@ export default {
       return {
         onEachFeature: this.onEachFeatureScenes,
         pointToLayer: this.pointToLayerScenes,
+      };
+    },
+    optionsStopBounds() {
+      return {
+        onEachFeature: this.onEachFeature,
+        pointToLayer: this.pointToLayerStopBounds,
       };
     },
     onEachFeatureScenes() {
@@ -110,14 +154,14 @@ export default {
     pointToLayerScenes() {
       return (feature, latlng) => {
         const points = this.scenes.data.features;
-        // Match getMainScenes IDs with ID of given feature
+        // Match scenes.data IDs with ID of given feature
         const id = points.map((a) => a.id === feature.id).indexOf(true) + 1;
         const svg =
           "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><g><path d='" +
           this.markerIcons.fg[id] +
           "' fill='" +
           this.markerIconColors[id] +
-          "' fill-opacity='1' stroke='#6B818C' stroke-width='.5'/><path d='" +
+          "' fill-opacity='1' stroke='#6B818C' stroke-opacity='0.5' stroke-width='.5'/><path d='" +
           this.markerIcons.bg[id] +
           "' fill='#FFFFFF' stroke-width='.028606'/></g></svg>";
         const url = "data:image/svg+xml," + encodeURIComponent(svg);
@@ -127,6 +171,19 @@ export default {
           iconAnchor: [16, 18],
         });
         return new L.Marker(latlng, { icon: markerIcon });
+      };
+    },
+    pointToLayerStopBounds() {
+      return (_, latlng) => {
+        const style = {
+          radius: 50,
+          fillColor: this.colors.primary.lighten3,
+          color: this.colors.primary.darken3,
+          fillOpacity: 0.2,
+          opacity: 0.1,
+          weight: 1,
+        };
+        return L.circle(latlng, style);
       };
     },
     styleRoute() {
@@ -196,12 +253,12 @@ export default {
     },
     populateMarkerColors() {
       for (let i = 0; i <= 11; i++) {
-        this.markerIconColors[i] = this.colors.accent.lighten3;
+        this.markerIconColors[i] = this.colors.neutral.darken2;
       }
     },
     updateMarkerColors(id) {
       // Set color of visited
-      this.markerIconColors[this.prevID] = this.colors.neutral.darken1;
+      this.markerIconColors[this.prevID] = this.colors.neutral.lighten2;
       // Set color of active
       this.markerIconColors[id] = this.colors.accent.base;
       // Redraw Markers on Key Change

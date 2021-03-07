@@ -20,7 +20,8 @@ export default new Vuex.Store({
 			bottomSheetHeight: null,
 			drawerRightWidth: null,
 			drawerLeft: false,
-			contentDrawer: false
+			contentDrawer: false,
+			actionBounds: true,
 		},
 		map: {
 			title: null,
@@ -138,6 +139,9 @@ export default new Vuex.Store({
 		},
 		contentDrawer: state => {
 			return state.global.contentDrawer
+		},
+		useActionBounds: state => {
+			return state.global.actionBounds
 		},
 		// * Map Getters
 		activeLayers: state => {

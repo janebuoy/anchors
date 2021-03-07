@@ -5,6 +5,7 @@ Vue.use(Vuetify);
 
 export default new Vuetify({
 	theme: {
+		options: { customProperties: true },
 		themes: {
 			light: {
 				primary: {
@@ -40,10 +41,33 @@ export default new Vuetify({
 					darken3: "#5c2945",
 					darken4: "#4f233b",
 				},
-				error: '#C35755',
-				info: '#EECF6D',
-				success: '#B5B682',
-				warning: '#D57A66',
+				error: {
+					base: "#E25455",
+					lighten1: "#e56364",
+					lighten2: "#efa2a2",
+					lighten3: "#fae0e0",
+					darken1: "#9c1a1b",
+					darken2: "#5d1010",
+					darken3: "#1f0505"
+				},
+				warning: {
+					base: "#E68E00",
+					lighten1: "#FCB849",
+					lighten2: "#ffdb92",
+					lighten3: "#fff3db",
+					darken1: "#b67900",
+					darken2: "#6d4900",
+					darken3: "#241800"
+				},
+				success: {
+					base: "#47b857",
+					lighten1: "#7bcc87",
+					lighten2: "#b0e1b7",
+					lighten3: "#e5f5e7",
+					darken1: "#32843e",
+					darken2: "#1e4f25",
+					darken3: "#0a1a0c"
+				},
 			}
 		}
 	},
