@@ -3,10 +3,10 @@
     <v-main
       :style="[
         contentDrawer && $vuetify.breakpoint.smAndDown
-          ? { paddingBottom: bottomSheetHeightPx }
+          ? { paddingBottom: bottomSheetHeight + 'px' }
           : null,
         contentDrawer && $vuetify.breakpoint.mdAndUp
-          ? { paddingRight: drawerRightWidthPx }
+          ? { paddingRight: drawerRightWidth + 'px' }
           : null,
       ]"
     >
@@ -39,12 +39,10 @@ export default {
       "drawerRightWidth",
       "scenes",
     ]),
-    bottomSheetHeightPx() {
-      return this.bottomSheetHeight + "px";
-    },
-    drawerRightWidthPx() {
-      return this.drawerRightWidth + "px";
-    },
+  },
+  created() {
+    // Make store fetch the scenes
+    this.$store.dispatch("fetchScenes");
   },
 };
 </script>

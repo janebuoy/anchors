@@ -1,7 +1,9 @@
 <template>
   <v-app-bar app dark color="primary" elevate-on-scroll clipped-right>
     <v-app-bar-nav-icon @click="toggleDrawerLeft()"></v-app-bar-nav-icon>
+    <v-toolbar-title style="cursor: default"> Title </v-toolbar-title>
     <v-spacer />
+
     <v-btn @click="openNextScene()">
       {{ nextSceneText }}
     </v-btn>

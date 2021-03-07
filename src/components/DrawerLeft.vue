@@ -4,11 +4,11 @@
       <v-card
         tile
         dark
-        color="secondary darken-4"
+        color="neutral darken-4"
         style="font-size: 0.9em"
         elevation="1"
       >
-        <v-img src="" aspect-ratio="1.7" height="160px">
+        <v-img src="" aspect-ratio="1.7" contain height="160px">
           <v-btn
             icon
             tile
@@ -53,7 +53,7 @@
         dark
         tile
         elevation="12"
-        color="py-2 secondary darken-4"
+        color="py-2 neutral darken-4"
         class="nav-actions"
         style="width: 100%"
       >
@@ -131,7 +131,7 @@ export default {
 .bottom-gradient {
   background-image: linear-gradient(
     to top,
-    rgba(42, 39, 43, 0.7) 3%,
+    rgba(46, 42, 49, 0.8) 3%,
     transparent 140px
   );
 }

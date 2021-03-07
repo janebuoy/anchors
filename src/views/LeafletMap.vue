@@ -22,7 +22,7 @@
     <!-- STOP NUMBERS -->
     <l-geo-json
       v-if="isActiveLayer(activeLayers, 'scenes')"
-      :key="'scenes'"
+      :key="'scenes' + stopKeyIndex"
       ref="stopsLayer"
       :geojson="scenes.data"
       :options="optionsScenes"
@@ -76,6 +76,9 @@ export default {
         },
       },
       colors: this.$vuetify.theme.themes.light,
+      markerIconColors: [],
+      stopKeyIndex: 0,
+      prevID: null,
     };
   },
   computed: {
@@ -109,8 +112,17 @@ export default {
         const points = this.scenes.data.features;
         // Match getMainScenes IDs with ID of given feature
         const id = points.map((a) => a.id === feature.id).indexOf(true) + 1;
+        const svg =
+          "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><g><path d='" +
+          this.markerIcons.fg[id] +
+          "' fill='" +
+          this.markerIconColors[id] +
+          "' fill-opacity='1' stroke='#6B818C' stroke-width='.5'/><path d='" +
+          this.markerIcons.bg[id] +
+          "' fill='#FFFFFF' stroke-width='.028606'/></g></svg>";
+        const url = "data:image/svg+xml," + encodeURIComponent(svg);
         const markerIcon = icon({
-          iconUrl: this.markerIcons[id],
+          iconUrl: url,
           iconSize: [32, 37],
           iconAnchor: [16, 18],
         });
@@ -121,7 +133,7 @@ export default {
       // ! need touch fillColor in computed to re-calculate when change fillColor
       // const fillColor = this.fillColor;
       return {
-        color: this.colors["primary"],
+        color: this.colors.primary.base,
         weight: 3,
         opacity: 0.7,
         stroke: true,
@@ -180,6 +192,26 @@ export default {
         content: feature.content,
       };
       this.$store.dispatch("updateState", payload);
+      this.updateMarkerColors(feature.id);
+    },
+    populateMarkerColors() {
+      for (let i = 0; i <= 11; i++) {
+        this.markerIconColors[i] = this.colors.accent.lighten3;
+      }
+    },
+    updateMarkerColors(id) {
+      // Set color of visited
+      this.markerIconColors[this.prevID] = this.colors.neutral.darken1;
+      // Set color of active
+      this.markerIconColors[id] = this.colors.accent.base;
+      // Redraw Markers on Key Change
+      if (this.stopKeyIndex === 0) {
+        this.stopKeyIndex = 1;
+      } else {
+        this.stopKeyIndex = 0;
+      }
+      // Store current ID as prevID for next run
+      this.prevID = id;
     },
     setCoords(feature) {
       const zoom = feature.properties.zoom;
@@ -238,11 +270,11 @@ export default {
   },
   created() {
     this.fetchJSONLayers();
-    this.$store.dispatch("fetchScenes");
+    eventBus.$on("openScene", this.openScene);
     eventBus.$on("openNextScene", () => {
       this.openScene(this.nextUUID);
     });
-    eventBus.$on("openScene", this.openScene);
+    this.populateMarkerColors();
   },
   watch: {
     // Watch for map height size changes

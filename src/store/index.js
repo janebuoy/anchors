@@ -1,18 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-// Import numeric Icons
-import mdi_numeric_0 from "../assets/svg/numeric-0-circle-bg.svg"
-import mdi_numeric_1 from "../assets/svg/numeric-1-circle-bg.svg"
-import mdi_numeric_2 from "../assets/svg/numeric-2-circle-bg.svg"
-import mdi_numeric_3 from "../assets/svg/numeric-3-circle-bg.svg"
-import mdi_numeric_4 from "../assets/svg/numeric-4-circle-bg.svg"
-import mdi_numeric_5 from "../assets/svg/numeric-5-circle-bg.svg"
-import mdi_numeric_6 from "../assets/svg/numeric-6-circle-bg.svg"
-import mdi_numeric_7 from "../assets/svg/numeric-7-circle-bg.svg"
-import mdi_numeric_8 from "../assets/svg/numeric-8-circle-bg.svg"
-import mdi_numeric_9 from "../assets/svg/numeric-9-circle-bg.svg"
-import mdi_numeric_10 from "../assets/svg/numeric-10-circle-bg.svg"
+import icons from "../assets/icons.json"
 
 import axios from "axios";
 const ax = axios.create({
@@ -38,19 +27,7 @@ export default new Vuex.Store({
 			currentUUID: null,
 			nextID: null,
 			activeLayers: ['route', 'scenes'],
-			icons: [
-				mdi_numeric_0,
-				mdi_numeric_1,
-				mdi_numeric_2,
-				mdi_numeric_3,
-				mdi_numeric_4,
-				mdi_numeric_5,
-				mdi_numeric_6,
-				mdi_numeric_7,
-				mdi_numeric_8,
-				mdi_numeric_9,
-				mdi_numeric_10
-			]
+			icons: icons.icons
 		},
 		content: {
 			object: null,
@@ -73,6 +50,9 @@ export default new Vuex.Store({
 				.then(scenes => {
 					context.commit('setScenes', scenes)
 				})
+				.catch((err) => {
+					console.log(err);
+				});
 		},
 		bottomSheetHeight(context, payload) {
 			context.commit('bottomSheetHeight', payload)
