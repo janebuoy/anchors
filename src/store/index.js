@@ -22,6 +22,7 @@ export default new Vuex.Store({
 			drawerLeft: false,
 			contentDrawer: false,
 			actionBounds: true,
+			actionBoundsRadius: 50
 		},
 		map: {
 			title: null,
@@ -142,6 +143,9 @@ export default new Vuex.Store({
 		},
 		useActionBounds: state => {
 			return state.global.actionBounds
+		},
+		actionBoundsRadius: state => {
+			return state.global.actionBoundsRadius
 		},
 		// * Map Getters
 		activeLayers: state => {

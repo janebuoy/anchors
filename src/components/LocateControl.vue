@@ -42,7 +42,12 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["scenes", "useActionBounds", "currentUUID"]),
+    ...mapGetters([
+      "scenes",
+      "useActionBounds",
+      "actionBoundsRadius",
+      "currentUUID",
+    ]),
     // Returns the user's postion from locateControl if possible
     userPosition() {
       let position;
@@ -59,7 +64,9 @@ export default {
       let boundsArr = [];
       for (let i = 0; i < points.length; i++) {
         const coordinates = points[i].geometry.coordinates;
-        const bounds = L.latLng(coordinates.reverse()).toBounds(50);
+        const bounds = L.latLng(coordinates.reverse()).toBounds(
+          this.actionBoundsRadius
+        );
         const payload = {
           uuid: points[i].uuid,
           bounds: bounds,

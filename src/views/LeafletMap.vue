@@ -128,6 +128,7 @@ export default {
       "bottomSheetHeight",
       "contentDrawer",
       "useActionBounds",
+      "actionBoundsRadius",
     ]),
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
@@ -176,7 +177,7 @@ export default {
     pointToLayerStopBounds() {
       return (_, latlng) => {
         const style = {
-          radius: 50,
+          radius: this.actionBoundsRadius,
           fillColor: this.colors.primary.lighten3,
           color: this.colors.primary.darken3,
           fillOpacity: 0.2,
