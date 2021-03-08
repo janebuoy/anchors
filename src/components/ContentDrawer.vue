@@ -50,6 +50,7 @@ export default {
     return {
       drawerRightWidth: 480,
       contentKey: 0,
+      scrollTimer: 120,
     };
   },
   computed: {
@@ -77,6 +78,9 @@ export default {
     keepOpen() {
       return this.onClickOutside;
     },
+    windowHeight() {
+      return this.$vuetify.breakpoint.height;
+    },
   },
   methods: {
     onClickOutside() {
@@ -98,6 +102,9 @@ export default {
   },
   watch: {
     currentUUID() {
+      this.updateBottomSheetHeight();
+    },
+    windowHeight() {
       this.updateBottomSheetHeight();
     },
   },

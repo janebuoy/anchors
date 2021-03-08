@@ -309,7 +309,10 @@ export default {
       const vm = this;
       setTimeout(function () {
         vm.mapInvalidate();
-      }, 120);
+        vm.$nextTick(() => {
+          vm.mapInvalidate();
+        });
+      }, 160);
     },
     async fetchJSONLayers() {
       for (let layer in this.JSONLayers) {
@@ -328,8 +331,6 @@ export default {
     if (this.JSONLayers.route && this.scenes) {
       this.map = this.$refs.lmap.mapObject;
     }
-    console.log(document.body.scrollHeight);
-    console.log(this.windowHeight);
   },
   created() {
     this.fetchJSONLayers();
@@ -351,9 +352,8 @@ export default {
     isMobile() {
       this.recentreMap();
     },
-    windowHeight(o, n) {
+    windowHeight() {
       this.recentreMap();
-      console.log(o, n);
     },
   },
 };

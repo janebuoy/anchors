@@ -22,7 +22,7 @@ export default new Vuex.Store({
 			drawerLeft: false,
 			contentDrawer: false,
 			actionBounds: true,
-			actionBoundsRadius: 50
+			actionBoundsRadius: 50,
 		},
 		map: {
 			title: null,
@@ -81,7 +81,7 @@ export default new Vuex.Store({
 		},
 		saveAudioState(context, payload) {
 			context.commit("saveAudioState", payload)
-		}
+		},
 	},
 	mutations: {
 		// * Global Mutations
@@ -226,8 +226,5 @@ export default new Vuex.Store({
 			return false
 		},
 	},
-	modules: {
-
-	}
 })
 
