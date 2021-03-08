@@ -48,16 +48,6 @@ export default {
       "actionBoundsRadius",
       "currentUUID",
     ]),
-    // Returns the user's postion from locateControl if possible
-    userPosition() {
-      let position;
-      if (this.mapObject._active && this.mapObject._event.latlng) {
-        position = this.mapObject._event.latlng;
-      } else {
-        position = undefined;
-      }
-      return position;
-    },
     stopBounds() {
       // Make deep copy to mess with
       const points = JSON.parse(JSON.stringify(this.scenes.data.features));
@@ -78,19 +68,17 @@ export default {
   },
   methods: {
     enterBounds() {
-      // Check if ActionBounds is used (can be changed in settings)
+      // Check if ActionBounds is used (may be able to be changed in settings)
       if (this.useActionBounds) {
-        // Repeat check every 10 seconds
         let vm = this;
         setInterval(function () {
           // Check if user location is set by LocateControl
-          if (vm.userPosition !== undefined) {
-            // Compare the position against the bounds of all stations and open
-            // stop if the user has entered a bound that is not that of the
-            // current stop
+          if (vm.mapObject._event && vm.mapObject._event.latlng !== undefined) {
+            // Compare the position against all the bounds
+            // and open scene if the user has entered a bound that is not that of the current stop
             for (let i = 0; i < vm.stopBounds.length; i++) {
               if (
-                vm.stopBounds[i].bounds.contains(vm.userPosition) &&
+                vm.stopBounds[i].bounds.contains(vm.mapObject._event.latlng) &&
                 vm.stopBounds[i].uuid !== vm.currentUUID &&
                 vm.mapObject._active
               ) {

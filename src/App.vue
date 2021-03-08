@@ -46,3 +46,29 @@ export default {
   },
 };
 </script>
+
+<style>
+#app {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+main {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  height: 100% !important;
+  min-height: 100vh !important;
+  /* mobile viewport bug fix */
+  min-height: -webkit-fill-available !important;
+}
+
+html {
+  height: 100% !important;
+  height: -webkit-fill-available !important;
+}
+</style>
