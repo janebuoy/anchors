@@ -223,6 +223,9 @@ export default {
       // Return UUID of next Scene
       return this.scenes.data.features[this.nextID].uuid;
     },
+    windowHeight() {
+      return this.$vuetify.breakpoint.height;
+    },
   },
   methods: {
     isActiveLayer(array, payload) {
@@ -325,6 +328,8 @@ export default {
     if (this.JSONLayers.route && this.scenes) {
       this.map = this.$refs.lmap.mapObject;
     }
+    console.log(document.body.scrollHeight);
+    console.log(this.windowHeight);
   },
   created() {
     this.fetchJSONLayers();
@@ -345,6 +350,10 @@ export default {
     },
     isMobile() {
       this.recentreMap();
+    },
+    windowHeight(o, n) {
+      this.recentreMap();
+      console.log(o, n);
     },
   },
 };

@@ -3,7 +3,7 @@
     <v-card tile flat>
       <v-card-title class="py-4">{{ content.title }}</v-card-title>
     </v-card>
-    <v-list three-line class="white">
+    <v-list three-line class="white mb-16">
       <v-list-item-group color="accent" mandatory v-model="resourceID">
         <v-list-item
           v-for="item in resources"
