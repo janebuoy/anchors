@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Vuetify from '@/plugins/vuetify'
 
-import icons from "../assets/icons.json"
+import icons from "@/assets/icons.json"
 
 import axios from "axios";
 const ax = axios.create({
@@ -14,8 +15,14 @@ export default new Vuex.Store({
 	state: {
 		global: {
 			scenes: {
-				url: "data/json/scenes.json",
-				data: null,
+				mainScenes: {
+					url: "data/json/scenes.json",
+					data: null,
+				},
+				subScenes: {
+					url: "data/json/subScenes.json",
+					data: null,
+				}
 			},
 			bottomSheetHeight: null,
 			drawerRightWidth: null,
@@ -28,7 +35,7 @@ export default new Vuex.Store({
 			title: null,
 			currentUUID: null,
 			nextID: null,
-			activeLayers: ['route', 'scenes'],
+			activeLayers: ["route", "scenes"],
 			icons: icons.icons
 		},
 		content: {
@@ -47,14 +54,20 @@ export default new Vuex.Store({
 	actions: {
 		// * Global Actions
 		fetchScenes(context) {
-			ax.get(context.state.global.scenes.url)
-				.then(response => response.data)
-				.then(scenes => {
-					context.commit('setScenes', scenes)
-				})
-				.catch((err) => {
-					console.log(err);
-				});
+			for (let [key, value] of Object.entries(context.state.global.scenes)) {
+				ax.get(value.url)
+					.then(response => response.data)
+					.then(scenes => {
+						const payload = {
+							scenes,
+							key
+						}
+						context.commit('setScenes', payload)
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
 		},
 		bottomSheetHeight(context, payload) {
 			context.commit('bottomSheetHeight', payload)
@@ -86,7 +99,7 @@ export default new Vuex.Store({
 	mutations: {
 		// * Global Mutations
 		setScenes: (state, payload) => {
-			state.global.scenes.data = payload
+			state.global.scenes[payload.key].data = payload.scenes
 		},
 		bottomSheetHeight: (state, payload) => {
 			state.global.bottomSheetHeight = payload
@@ -106,11 +119,21 @@ export default new Vuex.Store({
 		},
 		// * Map Mutations
 		updateState: (state, payload) => {
-			state.map.currentUUID = payload.uuid
-			state.map.nextID = payload.nextID
-			state.map.title = payload.title
-			state.map.activeLayers = payload.layers
-			state.content.object = payload.content
+			if (payload.uuid) {
+				state.map.currentUUID = payload.uuid
+			}
+			if (payload.nextID) {
+				state.map.nextID = payload.nextID
+			}
+			if (payload.title) {
+				state.map.title = payload.title
+			}
+			if (payload.layers) {
+				state.map.activeLayers = payload.layers
+			}
+			if (payload.content) {
+				state.content.object = payload.content
+			}
 			// state.app.title = payload.title
 		},
 		// Content Mutations
@@ -127,7 +150,10 @@ export default new Vuex.Store({
 	getters: {
 		// * Global Getters
 		scenes: state => {
-			return state.global.scenes
+			return state.global.scenes.mainScenes
+		},
+		subScenes: state => {
+			return state.global.scenes.subScenes
 		},
 		bottomSheetHeight: state => {
 			return state.global.bottomSheetHeight
@@ -147,6 +173,13 @@ export default new Vuex.Store({
 		actionBoundsRadius: state => {
 			return state.global.actionBoundsRadius
 		},
+		colors: state => {
+			if (state.global.darkMode) {
+				return Vuetify.framework.theme.themes.dark
+			} else {
+				return Vuetify.framework.theme.themes.light
+			}
+		},
 		// * Map Getters
 		activeLayers: state => {
 			return state.map.activeLayers
@@ -161,7 +194,7 @@ export default new Vuex.Store({
 			return state.map.nextID
 		},
 		noOfScenes: state => {
-			return state.global.scenes.data.features.length
+			return state.global.scenes.mainScenes.data.features.length
 		},
 		// * Content Getters
 		content: state => {

@@ -1,0 +1,32 @@
+{
+	"type": "FeatureCollection",
+	"features": [
+		{
+			"type": "Feature",
+			"id": 1,
+			"uuid": "313d67bc-80d2-11eb-9439-0242ac130002",
+			"common_name": "pattern_map_scene",
+			"properties": {
+				"title": "Pattern Map Scene",
+				"zoom": 17,
+				"flyTo": true,
+				"flyToOptions": {
+					"duration": 0.3,
+					"easeLinearity": 0.2
+				}
+			},
+			"layers": [
+				"route",
+				"scenes",
+				"pattern"
+			],
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					8.82472,
+					53.09188
+				]
+			}
+		}
+	]
+}

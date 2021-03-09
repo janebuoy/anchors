@@ -69,7 +69,6 @@ export default {
   methods: {
     openItemByID(id) {
       const item = this.resources.filter((a) => a.id === id)[0];
-      // Prevent Update if item equals already stored item
       if (item !== this.currentItem) {
         this.$store.dispatch("updateContentItem", item);
       }
@@ -78,7 +77,8 @@ export default {
           eventBus.$emit("toggleAudio");
           break;
         case "map":
-          console.log("map");
+          // target is a subScene UUID
+          if (item.target) eventBus.$emit("openSubscene", item.target);
           break;
         case "gallery":
           console.log("gallery");

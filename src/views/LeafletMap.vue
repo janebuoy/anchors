@@ -12,29 +12,36 @@
       :url="baseLayer.url"
       :attribution="baseLayer.attribution"
     />
+    <!-- PATTERN LAYER -->
+    <PatternLayer
+      :key="'pattern'"
+      ref="patternLayer"
+      v-if="isActiveLayer(activeLayers, 'pattern') && JSONLayers.pattern.data"
+      :geojson="JSONLayers.pattern.data"
+    />
     <!-- ROUTE PATH -->
-    <l-geo-json
+    <RouteLayer
       ref="routeLayer"
       :key="'route'"
-      v-if="isActiveLayer(activeLayers, 'route')"
+      v-if="isActiveLayer(activeLayers, 'route') && JSONLayers.route.data"
       :geojson="JSONLayers.route.data"
-      :options-style="styleRoute"
     />
     <!-- ACTION BOUNDS -->
-    <l-geo-json
-      v-if="isActiveLayer(activeLayers, 'scenes') && useActionBounds === true"
+    <BoundsLayer
+      v-if="
+        isActiveLayer(activeLayers, 'scenes') &&
+        useActionBounds === true &&
+        scenes.data
+      "
       :key="'bounds'"
-      ref="stationsLayer"
+      ref="boundsLayer"
       :geojson="scenes.data"
-      :options="optionsStopBounds"
     />
     <!-- STOP NUMBERS -->
-    <l-geo-json
-      v-if="isActiveLayer(activeLayers, 'scenes')"
-      :key="'scenes' + stopKeyIndex"
+    <StopsLayer
+      v-if="isActiveLayer(activeLayers, 'scenes') && scenes.data"
       ref="stopsLayer"
       :geojson="scenes.data"
-      :options="optionsScenes"
     />
     <l-control position="bottomright" v-if="currentItem">
       <ToggleContentDrawerBtn />
@@ -51,16 +58,16 @@ const ax = axios.create({
 });
 import { mapGetters } from "vuex";
 import { eventBus } from "../main.js";
-import L from "leaflet";
-import { latLng, icon } from "leaflet";
-import {
-  LMap,
-  LTileLayer,
-  LGeoJson,
-  LControl,
-  LControlZoom,
-} from "vue2-leaflet";
 
+import L from "leaflet";
+import { latLng } from "leaflet";
+
+import { LMap, LTileLayer, LControl, LControlZoom } from "vue2-leaflet";
+
+import PatternLayer from "@/components/map/PatternLayer";
+import RouteLayer from "@/components/map/RouteLayer";
+import BoundsLayer from "@/components/map/BoundsLayer";
+import StopsLayer from "@/components/map/StopsLayer";
 import LocateControl from "@/components/LocateControl";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
@@ -69,11 +76,14 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LGeoJson,
     LControl,
     LControlZoom,
     ToggleContentDrawerBtn,
     LocateControl,
+    PatternLayer,
+    RouteLayer,
+    BoundsLayer,
+    StopsLayer,
   },
   data() {
     return {
@@ -100,6 +110,10 @@ export default {
           url: "data/json/route.json",
           data: null,
         },
+        pattern: {
+          url: "data/json/pattern.json",
+          data: null,
+        },
       },
       locateControl: {
         object: Object,
@@ -112,92 +126,21 @@ export default {
           iconLoading: "mdi mdi-loading mdi-spin",
         },
       },
-      colors: this.$vuetify.theme.themes.light,
-      markerIconColors: [],
-      stopKeyIndex: 0,
-      prevID: null,
     };
   },
   computed: {
     ...mapGetters([
       "scenes",
+      "subScenes",
       "activeLayers",
-      "markerIcons",
       "currentUUID",
       "currentItem",
       "bottomSheetHeight",
       "contentDrawer",
       "useActionBounds",
-      "actionBoundsRadius",
     ]),
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
-    },
-    optionsScenes() {
-      return {
-        onEachFeature: this.onEachFeatureScenes,
-        pointToLayer: this.pointToLayerScenes,
-      };
-    },
-    optionsStopBounds() {
-      return {
-        onEachFeature: this.onEachFeature,
-        pointToLayer: this.pointToLayerStopBounds,
-      };
-    },
-    onEachFeatureScenes() {
-      return (feature, layer) => {
-        layer.on({
-          click: this.onStopClick,
-        });
-      };
-    },
-    pointToLayerScenes() {
-      return (feature, latlng) => {
-        const points = this.scenes.data.features;
-        // Match scenes.data IDs with ID of given feature
-        const id = points.map((a) => a.id === feature.id).indexOf(true) + 1;
-        const svg =
-          "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><g><path d='" +
-          this.markerIcons.fg[id] +
-          "' fill='" +
-          this.markerIconColors[id] +
-          "' fill-opacity='1' stroke='#6B818C' stroke-opacity='0.5' stroke-width='.5'/><path d='" +
-          this.markerIcons.bg[id] +
-          "' fill='#FFFFFF' stroke-width='.028606'/></g></svg>";
-        const url = "data:image/svg+xml," + encodeURIComponent(svg);
-        const markerIcon = icon({
-          iconUrl: url,
-          iconSize: [32, 37],
-          iconAnchor: [16, 18],
-        });
-        return new L.Marker(latlng, { icon: markerIcon });
-      };
-    },
-    pointToLayerStopBounds() {
-      return (_, latlng) => {
-        const style = {
-          radius: this.actionBoundsRadius,
-          fillColor: this.colors.primary.lighten3,
-          color: this.colors.primary.darken3,
-          fillOpacity: 0.2,
-          opacity: 0.1,
-          weight: 1,
-        };
-        return L.circle(latlng, style);
-      };
-    },
-    styleRoute() {
-      // ! need touch fillColor in computed to re-calculate when change fillColor
-      // const fillColor = this.fillColor;
-      return {
-        color: this.colors.primary.base,
-        weight: 3,
-        opacity: 0.7,
-        stroke: true,
-        lineCap: "round",
-        dashArray: "0.7 6",
-      };
     },
     nextID() {
       let index;
@@ -231,11 +174,6 @@ export default {
     isActiveLayer(array, payload) {
       return array.includes(payload);
     },
-    onStopClick(item) {
-      if (item.target.feature.uuid !== this.currentUUID) {
-        this.openScene(item.target.feature.uuid);
-      }
-    },
     openScene(uuid) {
       // Filter out single feature per UUID from scenes
       const feature = this.scenes.data.features.filter(
@@ -253,26 +191,18 @@ export default {
         content: feature.content,
       };
       this.$store.dispatch("updateState", payload);
-      this.updateMarkerColors(feature.id);
+      eventBus.$emit("updateMarkerColors", feature.id);
     },
-    populateMarkerColors() {
-      for (let i = 0; i <= 11; i++) {
-        this.markerIconColors[i] = this.colors.neutral.darken2;
-      }
-    },
-    updateMarkerColors(id) {
-      // Set color of visited
-      this.markerIconColors[this.prevID] = this.colors.neutral.lighten2;
-      // Set color of active
-      this.markerIconColors[id] = this.colors.accent.base;
-      // Redraw Markers on Key Change
-      if (this.stopKeyIndex === 0) {
-        this.stopKeyIndex = 1;
-      } else {
-        this.stopKeyIndex = 0;
-      }
-      // Store current ID as prevID for next run
-      this.prevID = id;
+    openSubscene(uuid) {
+      const feature = this.subScenes.data.features.filter(
+        (a) => a.uuid === uuid
+      )[0];
+      this.setCoords(feature);
+      const payload = {
+        title: feature.properties.title,
+        layers: feature.layers,
+      };
+      this.$store.dispatch("updateState", payload);
     },
     setCoords(feature) {
       const zoom = feature.properties.zoom;
@@ -335,10 +265,10 @@ export default {
   created() {
     this.fetchJSONLayers();
     eventBus.$on("openScene", this.openScene);
+    eventBus.$on("openSubscene", this.openSubscene);
     eventBus.$on("openNextScene", () => {
       this.openScene(this.nextUUID);
     });
-    this.populateMarkerColors();
   },
   watch: {
     // Watch for map height size changes

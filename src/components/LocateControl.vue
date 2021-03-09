@@ -98,7 +98,6 @@ export default {
     DomEvent.on(this.mapObject, this.$listeners);
     propsBinder(this, this.mapObject, props);
     this.ready = true;
-    this.active = this.mapObject._active;
     this.parentContainer = findRealParent(this.$parent);
     this.mapObject.addTo(this.parentContainer.mapObject, !this.visible);
     this.enterBounds();

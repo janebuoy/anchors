@@ -108,10 +108,10 @@
 					},
 					{
 						"id": 1,
-						"title": " Pattern Map Scene",
+						"title": "Pattern Map Scene",
 						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
-						"target": 0,
-						"type": "map"
+						"type": "map",
+						"target": "313d67bc-80d2-11eb-9439-0242ac130002"
 					},
 					{
 						"id": 2,
@@ -234,8 +234,8 @@
 						"id": 1,
 						"title": " Pattern Map Scene",
 						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
-						"target": 0,
-						"type": "map"
+						"type": "map",
+						"target": "313d67bc-80d2-11eb-9439-0242ac130002"
 					},
 					{
 						"id": 2,
@@ -296,8 +296,8 @@
 						"id": 1,
 						"title": " Pattern Map Scene",
 						"subtitle": "Ac placerat vestibulum lectus mauris ultrices purus non enim praesent faucibus turpis in eu",
-						"target": 0,
-						"type": "map"
+						"type": "map",
+						"target": "313d67bc-80d2-11eb-9439-0242ac130002"
 					},
 					{
 						"id": 2,
