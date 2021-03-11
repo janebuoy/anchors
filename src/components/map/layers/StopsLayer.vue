@@ -12,7 +12,7 @@ import { icon } from "leaflet";
 
 import { LGeoJson } from "vue2-leaflet";
 import { mapGetters } from "vuex";
-import { eventBus } from "../../main";
+import { eventBus } from "../../../main";
 export default {
   name: "StopsLayer",
   components: {
@@ -44,7 +44,7 @@ export default {
     pointToLayerScenes() {
       return (feature, latlng) => {
         const points = this.geojson.features;
-        // Match scenes.data IDs with ID of given feature
+        // Match scenes IDs with ID of given feature
         const id = points.map((a) => a.id === feature.id).indexOf(true) + 1;
         const svg =
           "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><g><path d='" +

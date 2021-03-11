@@ -26,28 +26,37 @@
       v-if="isActiveLayer(activeLayers, 'route') && JSONLayers.route.data"
       :geojson="JSONLayers.route.data"
     />
+    <!-- COLONIES LAYER -->
+    <ColoniesLayer
+      v-if="isActiveLayer(activeLayers, 'colonies') && JSONLayers.colonies.data"
+      :geojson="JSONLayers.colonies.data"
+      :max="thisYear"
+    />
     <!-- ACTION BOUNDS -->
     <BoundsLayer
       v-if="
         isActiveLayer(activeLayers, 'scenes') &&
         useActionBounds === true &&
-        scenes.data
+        scenes
       "
       :key="'bounds'"
       ref="boundsLayer"
-      :geojson="scenes.data"
+      :geojson="scenes"
     />
     <!-- STOP NUMBERS -->
     <StopsLayer
-      v-if="isActiveLayer(activeLayers, 'scenes') && scenes.data"
+      v-if="isActiveLayer(activeLayers, 'scenes') && scenes"
       ref="stopsLayer"
-      :geojson="scenes.data"
+      :geojson="scenes"
     />
-    <l-control position="bottomright" v-if="currentItem">
-      <ToggleContentDrawerBtn />
-    </l-control>
+    <!-- <ColoniesSlider
+      :min="1400"
+      :max="thisYear"
+      :eventsData="JSONLayers.events.data"
+    /> -->
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
+    <ToggleContentDrawerBtn v-if="currentItem" />
   </l-map>
 </template>
 
@@ -62,13 +71,16 @@ import { eventBus } from "../main.js";
 import L from "leaflet";
 import { latLng } from "leaflet";
 
-import { LMap, LTileLayer, LControl, LControlZoom } from "vue2-leaflet";
+import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 
-import PatternLayer from "@/components/map/PatternLayer";
-import RouteLayer from "@/components/map/RouteLayer";
-import BoundsLayer from "@/components/map/BoundsLayer";
-import StopsLayer from "@/components/map/StopsLayer";
-import LocateControl from "@/components/LocateControl";
+import PatternLayer from "@/components/map/layers/PatternLayer";
+import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
+import RouteLayer from "@/components/map/layers/RouteLayer";
+import BoundsLayer from "@/components/map/layers/BoundsLayer";
+import StopsLayer from "@/components/map/layers/StopsLayer";
+
+// import ColoniesSlider from "@/components/map/controls/ColoniesSlider";
+import LocateControl from "@/components/map/controls/LocateControl";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -76,11 +88,12 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LControl,
     LControlZoom,
+    // ColoniesSlider,
     ToggleContentDrawerBtn,
     LocateControl,
     PatternLayer,
+    ColoniesLayer,
     RouteLayer,
     BoundsLayer,
     StopsLayer,
@@ -94,8 +107,8 @@ export default {
         zoomSnap: 0.2,
       },
       baseLayer: {
-        zoom: 15,
-        center: latLng(53.0933, 8.8249),
+        zoom: 12,
+        center: latLng(53.09188, 8.82472),
         url:
           "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
         attribution: `
@@ -114,6 +127,10 @@ export default {
           url: "data/json/pattern.json",
           data: null,
         },
+        colonies: {
+          url: "data/json/countries.json",
+          data: null,
+        },
       },
       locateControl: {
         object: Object,
@@ -126,6 +143,7 @@ export default {
           iconLoading: "mdi mdi-loading mdi-spin",
         },
       },
+      thisYear: new Date().getFullYear(),
     };
   },
   computed: {
@@ -149,11 +167,11 @@ export default {
         index = 0;
         // Otherwise find index of currently selected UUID
       } else {
-        index = this.scenes.data.features.findIndex(
+        index = this.scenes.features.findIndex(
           (s) => s.uuid === this.currentUUID
         );
         // set index to 0 if last scene is reached
-        if (index === this.scenes.data.features.length - 1) {
+        if (index === this.scenes.features.length - 1) {
           index = 0;
           // otherwise add 1 to index
         } else {
@@ -164,7 +182,7 @@ export default {
     },
     nextUUID() {
       // Return UUID of next Scene
-      return this.scenes.data.features[this.nextID].uuid;
+      return this.scenes.features[this.nextID].uuid;
     },
     windowHeight() {
       return this.$vuetify.breakpoint.height;
@@ -176,9 +194,7 @@ export default {
     },
     openScene(uuid) {
       // Filter out single feature per UUID from scenes
-      const feature = this.scenes.data.features.filter(
-        (a) => a.uuid === uuid
-      )[0];
+      const feature = this.scenes.features.filter((a) => a.uuid === uuid)[0];
       this.setCoords(feature);
       this.pushToRoute(feature);
       this.$store.dispatch("toggleContentDrawer", true);
@@ -194,9 +210,7 @@ export default {
       eventBus.$emit("updateMarkerColors", feature.id);
     },
     openSubscene(uuid) {
-      const feature = this.subScenes.data.features.filter(
-        (a) => a.uuid === uuid
-      )[0];
+      const feature = this.subScenes.features.filter((a) => a.uuid === uuid)[0];
       this.setCoords(feature);
       const payload = {
         title: feature.properties.title,
@@ -258,7 +272,7 @@ export default {
   },
   mounted() {
     // Assign the Leaflet mapObject to map
-    if (this.JSONLayers.route && this.scenes) {
+    if (this.JSONLayers.route) {
       this.map = this.$refs.lmap.mapObject;
     }
   },

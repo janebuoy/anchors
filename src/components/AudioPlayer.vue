@@ -258,7 +258,7 @@ export default {
 };
 </script>
 
-<style scss scoped>
+<style lang="scss" scoped>
 .disabledSliderLabel {
   color: rgba(224, 224, 224, 0.28) !important;
 }

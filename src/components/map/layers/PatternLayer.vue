@@ -53,12 +53,13 @@ export default {
     },
     onEachFeatureExhib() {
       return (feature, layer) => {
-        layer.bindPopup("<p class='popup_title'>" + feature.properties.name);
-
-        layer.on({
-          click: function () {
-            this.openPopup();
-          },
+        layer.on("click", (e) => {
+          L.popup()
+            .setLatLng(e.latlng)
+            .setContent(
+              "<p class='popup_title'>" + feature.properties.name + "</p>"
+            )
+            .openOn(this.map);
         });
       };
     },
@@ -80,18 +81,19 @@ export default {
       console.log("click exhib el:", item);
     },
   },
+  created() {
+    this.map = this.$parent.$parent.$refs.lmap.mapObject;
+  },
   mounted() {
     // Add patterns to map Object
-    const map = this.$parent.$parent.$refs.lmap.mapObject;
     for (let value of Object.values(this.patterns)) {
-      value.addTo(map);
+      value.addTo(this.map);
     }
   },
   beforeDestroy() {
     // Remove patterns to map Object
-    const map = this.$parent.$parent.$refs.lmap.mapObject;
     for (let value of Object.values(this.patterns)) {
-      map.removeLayer(value);
+      this.map.removeLayer(value);
     }
   },
 };

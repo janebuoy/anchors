@@ -1,119 +1,61 @@
 <template>
   <div id="content">
-    <v-card tile flat>
-      <v-card-title class="py-4">{{ content.title }}</v-card-title>
-    </v-card>
-    <v-list three-line class="white mb-16">
-      <v-list-item-group color="accent" mandatory v-model="resourceID">
-        <v-list-item
-          v-for="item in resources"
-          :key="item.id"
-          @click.stop="openItemByID(item.id)"
-        >
-          <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-            <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-icon>
-            <!-- Show play icon on all non-playing audio Item -->
-            <v-icon v-if="item.type === 'audio' && !isPlaying">
-              mdi-play
-            </v-icon>
-            <!-- Show pause icon on active audio Item -->
-            <v-icon
-              v-if="
-                item.type === 'audio' && isPlaying && currentItem.id === item.id
-              "
-            >
-              mdi-pause
-            </v-icon>
-            <!-- Show play icon on inactive audio Items -->
-            <v-icon
-              v-if="
-                item.type === 'audio' && isPlaying && currentItem.id !== item.id
-              "
-            >
-              mdi-play
-            </v-icon>
-          </v-list-item-icon>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+    <TabBar v-if="!$vuetify.breakpoint.smAndDown" />
+    <v-tabs-items :value="resourceID" style="overflow-y: auto">
+      <v-tab-item v-for="item in resources" :key="item.id" transition="false">
+        <ContentList v-show="item.type === 'audio'" />
+        <TimelineContent v-if="item.type === 'timeline'" />
+      </v-tab-item>
+    </v-tabs-items>
+    <TabBar
+      v-if="$vuetify.breakpoint.smAndDown"
+      style="position: fixed; bottom: 0"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { eventBus } from "../main.js";
+import { eventBus } from "@/main.js";
+
+import TabBar from "@/components/content/TabBar";
+import ContentList from "@/components/content/ContentList";
+import TimelineContent from "@/components/content/TimelineContent";
 
 export default {
   name: "Content",
-  data() {
-    return {
-      resourceID: null,
-    };
+  components: {
+    TabBar,
+    ContentList,
+    TimelineContent,
   },
   computed: {
-    ...mapGetters([
-      "content",
-      "resources",
-      "currentItem",
-      "prevAudioID",
-      "nextAudioID",
-      "isPlaying",
-    ]),
+    ...mapGetters(["scenes", "currentUUID", "resources", "currentItem"]),
+    numericIcon() {
+      const num =
+        this.scenes.features.map((a) => a.uuid).indexOf(this.currentUUID) + 1;
+      return "mdi-numeric-" + num + "-circle";
+    },
+    resourceID() {
+      if (this.currentItem) {
+        return this.currentItem.id;
+      } else {
+        return 0;
+      }
+    },
   },
   methods: {
-    openItemByID(id) {
-      const item = this.resources.filter((a) => a.id === id)[0];
-      if (item !== this.currentItem) {
-        this.$store.dispatch("updateContentItem", item);
-      }
-      switch (item.type) {
-        case "audio":
-          eventBus.$emit("toggleAudio");
-          break;
-        case "map":
-          // target is a subScene UUID
-          if (item.target) eventBus.$emit("openSubscene", item.target);
-          break;
-        case "gallery":
-          console.log("gallery");
-          break;
-        case "timeline":
-          console.log("timeline");
-          break;
-      }
-    },
-    openInitalItem(string) {
-      if (this.currentItem === null && string === "created") {
-        const item = this.resources.filter((a) => a.id === 0)[0];
-        this.$store.dispatch("updateContentItem", item);
-      } else if (string === "watch") {
-        // open first Item on the list and reset ID to 0
-        const item = this.resources.filter((a) => a.id === 0)[0];
-        this.resourceID = 0;
-        this.$store.dispatch("updateContentItem", item);
-      }
-    },
-  },
-  created() {
-    // Intial load of first list item, if currentItem is still null
-    this.openInitalItem("created");
-    eventBus.$on("prevAudio", () => {
-      this.openItemByID(this.prevAudioID);
-    });
-    eventBus.$on("nextAudio", () => {
-      this.openItemByID(this.nextAudioID);
-    });
-  },
-  watch: {
-    content() {
-      this.openInitalItem("watch");
+    open(v) {
+      eventBus.$emit("openItemByID", v);
     },
   },
 };
 </script>
+
+<style scoped>
+.bottomContent {
+  max-height: 388px;
+  overflow: auto;
+  padding-bottom: 0;
+}
+</style>

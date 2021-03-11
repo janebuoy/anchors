@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <l-control position="bottomright">
     <v-btn
       v-if="this.$vuetify.breakpoint.mdAndUp"
       elevation="3"
@@ -19,13 +19,18 @@
         {{ icon }}
       </v-icon>
     </v-btn>
-  </div>
+  </l-control>
 </template>
 
 <script>
+import { LControl } from "vue2-leaflet";
+
 import { mapGetters } from "vuex";
 export default {
   name: "ToggleContentDrawerBtn",
+  components: {
+    LControl,
+  },
   computed: {
     ...mapGetters(["contentDrawer"]),
     icon() {

@@ -25,8 +25,7 @@
     >
       <v-card>
         <AudioPlayer v-if="currentItem" />
-        <v-divider></v-divider>
-        <v-card-text class="bottomContent px-0">
+        <v-card-text class="px-0 py-0" style="height: 388px">
           <Content v-if="content" />
         </v-card-text>
       </v-card>
@@ -111,13 +110,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 >>> .v-bottom-sheet.v-dialog {
   max-height: 60% !important;
-}
-.bottomContent {
-  height: 400px;
-  overflow: auto;
 }
 .nav-wrapper {
   height: 100%;

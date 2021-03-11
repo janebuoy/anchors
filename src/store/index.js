@@ -22,7 +22,11 @@ export default new Vuex.Store({
 				subScenes: {
 					url: "data/json/subScenes.json",
 					data: null,
-				}
+				},
+			},
+			timeline: {
+				url: "data/json/timeline.json",
+				data: null,
 			},
 			bottomSheetHeight: null,
 			drawerRightWidth: null,
@@ -35,8 +39,10 @@ export default new Vuex.Store({
 			title: null,
 			currentUUID: null,
 			nextID: null,
-			activeLayers: ["route", "scenes"],
-			icons: icons.icons
+			activeLayers: ["route", "scenes", "colonies"],
+			icons: icons.icons,
+			colSliderStart: null,
+			colEventPoint: null
 		},
 		content: {
 			object: null,
@@ -69,6 +75,16 @@ export default new Vuex.Store({
 					});
 			}
 		},
+		fetchTimeline(context) {
+			ax.get(context.state.global.timeline.url)
+				.then(response => response.data)
+				.then(timeline => {
+					context.commit('setTimeline', timeline)
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		},
 		bottomSheetHeight(context, payload) {
 			context.commit('bottomSheetHeight', payload)
 		},
@@ -85,6 +101,12 @@ export default new Vuex.Store({
 		updateState(context, payload) {
 			context.commit('updateState', payload)
 		},
+		colSliderStart(context, payload) {
+			context.commit("colSliderStart", payload)
+		},
+		colEventPoint(context, payload) {
+			context.commit("colEventPoint", payload)
+		},
 		// Content Actions
 		updateContentItem(context, payload) {
 			context.commit('updateContentItem', payload)
@@ -94,12 +116,15 @@ export default new Vuex.Store({
 		},
 		saveAudioState(context, payload) {
 			context.commit("saveAudioState", payload)
-		},
+		}
 	},
 	mutations: {
 		// * Global Mutations
 		setScenes: (state, payload) => {
 			state.global.scenes[payload.key].data = payload.scenes
+		},
+		setTimeline: (state, payload) => {
+			state.global.timeline.data = payload
 		},
 		bottomSheetHeight: (state, payload) => {
 			state.global.bottomSheetHeight = payload
@@ -136,6 +161,12 @@ export default new Vuex.Store({
 			}
 			// state.app.title = payload.title
 		},
+		colSliderStart: (state, payload) => {
+			state.map.colSliderStart = payload
+		},
+		colEventPoint: (state, payload) => {
+			state.map.colEventPoint = payload
+		},
 		// Content Mutations
 		updateContentItem: (state, payload) => {
 			state.content.currentItem = payload
@@ -150,10 +181,13 @@ export default new Vuex.Store({
 	getters: {
 		// * Global Getters
 		scenes: state => {
-			return state.global.scenes.mainScenes
+			return state.global.scenes.mainScenes.data
 		},
 		subScenes: state => {
-			return state.global.scenes.subScenes
+			return state.global.scenes.subScenes.data
+		},
+		timeline: state => {
+			return state.global.timeline.data
 		},
 		bottomSheetHeight: state => {
 			return state.global.bottomSheetHeight
@@ -195,6 +229,12 @@ export default new Vuex.Store({
 		},
 		noOfScenes: state => {
 			return state.global.scenes.mainScenes.data.features.length
+		},
+		colSliderStart: state => {
+			return state.map.colSliderStart
+		},
+		colEventPoint: state => {
+			return state.map.colEventPoint
 		},
 		// * Content Getters
 		content: state => {

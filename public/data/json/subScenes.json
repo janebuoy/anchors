@@ -27,6 +27,31 @@
 					53.09188
 				]
 			}
+		},
+		{
+			"type": "Feature",
+			"id": 2,
+			"uuid": "b9705224-fbed-4636-9140-5c87f16d7cac",
+			"common_name": "colonization_timeline_scene",
+			"properties": {
+				"title": "Colonization Timeline",
+				"zoom": 2,
+				"flyTo": true,
+				"flyToOptions": {
+					"duration": 0.3,
+					"easeLinearity": 0.2
+				}
+			},
+			"layers": [
+				"colonies"
+			],
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					16.3642108,
+					3.6523678
+				]
+			}
 		}
 	]
 }

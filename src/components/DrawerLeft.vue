@@ -28,7 +28,7 @@
         <v-list-item-group color="accent" v-model="activeItem">
           <v-list-item
             link
-            v-for="(item, id) in scenes.data.features"
+            v-for="(item, id) in scenes.features"
             :key="item.uuid"
             @click.stop="openScene(item.uuid)"
           >
