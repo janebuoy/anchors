@@ -47,7 +47,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "SingleListItem",
   computed: {
-    ...mapGetters(["currentItem"]),
+    ...mapGetters(["currentItem", "isPlaying"]),
   },
   created() {
     console.log(this.currentItem);

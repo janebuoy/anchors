@@ -13,7 +13,7 @@
       <div class="nav-wrapper overflow-hidden">
         <TabBar class="flex-grow-0" />
         <TabItems v-if="content" class="overflow-y-auto" />
-        <AudioPlayer v-if="currentItem" class="mt-auto" />
+        <AudioPlayer class="mt-auto" />
       </div>
     </v-navigation-drawer>
     <v-bottom-sheet
@@ -25,7 +25,7 @@
       no-click-animation
     >
       <div :style="{ height: bottomHeight + 'px' }" class="nav-wrapper">
-        <AudioPlayer v-if="currentItem" />
+        <AudioPlayer />
         <TabItems v-if="content" class="overflow-y-auto" />
         <TabBar class="mt-auto flex-grow-0" />
       </div>
@@ -111,6 +111,9 @@ export default {
     windowHeight() {
       this.updateBottomSheetHeight();
     },
+  },
+  created() {
+    this.$store.dispatch("updateContentItem", 0);
   },
 };
 </script>

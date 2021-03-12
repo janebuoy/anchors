@@ -1,7 +1,5 @@
 <template>
   <v-card width="100%" flat>
-    <SingleListItem class="flex-grow-0" />
-
     <!-- <v-card-title>Timeline of Western colonialism</v-card-title> -->
     <v-card-text>
       <v-card
@@ -107,13 +105,8 @@
 import { mapGetters } from "vuex";
 import wtf from "wtf_wikipedia";
 
-import SingleListItem from "@/components/content/SingleListItem";
-
 export default {
   name: "TimelineContent",
-  components: {
-    SingleListItem,
-  },
   data() {
     return {
       min: 1400,

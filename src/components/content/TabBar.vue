@@ -6,6 +6,7 @@
       style="max-width: 90px"
       v-model="tabMain"
       optional
+      grow
     >
       <v-tabs-slider color="accent"></v-tabs-slider>
       <v-tab
@@ -19,8 +20,10 @@
       dark
       background-color="secondary"
       v-model="tabBar"
-      show-arrows
       optional
+      grow
+      center-active
+      right
       class="shrunk-tabs"
       ref="VTabsBar2"
     >
@@ -29,12 +32,13 @@
         v-for="item in resources"
         :key="item.id"
         class="px-1"
-        style="max-width: 40px"
         @click="onClick(item.id, $event)"
         :class="{ 'v-tab--active': selected === item.id + 1 }"
       >
-        {{ item.id + 1 }}
-        <v-icon class="px-2">{{ item.icon }}</v-icon>
+        {{ item.id + 1 + "." }}
+        <v-icon class="px-2">{{
+          visited.has(item.id) ? "mdi-check-bold" : item.icon
+        }}</v-icon>
       </v-tab>
     </v-tabs>
   </div>
@@ -42,11 +46,13 @@
 
 <script>
 import { mapGetters } from "vuex";
-//import { eventBus } from "../../main";
+import { eventBus } from "../../main";
+
 export default {
   name: "TabBar",
   data() {
     return {
+      visited: new Set(),
       selected: null,
     };
   },
@@ -74,7 +80,11 @@ export default {
   },
   methods: {
     onClick(id) {
+      this.visited.add(this.selected - 1);
       this.selected = id + 1;
+      if (id !== -1) {
+        eventBus.$emit("openItemByID", id);
+      }
     },
     open(v) {
       if (v !== undefined) {

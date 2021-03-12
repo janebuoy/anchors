@@ -7,8 +7,10 @@
     </v-tabs-items>
     <v-tabs-items :value="tabID - 1" style="overflow-y: auto">
       <v-tab-item v-for="item in resources" :key="item.id" transition="false">
-        <ContentList v-if="item.type === 'audio'" />
+        <SingleListItem class="flex-grow-0" />
         <TimelineContent v-if="item.type === 'timeline'" />
+        <v-spacer />
+        <v-btn @click.stop="nextTab" class="mt-auto">Next Content Item</v-btn>
       </v-tab-item>
     </v-tabs-items>
   </div>
@@ -16,15 +18,17 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { eventBus } from "@/main.js";
 
 import ContentList from "@/components/content/ContentList";
+import SingleListItem from "@/components/content/SingleListItem";
 import TimelineContent from "@/components/content/TimelineContent";
+import { eventBus } from "../../main";
 
 export default {
   name: "Content",
   components: {
     ContentList,
+    SingleListItem,
     TimelineContent,
   },
   computed: {
@@ -40,21 +44,11 @@ export default {
         this.scenes.features.map((a) => a.uuid).indexOf(this.currentUUID) + 1;
       return "mdi-numeric-" + num + "-circle";
     },
-    resourceID() {
-      if (this.currentItem) {
-        return this.currentItem.id;
-      } else {
-        return 0;
-      }
-    },
   },
   methods: {
-    open(v) {
-      eventBus.$emit("openItemByID", v);
+    nextTab() {
+      eventBus.$emit("openItemByID", this.tabID);
     },
-  },
-  created() {
-    console.log(this.resources);
   },
 };
 </script>
