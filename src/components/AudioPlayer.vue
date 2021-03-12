@@ -18,7 +18,7 @@
       </v-btn>
       <v-btn
         fab
-        color="accent"
+        color="secondary"
         class="mt-n2"
         @click.stop="toggleAudio()"
         ref="playButton"
@@ -55,8 +55,8 @@
         style="max-width: 500px"
         color="primary"
         track-color="grey lighten-2"
-        track-fill-color="accent lighten-1"
-        thumb-color="accent lighten-1"
+        track-fill-color="secondary lighten-1"
+        thumb-color="secondary lighten-1"
         :label="elaspedTime"
       />
       <p

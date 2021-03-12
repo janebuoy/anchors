@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer
-      v-if="$vuetify.breakpoint.mdAndUp"
+      v-if="!$vuetify.breakpoint.smAndDown"
       v-model="contentDrawer"
       absolute
       right
@@ -11,7 +11,8 @@
       class="pt-16"
     >
       <div class="nav-wrapper overflow-hidden">
-        <Content v-if="content" class="overflow-y-auto" />
+        <TabBar class="flex-grow-0" />
+        <TabItems v-if="content" class="overflow-y-auto" />
         <AudioPlayer v-if="currentItem" class="mt-auto" />
       </div>
     </v-navigation-drawer>
@@ -23,12 +24,11 @@
       persistent
       no-click-animation
     >
-      <v-card>
+      <div :style="{ height: bottomHeight + 'px' }" class="nav-wrapper">
         <AudioPlayer v-if="currentItem" />
-        <v-card-text class="px-0 py-0" style="height: 388px">
-          <Content v-if="content" />
-        </v-card-text>
-      </v-card>
+        <TabItems v-if="content" class="overflow-y-auto" />
+        <TabBar class="mt-auto flex-grow-0" />
+      </div>
     </v-bottom-sheet>
   </div>
 </template>
@@ -36,13 +36,15 @@
 <script>
 import { mapGetters } from "vuex";
 
-import Content from "./Content";
+import TabBar from "@/components/content/TabBar";
+import TabItems from "@/components/content/TabItems";
 import AudioPlayer from "./AudioPlayer";
 
 export default {
   name: "ContentDrawer",
   components: {
-    Content,
+    TabBar,
+    TabItems,
     AudioPlayer,
   },
   data() {
@@ -79,6 +81,9 @@ export default {
     },
     windowHeight() {
       return this.$vuetify.breakpoint.height;
+    },
+    bottomHeight() {
+      return this.windowHeight * 0.6;
     },
   },
   methods: {

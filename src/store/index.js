@@ -253,7 +253,7 @@ export default new Vuex.Store({
 				const icons = {
 					"audio": "mdi-headphones",
 					"map": "mdi-map",
-					"gallery": "mdi-file-presentation-box",
+					"gallery": "mdi-view-carousel",
 					"timeline": "mdi-timeline"
 				}
 				for (let value of Object.values(resources)) {

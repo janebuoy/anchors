@@ -79,7 +79,7 @@ export default {
       // Set color of visited
       this.markerIconColors[this.prevID] = this.colors.neutral.lighten2;
       // Set color of active
-      this.markerIconColors[id] = this.colors.accent.base;
+      this.markerIconColors[id] = this.colors.secondary.base;
       // Redraw Markers on Key Change
       if (this.stopKeyIndex === 0) {
         this.stopKeyIndex = 1;

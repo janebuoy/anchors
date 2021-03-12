@@ -2,16 +2,16 @@
   <v-tabs
     dark
     :value="resourceID"
-    background-color="accent"
+    background-color="secondary"
     @change="open"
     centered
   >
-    <v-tabs-slider color="yellow"></v-tabs-slider>
+    <v-tabs-slider color="accent"></v-tabs-slider>
     <v-tab
       v-for="item in resources"
       :key="item.id"
       class="px-1"
-      style="min-width: 90px !important"
+      :style="{ minWidth: 90 + 'px' }"
     >
       {{ item.id + 1 }}
       <v-icon class="px-2">{{ item.icon }}</v-icon>

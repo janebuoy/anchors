@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib/framework';
+import colors from 'vuetify/lib/util/colors';
 
 Vue.use(Vuetify);
 
@@ -19,6 +20,28 @@ export default new Vuetify({
 					darken3: "#262240",
 					darken4: "#201d37",
 				},
+				secondary: {
+					base: '#843B62',
+					lighten1: "#904f72",
+					lighten2: "#9d6281",
+					lighten3: "#a97691",
+					lighten4: "#b589a1",
+					darken1: "#773558",
+					darken2: "#6a2f4e",
+					darken3: "#5c2945",
+					darken4: "#4f233b",
+				},
+				accent: {
+					base: colors.yellow.base,
+					lighten1: colors.yellow.lighten1,
+					lighten2: colors.yellow.lighten2,
+					lighten3: colors.yellow.lighten3,
+					lighten4: colors.yellow.lighten4,
+					darken1: colors.yellow.darken1,
+					darken2: colors.yellow.darken2,
+					darken3: colors.yellow.darken3,
+					darken4: colors.yellow.darken4,
+				},
 				neutral: {
 					base: '#8e8991',
 					lighten1: "#a5a1a7",
@@ -29,17 +52,6 @@ export default new Vuetify({
 					darken2: "#555257",
 					darken3: "#39373a",
 					darken4: "#1c1b1d",
-				},
-				accent: {
-					base: '#843B62',
-					lighten1: "#904f72",
-					lighten2: "#9d6281",
-					lighten3: "#a97691",
-					lighten4: "#b589a1",
-					darken1: "#773558",
-					darken2: "#6a2f4e",
-					darken3: "#5c2945",
-					darken4: "#4f233b",
 				},
 				error: {
 					base: "#E25455",

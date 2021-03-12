@@ -2,7 +2,7 @@
   <v-container fluid style="height: 100%">
     <v-row no-gutters>
       <v-card width="100%" flat>
-        <v-card-title>Play Timeline Animation</v-card-title>
+        <v-card-title>Timeline of Western colonialism</v-card-title>
         <v-card-text>
           <v-card
             style="width: 100%; height: 46px"
@@ -91,6 +91,14 @@
             </v-card-title>
             <v-card-text v-if="event !== null" v-html="event[1]"></v-card-text>
           </v-card>
+          <span class="subtitle-1">
+            Sources:
+            <ul>
+              <li v-for="src in sources" :key="src.title">
+                <a :href="src.url">{{ src.title }}</a>
+              </li>
+            </ul>
+          </span>
         </v-card-text>
       </v-card>
     </v-row>
@@ -110,8 +118,19 @@ export default {
       playing: false,
       speed: 600,
       event: null,
-      tmpObj: null,
+      tmpTimeline: null,
       closeOnClick: true,
+      sources: [
+        {
+          url: "https://doi.org/10.7910/DVN/T9SDEW",
+          title: "Colonial Dates Dataset (COLDAT) ",
+        },
+        {
+          url:
+            "https://en.wikipedia.org/wiki/Chronology_of_Western_colonialism",
+          title: "Chronology of Western colonialism",
+        },
+      ],
     };
   },
   computed: {
@@ -148,12 +167,12 @@ export default {
     },
     getEvent(val) {
       let arr = [];
-      for (let [key, value] of Object.entries(this.tmpObj)) {
+      for (let [key, value] of Object.entries(this.tmpTimeline)) {
         const keyStartTime = key.substring(0, 4);
         if (keyStartTime <= val && keyStartTime > this.min) {
           arr[0] = key;
           arr[1] = this.replaceWikiLinks(value.text);
-          delete this.tmpObj[key];
+          delete this.tmpTimeline[key];
           if (arr.length > 0) {
             this.event = arr;
           }
@@ -251,7 +270,7 @@ export default {
     year(val, old) {
       if (this.timeline) {
         if (val <= old) {
-          this.tmpObj = JSON.parse(JSON.stringify(this.timeline));
+          this.tmpTimeline = JSON.parse(JSON.stringify(this.timeline));
           this.getEvent(val);
         }
         if (val > old) {
@@ -261,18 +280,18 @@ export default {
     },
     timeline(v) {
       if (v) {
-        this.tmpObj = JSON.parse(JSON.stringify(v));
+        this.tmpTimeline = JSON.parse(JSON.stringify(v));
       }
     },
   },
-  created() {
-    this.tmpObj = JSON.parse(JSON.stringify(this.timeline));
+  mounted() {
+    this.tmpTimeline = JSON.parse(JSON.stringify(this.timeline));
   },
 };
 </script>
 
 <style>
 .snack-text a {
-  color: var(--v-accent-lighten3) !important;
+  color: var(--v-secondary-lighten3) !important;
 }
 </style>

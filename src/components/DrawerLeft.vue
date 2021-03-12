@@ -25,7 +25,7 @@
         <v-card-subtitle>Subtitle</v-card-subtitle>
       </v-card>
       <v-list dense>
-        <v-list-item-group color="accent" v-model="activeItem">
+        <v-list-item-group color="secondary" v-model="activeItem">
           <v-list-item
             link
             v-for="(item, id) in scenes.features"

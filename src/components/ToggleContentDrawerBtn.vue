@@ -6,7 +6,7 @@
       rounded
       x-large
       class="ml-2"
-      color="accent"
+      color="secondary"
       @click.stop="toggleContentDrawer()"
     >
       <v-icon left>
@@ -14,7 +14,7 @@
       </v-icon>
       Content Panel
     </v-btn>
-    <v-btn v-else fab color="accent" @click.stop="toggleContentDrawer()">
+    <v-btn v-else fab color="secondary" @click.stop="toggleContentDrawer()">
       <v-icon large>
         {{ icon }}
       </v-icon>

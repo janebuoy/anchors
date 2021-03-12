@@ -110,15 +110,15 @@ export default {
   cursor: pointer;
 }
 .leaflet-control-locate.active a {
-  color: var(--v-accent-base);
+  color: var(--v-secondary-base);
   :hover > & {
-    color: var(--v-accent-base);
+    color: var(--v-secondary-base);
   }
 }
 .leaflet-control-locate.active.following a {
-  color: var(--v-accent-base);
+  color: var(--v-secondary-base);
   :hover > & {
-    color: var(--v-accent-base);
+    color: var(--v-secondary-base);
   }
 }
 .leafet-control-locate-location circle {
