@@ -1,17 +1,23 @@
 <template>
-  <v-tabs-items :value="resourceID" style="overflow-y: auto">
-    <v-tab-item v-for="item in resources" :key="item.id" transition="false">
-      <ContentList v-show="item.type === 'audio'" />
-      <TimelineContent v-if="item.type === 'timeline'" />
-    </v-tab-item>
-  </v-tabs-items>
+  <div id="tabItemsWrapper">
+    <v-tabs-items :value="tabID">
+      <v-tab-item transition="false">
+        <ContentList />
+      </v-tab-item>
+    </v-tabs-items>
+    <v-tabs-items :value="tabID - 1" style="overflow-y: auto">
+      <v-tab-item v-for="item in resources" :key="item.id" transition="false">
+        <ContentList v-if="item.type === 'audio'" />
+        <TimelineContent v-if="item.type === 'timeline'" />
+      </v-tab-item>
+    </v-tabs-items>
+  </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import { eventBus } from "@/main.js";
 
-//import TabBar from "@/components/content/TabBar";
 import ContentList from "@/components/content/ContentList";
 import TimelineContent from "@/components/content/TimelineContent";
 
@@ -22,7 +28,13 @@ export default {
     TimelineContent,
   },
   computed: {
-    ...mapGetters(["scenes", "currentUUID", "resources", "currentItem"]),
+    ...mapGetters([
+      "scenes",
+      "currentUUID",
+      "resources",
+      "currentItem",
+      "tabID",
+    ]),
     numericIcon() {
       const num =
         this.scenes.features.map((a) => a.uuid).indexOf(this.currentUUID) + 1;
@@ -40,6 +52,9 @@ export default {
     open(v) {
       eventBus.$emit("openItemByID", v);
     },
+  },
+  created() {
+    console.log(this.resources);
   },
 };
 </script>

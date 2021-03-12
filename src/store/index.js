@@ -46,6 +46,7 @@ export default new Vuex.Store({
 		},
 		content: {
 			object: null,
+			tabID: 0,
 			currentItem: null,
 			audio: {
 				localSrc: null,
@@ -108,6 +109,9 @@ export default new Vuex.Store({
 			context.commit("colEventPoint", payload)
 		},
 		// Content Actions
+		tabID(context, payload) {
+			context.commit("tabID", payload)
+		},
 		updateContentItem(context, payload) {
 			context.commit('updateContentItem', payload)
 		},
@@ -168,6 +172,9 @@ export default new Vuex.Store({
 			state.map.colEventPoint = payload
 		},
 		// Content Mutations
+		tabID: (state, payload) => {
+			state.content.tabID = payload
+		},
 		updateContentItem: (state, payload) => {
 			state.content.currentItem = payload
 		},
@@ -267,6 +274,9 @@ export default new Vuex.Store({
 		},
 		currentItem: state => {
 			return state.content.currentItem
+		},
+		tabID: state => {
+			return state.content.tabID
 		},
 		savedAudioState: state => {
 			return state.content.audio

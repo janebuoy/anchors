@@ -1,5 +1,5 @@
 <template>
-  <v-list three-line class="white mb-16">
+  <v-list three-line class="white mb-16 py-0">
     <v-list-item-group color="secondary" mandatory :value="resourceID">
       <v-list-item
         v-for="item in resources"
@@ -63,52 +63,63 @@ export default {
   },
   methods: {
     openItemByID(id) {
-      const item = this.resources.filter((a) => a.id === id)[0];
-      if (item !== this.currentItem) {
+      if (id === null) {
+        const item = {
+          id: null,
+        };
         this.$store.dispatch("updateContentItem", item);
-      }
-      switch (item.type) {
-        case "audio":
-          eventBus.$emit("toggleAudio");
-          break;
-        case "map":
-          // target is a subScene UUID
-          if (item.target) eventBus.$emit("openSubscene", item.target);
-          break;
-        case "gallery":
-          console.log("gallery");
-          break;
-        case "timeline":
-          if (item.target) eventBus.$emit("openSubscene", item.target);
-          break;
+      } else {
+        const item = this.resources.filter((a) => a.id === id)[0];
+        if (item !== this.currentItem) {
+          this.$store.dispatch("updateContentItem", item);
+        }
+        switch (item.type) {
+          case "audio":
+            eventBus.$emit("toggleAudio");
+            break;
+          case "map":
+            // target is a subScene UUID
+            if (item.target) eventBus.$emit("openSubscene", item.target);
+            break;
+          case "gallery":
+            console.log("gallery");
+            break;
+          case "timeline":
+            if (item.target) eventBus.$emit("openSubscene", item.target);
+            break;
+        }
       }
     },
     openInitalItem(string) {
       if (this.currentItem === null && string === "created") {
-        const item = this.resources.filter((a) => a.id === 0)[0];
+        //const item = this.resources.filter((a) => a.id === 0)[0];
+        const item = {
+          id: null,
+        };
         this.$store.dispatch("updateContentItem", item);
       } else if (string === "watch") {
+        console.log("log");
         // open first Item on the list and reset ID to 0
         const item = this.resources.filter((a) => a.id === 0)[0];
-        this.resourceID = 0;
+        //this.resourceID = 0;
         this.$store.dispatch("updateContentItem", item);
       }
     },
   },
   created() {
     // Intial load of first list item, if currentItem is still null
-    this.openInitalItem("created");
-    eventBus.$on("openItemByID", this.openItemByID);
-    eventBus.$on("prevAudio", () => {
-      this.openItemByID(this.prevAudioID);
-    });
-    eventBus.$on("nextAudio", () => {
-      this.openItemByID(this.nextAudioID);
-    });
+    // this.openInitalItem("created");
+    // eventBus.$on("openItemByID", this.openItemByID);
+    // eventBus.$on("prevAudio", () => {
+    //   this.openItemByID(this.prevAudioID);
+    // });
+    // eventBus.$on("nextAudio", () => {
+    //   this.openItemByID(this.nextAudioID);
+    // });
   },
   watch: {
     content() {
-      this.openInitalItem("watch");
+      // this.openInitalItem("watch");
     },
   },
 };

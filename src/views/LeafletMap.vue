@@ -16,8 +16,10 @@
     <PatternLayer
       :key="'pattern'"
       ref="patternLayer"
-      v-if="isActiveLayer(activeLayers, 'pattern') && JSONLayers.pattern.data"
-      :geojson="JSONLayers.pattern.data"
+      v-if="
+        isActiveLayer(activeLayers, 'speicherXI') && JSONLayers.speicherXI.data
+      "
+      :geojson="JSONLayers.speicherXI.data"
     />
     <!-- ROUTE PATH -->
     <RouteLayer
@@ -49,11 +51,6 @@
       ref="stopsLayer"
       :geojson="scenes"
     />
-    <!-- <ColoniesSlider
-      :min="1400"
-      :max="thisYear"
-      :eventsData="JSONLayers.events.data"
-    /> -->
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
     <ToggleContentDrawerBtn v-if="currentItem" />
@@ -79,7 +76,6 @@ import RouteLayer from "@/components/map/layers/RouteLayer";
 import BoundsLayer from "@/components/map/layers/BoundsLayer";
 import StopsLayer from "@/components/map/layers/StopsLayer";
 
-// import ColoniesSlider from "@/components/map/controls/ColoniesSlider";
 import LocateControl from "@/components/map/controls/LocateControl";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
@@ -89,7 +85,6 @@ export default {
     LMap,
     LTileLayer,
     LControlZoom,
-    // ColoniesSlider,
     ToggleContentDrawerBtn,
     LocateControl,
     PatternLayer,
@@ -107,8 +102,8 @@ export default {
         zoomSnap: 0.2,
       },
       baseLayer: {
-        zoom: 12,
-        center: latLng(53.09188, 8.82472),
+        zoom: 16,
+        center: latLng(53.095, 8.772),
         url:
           "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
         attribution: `
@@ -123,8 +118,8 @@ export default {
           url: "data/json/route.json",
           data: null,
         },
-        pattern: {
-          url: "data/json/pattern.json",
+        speicherXI: {
+          url: "data/json/speicherXI.json",
           data: null,
         },
         colonies: {
