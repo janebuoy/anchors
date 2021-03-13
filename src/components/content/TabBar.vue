@@ -1,44 +1,44 @@
 <template>
   <div id="tabsWrapper" class="d-flex">
     <v-tabs
+      :value="pinned"
+      slider-color="accent"
       dark
       background-color="secondary"
-      style="max-width: 90px"
-      v-model="tabMain"
       optional
-      grow
+      style="max-width: 90px"
     >
-      <v-tabs-slider color="accent"></v-tabs-slider>
-      <v-tab
-        title="View list"
-        @click="onClick(-1, $event)"
-        :class="{ 'v-tab--active': selected === 0 }"
-        ><v-icon>mdi-view-list</v-icon></v-tab
-      >
+      <v-tab @click.stop="openTab('pinned', $event)">
+        <v-icon>mdi-view-list</v-icon>
+      </v-tab>
     </v-tabs>
     <v-tabs
+      :value="active"
+      slider-color="accent"
       dark
       background-color="secondary"
-      v-model="tabBar"
       optional
-      grow
       center-active
       right
       class="shrunk-tabs"
       ref="VTabsBar2"
     >
-      <v-tabs-slider color="accent"></v-tabs-slider>
       <v-tab
         v-for="item in resources"
         :key="item.id"
         class="px-1"
-        @click="onClick(item.id, $event)"
+        @click.stop="openTab(item.id, $event)"
+        style="min-width: 60px"
         :class="{ 'v-tab--active': selected === item.id + 1 }"
       >
-        {{ item.id + 1 + "." }}
-        <v-icon class="px-2">{{
-          visited.has(item.id) ? "mdi-check-bold" : item.icon
-        }}</v-icon>
+        <span class="pl-2">{{ item.id + 1 + "." }}</span>
+        <v-icon class="pr-2">
+          {{
+            tabs[currentUUID].visited.has(item.id)
+              ? "mdi-check-bold"
+              : item.icon
+          }}
+        </v-icon>
       </v-tab>
     </v-tabs>
   </div>
@@ -52,56 +52,45 @@ export default {
   name: "TabBar",
   data() {
     return {
-      visited: new Set(),
+      active: null,
+      pinned: 0,
       selected: null,
     };
   },
   computed: {
-    ...mapGetters(["resources", "currentItem", "tabID"]),
-    tabMain: {
-      get() {
-        return this.tabID;
-      },
-      set(v) {
-        console.log(v);
-        this.$store.dispatch("tabID", v);
-      },
-    },
-    tabBar: {
-      get() {
-        return this.tabID - 1;
-      },
-      set(v) {
-        if (v !== undefined) {
-          this.$store.dispatch("tabID", v + 1);
-        }
-      },
-    },
+    ...mapGetters([
+      "scenes",
+      "resources",
+      "currentItem",
+      "tabs",
+      "currentUUID",
+    ]),
   },
   methods: {
-    onClick(id) {
-      this.visited.add(this.selected - 1);
-      this.selected = id + 1;
-      if (id !== -1) {
+    openTab(id) {
+      if (Number.isInteger(id)) {
+        this.active = id;
+        this.pinned = 1;
+        eventBus.$emit("updateTab", id);
         eventBus.$emit("openItemByID", id);
+      } else if (id === "pinned") {
+        this.active = null;
+        this.pinned = 0;
+        eventBus.$emit("updateTab", id);
       }
     },
-    open(v) {
-      if (v !== undefined) {
-        this.$store.dispatch("tabID", v + 1);
-      }
-      // eventBus.$emit("openItemByID", v);
-    },
-    viewList() {
-      this.$store.dispatch("tabID", 0);
-    },
-    resourceID() {
-      if (this.currentItem) {
-        return this.currentItem;
-      } else {
-        return undefined;
+    updateTab(id) {
+      if (Number.isInteger(id)) {
+        this.active = id;
+        this.pinned = 1;
+      } else if (id === "pinned") {
+        this.active = null;
+        this.pinned = 0;
       }
     },
+  },
+  created() {
+    eventBus.$on("updateTab", this.updateTab);
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <v-list three-line class="white mb-16 py-0">
+  <v-list three-line class="white mb-16">
     <v-list-item-group color="secondary" mandatory :value="resourceID">
       <v-list-item
         v-for="item in resources"
@@ -7,7 +7,13 @@
         @click.stop="openItemByID(item.id)"
       >
         <v-list-item-icon>
-          <v-icon v-text="item.icon"></v-icon>
+          <v-icon>
+            {{
+              tabs[currentUUID].visited.has(item.id)
+                ? "mdi-check-bold"
+                : item.icon
+            }}
+          </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -49,6 +55,8 @@ export default {
       "content",
       "resources",
       "currentItem",
+      "tabs",
+      "currentUUID",
       "prevAudioID",
       "nextAudioID",
       "isPlaying",
@@ -65,7 +73,7 @@ export default {
     openItemByID(id) {
       const item = this.resources.filter((a) => a.id === id)[0];
       if (item !== this.currentItem) {
-        this.$store.dispatch("tabID", item.id + 1);
+        eventBus.$emit("updateTab", item.id);
         this.$store.dispatch("updateContentItem", item);
       }
       switch (item.type) {
@@ -93,6 +101,7 @@ export default {
     eventBus.$on("nextAudio", () => {
       this.openItemByID(this.nextAudioID);
     });
+    console.log(this.resources);
   },
 };
 </script>

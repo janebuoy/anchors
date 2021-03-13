@@ -1,16 +1,15 @@
 <template>
   <div id="tabItemsWrapper">
-    <v-tabs-items :value="tabID">
-      <v-tab-item transition="false">
-        <ContentList />
-      </v-tab-item>
+    <v-tabs-items :value="pinned" reverse>
+      <v-tab-transition>
+        <v-tab-item>
+          <ContentList />
+        </v-tab-item>
+      </v-tab-transition>
     </v-tabs-items>
-    <v-tabs-items :value="tabID - 1" style="overflow-y: auto">
-      <v-tab-item v-for="item in resources" :key="item.id" transition="false">
-        <SingleListItem class="flex-grow-0" />
-        <TimelineContent v-if="item.type === 'timeline'" />
-        <v-spacer />
-        <v-btn @click.stop="nextTab" class="mt-auto">Next Content Item</v-btn>
+    <v-tabs-items :value="active" style="overflow-y: auto">
+      <v-tab-item v-for="item in resources" :key="item.id">
+        <ActiveTabItem v-if="active === item.id" />
       </v-tab-item>
     </v-tabs-items>
   </div>
@@ -18,37 +17,39 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { eventBus } from "../../main";
 
 import ContentList from "@/components/content/ContentList";
-import SingleListItem from "@/components/content/SingleListItem";
-import TimelineContent from "@/components/content/TimelineContent";
-import { eventBus } from "../../main";
+import ActiveTabItem from "@/components/content/ActiveTabItem";
 
 export default {
   name: "Content",
   components: {
     ContentList,
-    SingleListItem,
-    TimelineContent,
+    ActiveTabItem,
+  },
+  data() {
+    return {
+      active: null,
+      pinned: 0,
+    };
   },
   computed: {
-    ...mapGetters([
-      "scenes",
-      "currentUUID",
-      "resources",
-      "currentItem",
-      "tabID",
-    ]),
-    numericIcon() {
-      const num =
-        this.scenes.features.map((a) => a.uuid).indexOf(this.currentUUID) + 1;
-      return "mdi-numeric-" + num + "-circle";
-    },
+    ...mapGetters(["scenes", "currentUUID", "resources", "currentItem"]),
   },
   methods: {
-    nextTab() {
-      eventBus.$emit("openItemByID", this.tabID);
+    updateTab(id) {
+      if (Number.isInteger(id)) {
+        this.active = id;
+        this.pinned = 1;
+      } else {
+        this.active = -1;
+        this.pinned = 0;
+      }
     },
+  },
+  created() {
+    eventBus.$on("updateTab", this.updateTab);
   },
 };
 </script>

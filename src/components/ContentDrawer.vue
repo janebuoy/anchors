@@ -11,8 +11,8 @@
       class="pt-16"
     >
       <div class="nav-wrapper overflow-hidden">
-        <TabBar class="flex-grow-0" />
-        <TabItems v-if="content" class="overflow-y-auto" />
+        <TabBar class="flex-grow-0" v-if="currentUUID" />
+        <TabItems class="overflow-y-auto" v-if="currentUUID" />
         <AudioPlayer class="mt-auto" />
       </div>
     </v-navigation-drawer>
@@ -26,8 +26,8 @@
     >
       <div :style="{ height: bottomHeight + 'px' }" class="nav-wrapper">
         <AudioPlayer />
-        <TabItems v-if="content" class="overflow-y-auto" />
-        <TabBar class="mt-auto flex-grow-0" />
+        <TabItems class="overflow-y-auto" v-if="currentUUID" />
+        <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
       </div>
     </v-bottom-sheet>
   </div>
@@ -111,9 +111,6 @@ export default {
     windowHeight() {
       this.updateBottomSheetHeight();
     },
-  },
-  created() {
-    this.$store.dispatch("updateContentItem", 0);
   },
 };
 </script>

@@ -1,6 +1,6 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Vuetify from '@/plugins/vuetify'
+import Vue from "vue"
+import Vuex from "vuex"
+import Vuetify from "@/plugins/vuetify"
 
 import icons from "@/assets/icons.json"
 
@@ -46,8 +46,8 @@ export default new Vuex.Store({
 		},
 		content: {
 			object: null,
-			tabID: 0,
-			currentItem: null,
+			tabs: {},
+			currentItem: 0,
 			audio: {
 				localSrc: null,
 				localProgress: null,
@@ -69,7 +69,7 @@ export default new Vuex.Store({
 							scenes,
 							key
 						}
-						context.commit('setScenes', payload)
+						context.commit("setScenes", payload)
 					})
 					.catch((err) => {
 						console.log(err);
@@ -80,27 +80,27 @@ export default new Vuex.Store({
 			ax.get(context.state.global.timeline.url)
 				.then(response => response.data)
 				.then(timeline => {
-					context.commit('setTimeline', timeline)
+					context.commit("setTimeline", timeline)
 				})
 				.catch((err) => {
 					console.log(err);
 				});
 		},
 		bottomSheetHeight(context, payload) {
-			context.commit('bottomSheetHeight', payload)
+			context.commit("bottomSheetHeight", payload)
 		},
 		drawerRightWidth(context, payload) {
-			context.commit('drawerRightWidth', payload)
+			context.commit("drawerRightWidth", payload)
 		},
 		toggleDrawerLeft(context, payload) {
-			context.commit('toggleDrawerLeft', payload)
+			context.commit("toggleDrawerLeft", payload)
 		},
 		toggleContentDrawer(context, payload) {
-			context.commit('toggleContentDrawer', payload)
+			context.commit("toggleContentDrawer", payload)
 		},
 		// * Map Actions
 		updateState(context, payload) {
-			context.commit('updateState', payload)
+			context.commit("updateState", payload)
 		},
 		colSliderStart(context, payload) {
 			context.commit("colSliderStart", payload)
@@ -109,11 +109,11 @@ export default new Vuex.Store({
 			context.commit("colEventPoint", payload)
 		},
 		// Content Actions
-		tabID(context, payload) {
-			context.commit("tabID", payload)
+		updateTabs(context, payload) {
+			context.commit("updateTabs", payload)
 		},
 		updateContentItem(context, payload) {
-			context.commit('updateContentItem', payload)
+			context.commit("updateContentItem", payload)
 		},
 		updatePlayingState(context, payload) {
 			context.commit("updatePlayingState", payload)
@@ -163,6 +163,12 @@ export default new Vuex.Store({
 			if (payload.content) {
 				state.content.object = payload.content
 			}
+			if (!state.content.tabs[payload.uuid]) {
+				state.content.tabs[payload.uuid] = {
+					visited: new Set(),
+					active: payload.tab
+				}
+			}
 			// state.app.title = payload.title
 		},
 		colSliderStart: (state, payload) => {
@@ -172,8 +178,10 @@ export default new Vuex.Store({
 			state.map.colEventPoint = payload
 		},
 		// Content Mutations
-		tabID: (state, payload) => {
-			state.content.tabID = payload
+		updateTabs: (state, payload) => {
+			state.content.tabs[state.map.currentUUID] = {
+				active: payload
+			}
 		},
 		updateContentItem: (state, payload) => {
 			state.content.currentItem = payload
@@ -264,7 +272,7 @@ export default new Vuex.Store({
 					"timeline": "mdi-timeline"
 				}
 				for (let value of Object.values(resources)) {
-					value['icon'] = icons[value.type]
+					value["icon"] = icons[value.type]
 				}
 				return resources
 			}
@@ -275,8 +283,11 @@ export default new Vuex.Store({
 		currentItem: state => {
 			return state.content.currentItem
 		},
-		tabID: state => {
-			return state.content.tabID
+		tabs: state => {
+			return state.content.tabs
+		},
+		activeTab: state => {
+			return state.content.tabs[state.map.currentUUID].active
 		},
 		savedAudioState: state => {
 			return state.content.audio
@@ -290,7 +301,7 @@ export default new Vuex.Store({
 
 			while (index < resources.length - 1) {
 				index++
-				if (resources[index].type === 'audio') {
+				if (resources[index].type === "audio") {
 					return index
 				}
 			}
@@ -302,7 +313,7 @@ export default new Vuex.Store({
 
 			while (i > 0) {
 				i--
-				if (resources[i].type === 'audio') {
+				if (resources[i].type === "audio") {
 					return i
 				}
 			}

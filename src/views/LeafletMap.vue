@@ -53,7 +53,7 @@
     />
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
-    <ToggleContentDrawerBtn v-if="currentItem" />
+    <ToggleContentDrawerBtn v-if="currentUUID" />
   </l-map>
 </template>
 
@@ -103,7 +103,7 @@ export default {
       },
       baseLayer: {
         zoom: 16,
-        center: latLng(53.095, 8.772),
+        center: latLng(53.095, 8.7707),
         url:
           "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
         attribution: `
@@ -200,6 +200,7 @@ export default {
         title: feature.properties.title,
         layers: feature.layers,
         content: feature.content,
+        tab: 0,
       };
       this.$store.dispatch("updateState", payload);
       eventBus.$emit("updateMarkerColors", feature.id);
