@@ -17,10 +17,11 @@ import { eventBus } from "../main.js";
 export default {
   name: "AppBar",
   computed: {
-    ...mapGetters(["nextID", "currentUUID", "noOfScenes"]),
+    ...mapGetters(["scenes", "nextID", "currentUUID", "noOfScenes"]),
     nextSceneText() {
+      const firstSceneUUID = this.scenes.features.find((a) => a.uuid).uuid;
       let text;
-      if (this.currentUUID === null) {
+      if (this.currentUUID === null || this.currentUUID === firstSceneUUID) {
         text = "Start";
       } else if (this.nextID === this.noOfScenes - 1) {
         text = "Restart";

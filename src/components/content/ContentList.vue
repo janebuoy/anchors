@@ -4,7 +4,7 @@
       <v-list-item
         v-for="item in resources"
         :key="item.id"
-        @click.stop="openItemByID(item.id)"
+        @click.stop="openItemByID(item.id, 'no-toggle')"
       >
         <v-list-item-icon>
           <v-icon>
@@ -70,15 +70,22 @@ export default {
     },
   },
   methods: {
-    openItemByID(id) {
+    preloadItemByID(id) {
       const item = this.resources.filter((a) => a.id === id)[0];
       if (item !== this.currentItem) {
-        eventBus.$emit("updateTab", item.id);
         this.$store.dispatch("updateContentItem", item);
       }
+    },
+    openItemByID(id, string) {
+      const item = this.resources.filter((a) => a.id === id)[0];
+      if (item !== this.currentItem) {
+        this.$store.commit("updateContentItem", item);
+      }
+      eventBus.$emit("updateTab", item.id);
+
       switch (item.type) {
         case "audio":
-          eventBus.$emit("toggleAudio");
+          if (string !== "no-toggle") eventBus.$emit("toggleAudio");
           break;
         case "map":
           // target is a subScene UUID
@@ -94,6 +101,7 @@ export default {
     },
   },
   created() {
+    this.preloadItemByID(0);
     eventBus.$on("openItemByID", this.openItemByID);
     eventBus.$on("prevAudio", () => {
       this.openItemByID(this.prevAudioID);
@@ -101,7 +109,11 @@ export default {
     eventBus.$on("nextAudio", () => {
       this.openItemByID(this.nextAudioID);
     });
-    console.log(this.resources);
+  },
+  watch: {
+    currentUUID() {
+      this.preloadItemByID(0);
+    },
   },
 };
 </script>

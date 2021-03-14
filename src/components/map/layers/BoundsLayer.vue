@@ -45,7 +45,6 @@ export default {
   },
   methods: {
     onStopClick(item) {
-      console.log("click");
       if (item.target.feature.uuid !== this.currentUUID) {
         eventBus.$emit("openScene", item.target.feature.uuid);
       }

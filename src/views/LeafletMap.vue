@@ -190,9 +190,7 @@ export default {
     openScene(uuid) {
       // Filter out single feature per UUID from scenes
       const feature = this.scenes.features.filter((a) => a.uuid === uuid)[0];
-      this.setCoords(feature);
       this.pushToRoute(feature);
-      this.$store.dispatch("toggleContentDrawer", true);
       const payload = {
         uuid: feature.uuid,
         nextID: this.nextID,
@@ -204,6 +202,10 @@ export default {
       };
       this.$store.dispatch("updateState", payload);
       eventBus.$emit("updateMarkerColors", feature.id);
+      this.$nextTick(() => {
+        this.$store.dispatch("toggleContentDrawer", true);
+        this.setCoords(feature);
+      });
     },
     openSubscene(uuid) {
       const feature = this.subScenes.features.filter((a) => a.uuid === uuid)[0];
@@ -248,11 +250,11 @@ export default {
     recentreMap() {
       const vm = this;
       setTimeout(function () {
-        vm.mapInvalidate();
+        //vm.mapInvalidate();
         vm.$nextTick(() => {
           vm.mapInvalidate();
         });
-      }, 160);
+      }, 200);
     },
     async fetchJSONLayers() {
       for (let layer in this.JSONLayers) {
@@ -279,6 +281,7 @@ export default {
     eventBus.$on("openNextScene", () => {
       this.openScene(this.nextUUID);
     });
+    eventBus.$on("recentreMap", this.recentreMap);
   },
   watch: {
     // Watch for map height size changes

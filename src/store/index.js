@@ -47,7 +47,7 @@ export default new Vuex.Store({
 		content: {
 			object: null,
 			tabs: {},
-			currentItem: 0,
+			currentItem: {},
 			audio: {
 				localSrc: null,
 				localProgress: null,
@@ -109,8 +109,11 @@ export default new Vuex.Store({
 			context.commit("colEventPoint", payload)
 		},
 		// Content Actions
-		updateTabs(context, payload) {
-			context.commit("updateTabs", payload)
+		addVisited(context, payload) {
+			context.commit("addVisited", payload)
+		},
+		saveTabsState(context, payload) {
+			context.commit("saveTabsState", payload)
 		},
 		updateContentItem(context, payload) {
 			context.commit("updateContentItem", payload)
@@ -166,7 +169,8 @@ export default new Vuex.Store({
 			if (!state.content.tabs[payload.uuid]) {
 				state.content.tabs[payload.uuid] = {
 					visited: new Set(),
-					active: payload.tab
+					active: null,
+					pinned: 0,
 				}
 			}
 			// state.app.title = payload.title
@@ -178,10 +182,12 @@ export default new Vuex.Store({
 			state.map.colEventPoint = payload
 		},
 		// Content Mutations
-		updateTabs: (state, payload) => {
-			state.content.tabs[state.map.currentUUID] = {
-				active: payload
-			}
+		addVisited: (state, payload) => {
+			state.content.tabs[state.map.currentUUID].visited.add(payload)
+		},
+		saveTabsState: (state, payload) => {
+			state.content.tabs[state.map.currentUUID].active = payload.active
+			state.content.tabs[state.map.currentUUID].pinned = payload.pinned
 		},
 		updateContentItem: (state, payload) => {
 			state.content.currentItem = payload

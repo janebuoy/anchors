@@ -143,16 +143,27 @@ export default {
   methods: {
     toggleAudio() {
       // If nothing is playing, load Audio of selected item and play
-      if (!this.isPlaying) {
+      if (!this.isPlaying && this.currentItem.type === "audio") {
         this.loadAudio();
         this.playAudio();
         // If something is playing and selected item is different, load that item's source
-      } else if (this.isPlaying && this.localSrc !== this.currentItem.src) {
+      } else if (
+        this.isPlaying &&
+        this.localSrc !== this.currentItem.src &&
+        this.currentItem.type === "audio"
+      ) {
         this.loadAudio();
         this.playAudio();
         // If selected item is already playing, pause
-      } else if (this.localSrc === this.currentItem.src) {
+      } else if (
+        this.localSrc === this.currentItem.src &&
+        this.currentItem.type === "audio"
+      ) {
         this.pauseAudio();
+      } else if (this.isPlaying && this.currentItem.type !== "audio") {
+        this.pauseAudio();
+      } else if (!this.isPlaying && this.currentItem.type !== "audio") {
+        this.playAudio();
       }
     },
     playAudio() {
@@ -203,6 +214,14 @@ export default {
       this.duration = 0;
       this.currentTime = 0;
       window.player = null;
+      const payload = {
+        currentTime: this.currentTime,
+        duration: this.duration,
+        progress: this.progress,
+        localSrc: this.localSrc,
+        isPlaying: this.isPlaying,
+      };
+      this.$store.dispatch("saveAudioState", payload);
     },
     loadAudio() {
       // Load source if local source is different from currentItem source
@@ -223,6 +242,7 @@ export default {
         window.player.addEventListener("loadedmetadata", function () {
           vm.duration = Math.round(this.duration);
         });
+        window.player.addEventListener("ended", this.resetAudio);
       }
     },
   },
@@ -249,10 +269,13 @@ export default {
     this.$store.dispatch("saveAudioState", payload);
   },
   watch: {
-    currentItem() {
+    currentUUID() {
       this.loadAudio();
-      // Set focus to play button
-      // this.$refs.playButton.$el.focus();
+    },
+    currentItem(v) {
+      if (v.type === "audio") {
+        this.loadAudio();
+      }
     },
   },
 };

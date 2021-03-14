@@ -76,11 +76,6 @@ export default {
       };
     },
   },
-  methods: {
-    onExhibClick(item) {
-      console.log("click exhib el:", item);
-    },
-  },
   created() {
     this.map = this.$parent.$parent.$refs.lmap.mapObject;
   },

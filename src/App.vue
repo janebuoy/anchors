@@ -12,7 +12,7 @@
     >
       <router-view />
     </v-main>
-    <AppBar />
+    <AppBar v-if="scenes" />
     <DrawerLeft v-if="scenes" />
     <ContentDrawer v-if="currentUUID" />
   </v-app>
