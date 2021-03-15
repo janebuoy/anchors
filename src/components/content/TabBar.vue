@@ -24,7 +24,7 @@
       <v-tabs-slider color="accent darken-1" ref="tabsSlider" />
       <v-tab
         v-for="item in resources"
-        :key="item.id"
+        :key="(item.id + 1) * count"
         class="px-1"
         @click.stop="openTab(item.id, $event)"
         style="min-width: 60px"
@@ -73,6 +73,7 @@ export default {
       active: null,
       pinned: 0,
       sliderWidth: "63px",
+      count: 100,
     };
   },
   computed: {
@@ -83,7 +84,11 @@ export default {
       "isPlaying",
       "currentAudioID",
       "audios",
+      "completed",
     ]),
+    getRandomArbitrary(min, max) {
+      return Math.random() * (max - min) + min;
+    },
     source() {
       return window.player.attributes.src.nodeValue;
     },
@@ -96,14 +101,12 @@ export default {
   },
   methods: {
     icon(item) {
-      if (item.type === "audio") {
-        if (
-          (this.tabs[this.currentUUID].visited.has(item.id) &&
-            this.audios[this.currentUUID][item.id].progress >= 98 &&
-            !this.isPlaying) ||
-          (this.audios[this.currentUUID][item.id].progress >= 98 &&
-            !this.isPlaying)
-        ) {
+      if (
+        item.type === "audio" ||
+        item.type === "gallery" ||
+        item.type === "timeline"
+      ) {
+        if (this.completed.includes(item.id)) {
           return "mdi-check-bold";
         } else {
           return item.icon;
@@ -140,7 +143,16 @@ export default {
       } else if (id === "pinned") {
         this.active = null;
         this.pinned = 0;
-        this.$refs.tabsSlider.$el.parentElement.style.minWidth = 0;
+        if (this.$refs.tabsSlider) {
+          this.$refs.tabsSlider.$el.parentElement.style.minWidth = 0;
+        }
+      }
+    },
+    forceReloadTabs() {
+      if (this.count === 0) {
+        this.count++;
+      } else {
+        this.count--;
       }
     },
     preserveSliderWidth() {
@@ -160,6 +172,7 @@ export default {
     eventBus.$on("updateTab", this.updateTab);
     eventBus.$on("openScene", this.resetTabs);
     eventBus.$on("openNextScene", this.resetTabs);
+    eventBus.$on("newCompleted", this.forceReloadTabs);
   },
   beforeDestroy() {
     const payload = {

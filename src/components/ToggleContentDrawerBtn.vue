@@ -1,7 +1,7 @@
 <template>
   <l-control position="bottomright">
     <v-btn
-      v-if="this.$vuetify.breakpoint.mdAndUp"
+      v-if="$vuetify.breakpoint.mdAndUp"
       elevation="3"
       class="ml-2"
       color="neutral darken-3"

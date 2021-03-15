@@ -4,7 +4,7 @@
       v-show="pinned === 0"
       :value="pinned"
       reverse
-      style="height: 100%"
+      style="height: 100%; overflow-y: auto"
     >
       <v-tab-transition>
         <v-tab-item>

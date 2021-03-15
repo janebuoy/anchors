@@ -25,16 +25,16 @@
         <v-card-subtitle>Subtitle</v-card-subtitle>
       </v-card>
       <v-list dense>
-        <v-list-item-group color="secondary" v-model="activeItem">
+        <v-list-item-group color="secondary" :value="activeItem">
           <v-list-item
             link
-            v-for="(item, id) in scenes.features"
+            v-for="(item, index) in scenes.features"
             :key="item.uuid"
             @click.stop="openScene(item.uuid)"
           >
             <v-list-item-action>
               <v-icon>
-                {{ listIcon(id) }}
+                {{ listIcon(index) }}
               </v-icon>
             </v-list-item-action>
             <v-list-item-content>
@@ -90,11 +90,10 @@ export default {
     return {
       branch: VUE_APP_GIT_BRANCH,
       revision: VUE_APP_GIT_COMMIT_HASH,
-      activeItem: null,
     };
   },
   computed: {
-    ...mapGetters(["scenes"]),
+    ...mapGetters(["scenes", "currentUUID"]),
     drawerLeft: {
       get() {
         return this.$store.getters.drawerLeft;
@@ -103,10 +102,13 @@ export default {
         return this.$store.dispatch("toggleDrawerLeft", v);
       },
     },
+    activeItem() {
+      return this.scenes.features.findIndex((a) => a.uuid === this.currentUUID);
+    },
   },
   methods: {
-    listIcon(id) {
-      return "mdi-numeric-" + (id + 1) + "-circle";
+    listIcon(index) {
+      return "mdi-numeric-" + (index + 1) + "-circle";
     },
     closeDrawer() {
       this.$store.dispatch("toggleDrawerLeft", false);

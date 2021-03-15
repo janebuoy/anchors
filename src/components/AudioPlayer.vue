@@ -86,6 +86,7 @@ export default {
       progress: 0,
       currentTime: 0,
       lastAudioID: null,
+      addCompletedSent: false,
     };
   },
   computed: {
@@ -96,6 +97,7 @@ export default {
       "currentItem",
       "currentUUID",
       "audios",
+      "currentAudioID",
     ]),
     windowWidth() {
       return this.$vuetify.breakpoint.width;
@@ -240,6 +242,7 @@ export default {
       this.progress = 0;
       this.duration = 0;
       this.currentTime = 0;
+      this.localProgress = 0;
       window.player = null;
     },
     loadAudio() {
@@ -296,7 +299,6 @@ export default {
   },
   beforeDestroy() {
     const payload = {
-      type: "beforeDestroy",
       id: this.lastAudioID,
       currentTime: this.currentTime,
       duration: this.duration,
@@ -315,6 +317,15 @@ export default {
       if (v.type === "audio") {
         //this.getAudioState();
         this.loadAudio();
+      }
+    },
+    localProgress(v) {
+      if (v > 99 && !this.addCompletedSent) {
+        this.$store.dispatch("addCompleted", this.currentAudioID);
+        this.addCompletedSent = true;
+      }
+      if (v === 0) {
+        this.addCompletedSent = false;
       }
     },
   },

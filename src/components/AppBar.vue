@@ -21,8 +21,10 @@ export default {
     nextSceneText() {
       const firstSceneUUID = this.scenes.features.find((a) => a.uuid).uuid;
       let text;
-      if (this.currentUUID === null || this.currentUUID === firstSceneUUID) {
+      if (this.currentUUID === null) {
         text = "Start";
+      } else if (this.currentUUID === firstSceneUUID) {
+        text = "Next Scene";
       } else if (this.nextID === this.noOfScenes - 1) {
         text = "Restart";
       } else {

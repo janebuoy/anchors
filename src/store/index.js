@@ -5,6 +5,7 @@ import Vuetify from "@/plugins/vuetify"
 import icons from "@/assets/icons.json"
 
 import axios from "axios";
+import { eventBus } from "../main";
 const ax = axios.create({
 	baseURL: process.env.BASE_URL,
 });
@@ -121,6 +122,9 @@ export default new Vuex.Store({
 			context.commit("colEventPoint", payload)
 		},
 		// Content Actions
+		addCompleted(context, payload) {
+			context.commit("addCompleted", payload)
+		},
 		addVisited(context, payload) {
 			context.commit("addVisited", payload)
 		},
@@ -189,6 +193,7 @@ export default new Vuex.Store({
 					visited: new Set(),
 					active: null,
 					pinned: 0,
+					completed: []
 				}
 			}
 			if (!state.content.audios[payload.uuid]) {
@@ -213,6 +218,15 @@ export default new Vuex.Store({
 			state.map.colEventPoint = payload
 		},
 		// Content Mutations
+		addCompleted: (state, payload) => {
+			const completed = state.content.tabs[state.map.currentUUID].completed
+			if (Number.isInteger(payload)) {
+				if (!completed.includes(payload)) {
+					state.content.tabs[state.map.currentUUID].completed.push(payload)
+				}
+			}
+			eventBus.$emit("newCompleted")
+		},
 		addVisited: (state, payload) => {
 			state.content.tabs[state.map.currentUUID].visited.add(payload)
 		},
@@ -332,6 +346,9 @@ export default new Vuex.Store({
 		},
 		currentAudioID: state => {
 			return state.content.currentAudioID
+		},
+		completed: state => {
+			return state.content.tabs[state.map.currentUUID].completed
 		},
 		tabs: state => {
 			return state.content.tabs

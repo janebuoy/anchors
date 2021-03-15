@@ -45,14 +45,14 @@ export default {
       return (feature, latlng) => {
         const points = this.geojson.features;
         // Match scenes IDs with ID of given feature
-        const id = points.map((a) => a.id === feature.id).indexOf(true) + 1;
+        const index = points.findIndex((a) => a.uuid === feature.uuid) + 1;
         const svg =
           "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><g><path d='" +
-          this.markerIcons.fg[id] +
+          this.markerIcons.fg[index] +
           "' fill='" +
-          this.markerIconColors[id] +
+          this.markerIconColors[index] +
           "' fill-opacity='1' stroke='#6B818C' stroke-opacity='0.5' stroke-width='.5'/><path d='" +
-          this.markerIcons.bg[id] +
+          this.markerIcons.bg[index] +
           "' fill='#FFFFFF' stroke-width='.028606'/></g></svg>";
         const url = "data:image/svg+xml," + encodeURIComponent(svg);
         const markerIcon = icon({
@@ -75,11 +75,13 @@ export default {
         this.markerIconColors[i] = this.colors.neutral.darken2;
       }
     },
-    updateMarkerColors(id) {
+    updateMarkerColors(uuid) {
+      const index = this.geojson.features.findIndex((a) => a.uuid === uuid) + 1;
+
       // Set color of visited
       this.markerIconColors[this.prevID] = this.colors.neutral.lighten2;
       // Set color of active
-      this.markerIconColors[id] = this.colors.secondary.base;
+      this.markerIconColors[index] = this.colors.secondary.base;
       // Redraw Markers on Key Change
       if (this.stopKeyIndex === 0) {
         this.stopKeyIndex = 1;
@@ -87,13 +89,13 @@ export default {
         this.stopKeyIndex = 0;
       }
       // Store current ID as prevID for next run
-      this.prevID = id;
+      this.prevID = index;
     },
   },
   created() {
     this.populateMarkerColors();
-    eventBus.$on("updateMarkerColors", (id) => {
-      this.updateMarkerColors(id);
+    eventBus.$on("updateMarkerColors", (uuid) => {
+      this.updateMarkerColors(uuid);
     });
   },
 };

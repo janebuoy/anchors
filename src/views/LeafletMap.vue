@@ -201,7 +201,7 @@ export default {
         tab: 0,
       };
       this.$store.dispatch("updateState", payload);
-      eventBus.$emit("updateMarkerColors", feature.id);
+      eventBus.$emit("updateMarkerColors", feature.uuid);
       this.$nextTick(() => {
         this.$store.dispatch("toggleContentDrawer", true);
         this.setCoords(feature);
@@ -217,7 +217,12 @@ export default {
       this.$store.dispatch("updateState", payload);
     },
     setCoords(feature) {
-      const zoom = feature.properties.zoom;
+      let zoom;
+      if (this.isMobile) {
+        zoom = feature.properties.zoom - 1;
+      } else {
+        zoom = feature.properties.zoom;
+      }
       const lat = feature.geometry.coordinates[1];
       const lng = feature.geometry.coordinates[0];
       const latlng = L.latLng(lat, lng);
@@ -227,6 +232,20 @@ export default {
       } else {
         this.map.setView(latlng, zoom);
       }
+    },
+    updateZoom() {
+      const flyToOptions = {
+        duration: 0.3,
+        easeLinearity: 0.2,
+      };
+      const center = this.map.getCenter();
+      let zoom = this.map.getZoom();
+      if (this.isMobile) {
+        zoom--;
+      } else {
+        zoom++;
+      }
+      this.map.flyTo(center, zoom, flyToOptions);
     },
     pushToRoute(feature) {
       const station = feature.common_name;
@@ -293,6 +312,7 @@ export default {
       this.recentreMap();
     },
     isMobile() {
+      this.updateZoom();
       this.recentreMap();
     },
     windowHeight() {
