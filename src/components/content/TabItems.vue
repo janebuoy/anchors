@@ -38,7 +38,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["scenes", "currentUUID", "resources", "currentItem"]),
+    ...mapGetters(["resources"]),
   },
   methods: {
     updateTab(id) {

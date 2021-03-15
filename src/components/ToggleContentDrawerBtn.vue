@@ -3,18 +3,24 @@
     <v-btn
       v-if="this.$vuetify.breakpoint.mdAndUp"
       elevation="3"
-      rounded
-      x-large
       class="ml-2"
-      color="secondary"
+      color="neutral darken-3"
+      dark
       @click.stop="toggleContentDrawer()"
+      :title="contentDrawer ? 'Close Panel' : 'Open Panel'"
     >
-      <v-icon left>
+      <v-icon left style="margin-top: 2px">
         {{ icon }}
       </v-icon>
-      Content Panel
+      {{ contentDrawer ? "Close Panel" : "Open Panel" }}
     </v-btn>
-    <v-btn v-else fab color="secondary" @click.stop="toggleContentDrawer()">
+    <v-btn
+      v-else
+      fab
+      color="neutral darken-3"
+      dark
+      @click.stop="toggleContentDrawer()"
+    >
       <v-icon large>
         {{ icon }}
       </v-icon>

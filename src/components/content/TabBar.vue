@@ -8,7 +8,7 @@
       optional
       style="max-width: 90px"
     >
-      <v-tab @click.stop="openTab('pinned', $event)">
+      <v-tab @click.stop="openTab('pinned', $event)" title="View Content List">
         <v-icon>mdi-view-list</v-icon>
       </v-tab>
     </v-tabs>
@@ -29,11 +29,20 @@
         @click.stop="openTab(item.id, $event)"
         style="min-width: 60px"
         :class="{ 'v-tab--active': active === item.id }"
+        :title="
+          item.type.charAt(0).toUpperCase() +
+          item.type.slice(1) +
+          ': ' +
+          item.title
+        "
       >
         <v-badge
           color="accent darken-3"
           overlap
-          :value="item.type === 'audio' && isPlaying && source === item.src"
+          :key="item.id"
+          :value="
+            item.type === 'audio' && isPlaying && item.src === currentAudioSrc
+          "
         >
           <template v-slot:badge>
             <v-icon style="margin-top: -2px" class="mdi-pulseeffect"
@@ -68,23 +77,32 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "scenes",
       "resources",
-      "currentItem",
       "tabs",
       "currentUUID",
       "isPlaying",
+      "currentAudioID",
+      "audios",
     ]),
     source() {
       return window.player.attributes.src.nodeValue;
+    },
+    currentAudioSrc() {
+      const item = this.resources.filter(
+        (a) => a.id === this.currentAudioID
+      )[0];
+      return item.src;
     },
   },
   methods: {
     icon(item) {
       if (item.type === "audio") {
         if (
-          this.tabs[this.currentUUID].visited.has(item.id) &&
-          !this.isPlaying
+          (this.tabs[this.currentUUID].visited.has(item.id) &&
+            this.audios[this.currentUUID][item.id].progress >= 98 &&
+            !this.isPlaying) ||
+          (this.audios[this.currentUUID][item.id].progress >= 98 &&
+            !this.isPlaying)
         ) {
           return "mdi-check-bold";
         } else {

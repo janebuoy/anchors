@@ -4,6 +4,7 @@
       <v-btn
         icon
         @click.stop="prevAudio()"
+        title="Previous Audio"
         :disabled="prevAudioID === false || !localSrc"
       >
         <v-icon>mdi-skip-previous</v-icon>
@@ -12,6 +13,7 @@
         icon
         class="mr-1"
         @click.stop="seekBackwards()"
+        title="Seek Backwards"
         :disabled="!localSrc"
       >
         <v-icon>mdi-replay</v-icon>
@@ -21,6 +23,7 @@
         color="secondary"
         class="mt-n2"
         @click.stop="toggleAudio()"
+        :title="!isPlaying ? 'Play Audio' : 'Pause Audio'"
         ref="playButton"
       >
         <v-icon large class="white--text" v-if="!isPlaying">mdi-play</v-icon>
@@ -29,6 +32,7 @@
       <v-btn
         icon
         @click.stop="seekForwards()"
+        title="Seek Forwards"
         class="ml-1"
         :disabled="!localSrc"
       >
@@ -37,6 +41,7 @@
       <v-btn
         icon
         @click.stop="nextAudio()"
+        title="Next Audio"
         :disabled="nextAudioID === false || !localSrc"
       >
         <v-icon>mdi-skip-next</v-icon>
@@ -44,6 +49,7 @@
     </v-row>
     <v-row class="d-flex align-center justify-center mt-0 pb-2 px-2" no-gutters>
       <v-slider
+        title="Seek"
         v-model="computedProgress"
         @mousedown="pauseProgress"
         @click.stop="jumpInTime"
@@ -59,11 +65,7 @@
         thumb-color="secondary lighten-1"
         :label="elaspedTime"
       />
-      <p
-        class="mb-n2 ml-n2"
-        :class="[localSrc ? 'duration-label' : null]"
-        style="margin-top: -5px"
-      >
+      <p class="mb-n2 ml-n2 v-label theme--dark" style="margin-top: -5px">
         {{ minutes }}:{{ seconds }}
       </p>
     </v-row>
@@ -83,6 +85,7 @@ export default {
       duration: 0,
       progress: 0,
       currentTime: 0,
+      lastAudioID: null,
     };
   },
   computed: {
@@ -91,7 +94,8 @@ export default {
       "nextAudioID",
       "prevAudioID",
       "currentItem",
-      "savedAudioState",
+      "currentUUID",
+      "audios",
     ]),
     windowWidth() {
       return this.$vuetify.breakpoint.width;
@@ -124,8 +128,11 @@ export default {
     },
     seconds() {
       let secs = Math.floor((this.duration - this.currentTime) % 60);
+      console.log(secs);
       if (secs < 10 && secs > 0) {
         secs = 0 + String(secs);
+      } else if (secs < 60 && secs > 0) {
+        secs = String(secs);
       } else {
         secs = "00";
       }
@@ -146,6 +153,7 @@ export default {
       if (!this.isPlaying && this.currentItem.type === "audio") {
         this.loadAudio();
         this.playAudio();
+        eventBus.$emit("updateTab", this.currentItem.id);
         // If something is playing and selected item is different, load that item's source
       } else if (
         this.isPlaying &&
@@ -167,13 +175,33 @@ export default {
       }
     },
     playAudio() {
+      const newTime = ((this.localProgress * 1000) / 100000) * this.duration;
+      window.player.currentTime = newTime;
       window.player.play();
       this.startTimer(0);
+      const payload = {
+        id: this.lastAudioID,
+        currentTime: this.currentTime,
+        duration: this.duration,
+        progress: this.progress,
+        localSrc: this.localSrc,
+        isPlaying: true,
+      };
+      this.$store.dispatch("saveAudioState", payload);
       this.$store.dispatch("updatePlayingState", true);
     },
     pauseAudio() {
       window.player.pause();
       clearTimeout(this.timer);
+      const payload = {
+        id: this.lastAudioID,
+        currentTime: this.currentTime,
+        duration: this.duration,
+        progress: this.progress,
+        localSrc: this.localSrc,
+        isPlaying: false,
+      };
+      this.$store.dispatch("saveAudioState", payload);
       this.$store.dispatch("updatePlayingState", false);
     },
     pauseProgress() {
@@ -214,14 +242,6 @@ export default {
       this.duration = 0;
       this.currentTime = 0;
       window.player = null;
-      const payload = {
-        currentTime: this.currentTime,
-        duration: this.duration,
-        progress: this.progress,
-        localSrc: this.localSrc,
-        isPlaying: this.isPlaying,
-      };
-      this.$store.dispatch("saveAudioState", payload);
     },
     loadAudio() {
       // Load source if local source is different from currentItem source
@@ -229,7 +249,10 @@ export default {
         // reset player if exists
         if (window.player !== null) {
           this.resetAudio();
+          this.getAudioState();
         }
+        // store last audio id as safety measure against async state updates
+        this.lastAudioID = this.currentItem.id;
         // assign new source from from currentItem source
         this.localSrc = this.currentItem.src;
 
@@ -241,25 +264,40 @@ export default {
         let vm = this;
         window.player.addEventListener("loadedmetadata", function () {
           vm.duration = Math.round(this.duration);
+          console.log(vm.duration);
         });
         window.player.addEventListener("ended", this.resetAudio);
       }
+    },
+    getAudioState() {
+      this.currentTime = this.audios[this.currentUUID][
+        this.currentItem.id
+      ].currentTime;
+      this.duration = this.audios[this.currentUUID][
+        this.currentItem.id
+      ].duration;
+      this.progress = this.audios[this.currentUUID][
+        this.currentItem.id
+      ].progress;
+      this.localProgress = this.audios[this.currentUUID][
+        this.currentItem.id
+      ].progress;
     },
   },
   created() {
     eventBus.$on("toggleAudio", this.toggleAudio);
   },
   mounted() {
-    this.currentTime = this.savedAudioState.currentTime;
-    this.duration = this.savedAudioState.duration;
-    this.progress = this.savedAudioState.progress;
-    this.localSrc = this.savedAudioState.localSrc;
+    this.getAudioState();
     if (this.isPlaying) {
       this.startTimer(0);
     }
+    this.loadAudio();
   },
   beforeDestroy() {
     const payload = {
+      type: "beforeDestroy",
+      id: this.lastAudioID,
       currentTime: this.currentTime,
       duration: this.duration,
       progress: this.progress,
@@ -270,31 +308,24 @@ export default {
   },
   watch: {
     currentUUID() {
+      this.getAudioState();
       this.loadAudio();
     },
     currentItem(v) {
       if (v.type === "audio") {
+        //this.getAudioState();
         this.loadAudio();
       }
+    },
+    localProgress(v) {
+      console.log(v);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.disabledSliderLabel {
-  color: rgba(224, 224, 224, 0.28) !important;
-}
-.duration-label {
-  color: #e0e0e0 !important;
-}
 .mirror {
   transform: scale(-1, 1);
-}
->>> .theme--dark.v-label {
-  color: #e0e0e0 !important;
-}
->>> .theme--dark.v-label--is-disabled {
-  color: rgba(224, 224, 224, 0.28) !important;
 }
 </style>

@@ -89,14 +89,6 @@
         </v-card-title>
         <v-card-text v-if="event !== null" v-html="event[1]"></v-card-text>
       </v-card>
-      <span class="subtitle-1">
-        Sources:
-        <ul>
-          <li v-for="src in sources" :key="src.title">
-            <a :href="src.url">{{ src.title }}</a>
-          </li>
-        </ul>
-      </span>
     </v-card-text>
   </v-card>
 </template>
@@ -116,17 +108,6 @@ export default {
       event: null,
       tmpTimeline: null,
       closeOnClick: true,
-      sources: [
-        {
-          url: "https://doi.org/10.7910/DVN/T9SDEW",
-          title: "Colonial Dates Dataset (COLDAT) ",
-        },
-        {
-          url:
-            "https://en.wikipedia.org/wiki/Chronology_of_Western_colonialism",
-          title: "Chronology of Western colonialism",
-        },
-      ],
     };
   },
   computed: {

@@ -48,14 +48,11 @@ export default new Vuex.Store({
 			object: null,
 			tabs: {},
 			currentItem: {},
+			currentAudioID: null,
 			audio: {
-				localSrc: null,
-				localProgress: null,
-				duration: 0,
-				progress: 0,
-				currentTime: 0,
 				isPlaying: false,
-			}
+			},
+			audios: {}
 		}
 	},
 	actions: {
@@ -173,6 +170,19 @@ export default new Vuex.Store({
 					pinned: 0,
 				}
 			}
+			if (!state.content.audios[payload.uuid]) {
+				let audios = state.content.object.resources.filter(a => a.type === 'audio');
+				state.content.audios[payload.uuid] = {}
+				for (let i = 0; i < audios.length; i++) {
+					state.content.audios[payload.uuid][audios[i].id] = {
+						localSrc: null,
+						localProgress: null,
+						duration: 0,
+						progress: 0,
+						currentTime: 0,
+					}
+				}
+			}
 			// state.app.title = payload.title
 		},
 		colSliderStart: (state, payload) => {
@@ -191,12 +201,16 @@ export default new Vuex.Store({
 		},
 		updateContentItem: (state, payload) => {
 			state.content.currentItem = payload
+			// Store last opend audio item separately
+			if (payload.type === 'audio') {
+				state.content.currentAudioID = payload.id
+			}
 		},
 		updatePlayingState: (state, payload) => {
 			state.content.audio.isPlaying = payload
 		},
 		saveAudioState: (state, payload) => {
-			state.content.audio = payload
+			state.content.audios[state.map.currentUUID][payload.id] = payload
 		}
 	},
 	getters: {
@@ -289,14 +303,17 @@ export default new Vuex.Store({
 		currentItem: state => {
 			return state.content.currentItem
 		},
+		currentAudioID: state => {
+			return state.content.currentAudioID
+		},
 		tabs: state => {
 			return state.content.tabs
 		},
 		activeTab: state => {
 			return state.content.tabs[state.map.currentUUID].active
 		},
-		savedAudioState: state => {
-			return state.content.audio
+		audios: state => {
+			return state.content.audios
 		},
 		isPlaying: state => {
 			return state.content.audio.isPlaying

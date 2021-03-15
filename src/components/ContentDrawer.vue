@@ -13,7 +13,7 @@
       <div class="nav-wrapper overflow-hidden">
         <TabBar class="flex-grow-0" v-if="currentUUID" />
         <TabItems class="overflow-y-auto" v-if="currentUUID" />
-        <AudioPlayer class="mt-auto" />
+        <AudioPlayer class="mt-auto" v-if="currentUUID" />
       </div>
     </v-navigation-drawer>
     <v-bottom-sheet
@@ -25,7 +25,7 @@
       no-click-animation
     >
       <div :style="{ height: bottomHeight + 'px' }" class="nav-wrapper">
-        <AudioPlayer />
+        <AudioPlayer v-if="currentUUID" />
         <TabItems class="overflow-y-auto" v-if="currentUUID" />
         <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
       </div>

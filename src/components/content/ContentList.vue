@@ -5,14 +5,16 @@
         v-for="item in resources"
         :key="item.id"
         @click.stop="openItemByID(item.id, 'no-toggle')"
+        :title="
+          item.type.charAt(0).toUpperCase() +
+          item.type.slice(1) +
+          ': ' +
+          item.title
+        "
       >
         <v-list-item-icon>
           <v-icon>
-            {{
-              tabs[currentUUID].visited.has(item.id)
-                ? "mdi-check-bold"
-                : item.icon
-            }}
+            {{ icon(item) }}
           </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
@@ -60,6 +62,8 @@ export default {
       "prevAudioID",
       "nextAudioID",
       "isPlaying",
+      "audios",
+      "currentAudioID",
     ]),
     resourceID() {
       if (this.currentItem) {
@@ -70,10 +74,29 @@ export default {
     },
   },
   methods: {
+    icon(item) {
+      if (item.type === "audio") {
+        if (
+          this.tabs[this.currentUUID].visited.has(item.id) &&
+          this.audios[this.currentUUID][this.currentAudioID].progress >= 98 &&
+          !this.isPlaying
+        ) {
+          return "mdi-check-bold";
+        } else {
+          return item.icon;
+        }
+      } else {
+        if (this.tabs[this.currentUUID].visited.has(item.id)) {
+          return "mdi-check-bold";
+        } else {
+          return item.icon;
+        }
+      }
+    },
     preloadItemByID(id) {
       const item = this.resources.filter((a) => a.id === id)[0];
       if (item !== this.currentItem) {
-        this.$store.dispatch("updateContentItem", item);
+        this.$store.commit("updateContentItem", item);
       }
     },
     openItemByID(id, string) {
