@@ -115,7 +115,6 @@ export default {
           if (item.target) eventBus.$emit("openSubscene", item.target);
           break;
         case "gallery":
-          console.log("gallery");
           break;
         case "timeline":
           if (item.target) eventBus.$emit("openSubscene", item.target);

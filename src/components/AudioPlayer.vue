@@ -128,7 +128,6 @@ export default {
     },
     seconds() {
       let secs = Math.floor((this.duration - this.currentTime) % 60);
-      console.log(secs);
       if (secs < 10 && secs > 0) {
         secs = 0 + String(secs);
       } else if (secs < 60 && secs > 0) {
@@ -264,24 +263,25 @@ export default {
         let vm = this;
         window.player.addEventListener("loadedmetadata", function () {
           vm.duration = Math.round(this.duration);
-          console.log(vm.duration);
         });
         window.player.addEventListener("ended", this.resetAudio);
       }
     },
     getAudioState() {
-      this.currentTime = this.audios[this.currentUUID][
-        this.currentItem.id
-      ].currentTime;
-      this.duration = this.audios[this.currentUUID][
-        this.currentItem.id
-      ].duration;
-      this.progress = this.audios[this.currentUUID][
-        this.currentItem.id
-      ].progress;
-      this.localProgress = this.audios[this.currentUUID][
-        this.currentItem.id
-      ].progress;
+      if (this.audios[this.currentUUID][this.currentItem.id]) {
+        this.currentTime = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].currentTime;
+        this.duration = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].duration;
+        this.progress = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].progress;
+        this.localProgress = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].progress;
+      }
     },
   },
   created() {
@@ -316,9 +316,6 @@ export default {
         //this.getAudioState();
         this.loadAudio();
       }
-    },
-    localProgress(v) {
-      console.log(v);
     },
   },
 };

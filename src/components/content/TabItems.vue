@@ -1,18 +1,36 @@
 <template>
-  <div id="tabItemsWrapper" style="height: 100%">
-    <v-tabs-items :value="pinned" reverse>
+  <div ref="tabItemsWrapper" style="height: 100%" v-if="mounted">
+    <v-tabs-items
+      v-show="pinned === 0"
+      :value="pinned"
+      reverse
+      style="height: 100%"
+    >
       <v-tab-transition>
         <v-tab-item>
           <ContentList />
         </v-tab-item>
       </v-tab-transition>
     </v-tabs-items>
-    <v-tabs-items :value="active" style="overflow-y: auto">
-      <v-tab-item v-for="item in resources" :key="item.id">
-        <ActiveTabItem v-if="active === item.id" />
-        <timeline-content v-if="item.type === 'timeline'" />
-      </v-tab-item>
-    </v-tabs-items>
+
+    <div style="height: 100%" v-if="pinned !== 0">
+      <v-tabs-items :value="active" style="overflow-y: auto; height: 100%">
+        <v-tab-item
+          v-for="item in resources"
+          :key="item.id"
+          :style="!$vuetify.breakpoint.smAndDown ? 'height: 100%' : null"
+        >
+          <active-tab-item
+            v-if="item.type === 'audio' || item.type === 'map'"
+          />
+          <gallery-content
+            v-if="item.type === 'gallery'"
+            :style="!$vuetify.breakpoint.smAndDown ? 'height: 100%' : null"
+          />
+          <timeline-content v-if="item.type === 'timeline'" />
+        </v-tab-item>
+      </v-tabs-items>
+    </div>
   </div>
 </template>
 
@@ -21,24 +39,30 @@ import { mapGetters } from "vuex";
 import { eventBus } from "../../main";
 
 import ContentList from "@/components/content/ContentList";
-import ActiveTabItem from "@/components/content/ActiveTabItem";
+import GalleryContent from "@/components/content/GalleryContent.vue";
 import TimelineContent from "./TimelineContent.vue";
+import ActiveTabItem from "./ActiveTabItem.vue";
 
 export default {
   name: "TabItems",
   components: {
     ContentList,
-    ActiveTabItem,
+    GalleryContent,
     TimelineContent,
+    ActiveTabItem,
   },
   data() {
     return {
       active: null,
       pinned: 0,
+      mounted: false,
     };
   },
   computed: {
-    ...mapGetters(["resources"]),
+    ...mapGetters(["resources", "tabs", "currentUUID", "currentItem"]),
+    windowHeight() {
+      return this.$vuetify.breakpoint.height;
+    },
   },
   methods: {
     updateTab(id) {
@@ -55,10 +79,29 @@ export default {
       this.pinned = 0;
     },
   },
+  mounted() {
+    this.active = this.tabs[this.currentUUID].active;
+    this.pinned = this.tabs[this.currentUUID].pinned;
+    this.mounted = true;
+    this.$nextTick(() => {
+      this.$store.commit(
+        "tabItemsHeight",
+        this.$refs.tabItemsWrapper.offsetHeight
+      );
+    });
+  },
   created() {
     eventBus.$on("updateTab", this.updateTab);
     eventBus.$on("openScene", this.resetTabs);
     eventBus.$on("openNextScene", this.resetTabs);
+  },
+  watch: {
+    windowHeight() {
+      this.$store.commit(
+        "tabItemsHeight",
+        this.$refs.tabItemsWrapper.offsetHeight
+      );
+    },
   },
 };
 </script>

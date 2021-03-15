@@ -28,7 +28,12 @@ export default new Vuex.Store({
 				url: "data/json/timeline.json",
 				data: null,
 			},
+			galleries: {
+				url: "data/json/galleries.json",
+				data: null,
+			},
 			bottomSheetHeight: null,
+			tabItemsHeight: null,
 			drawerRightWidth: null,
 			drawerLeft: false,
 			contentDrawer: false,
@@ -83,6 +88,16 @@ export default new Vuex.Store({
 					console.log(err);
 				});
 		},
+		fetchGalleries(context) {
+			ax.get(context.state.global.galleries.url)
+				.then(response => response.data)
+				.then(galleries => {
+					context.commit("setGalleries", galleries)
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		},
 		bottomSheetHeight(context, payload) {
 			context.commit("bottomSheetHeight", payload)
 		},
@@ -130,8 +145,14 @@ export default new Vuex.Store({
 		setTimeline: (state, payload) => {
 			state.global.timeline.data = payload
 		},
+		setGalleries: (state, payload) => {
+			state.global.galleries.data = payload
+		},
 		bottomSheetHeight: (state, payload) => {
 			state.global.bottomSheetHeight = payload
+		},
+		tabItemsHeight: (state, payload) => {
+			state.global.tabItemsHeight = payload
 		},
 		drawerRightWidth: (state, payload) => {
 			state.global.drawerRightWidth = payload
@@ -224,8 +245,14 @@ export default new Vuex.Store({
 		timeline: state => {
 			return state.global.timeline.data
 		},
+		galleries: state => {
+			return state.global.galleries.data
+		},
 		bottomSheetHeight: state => {
 			return state.global.bottomSheetHeight
+		},
+		tabItemsHeight: state => {
+			return state.global.tabItemsHeight
 		},
 		drawerRightWidth: state => {
 			return state.global.drawerRightWidth

@@ -45,6 +45,7 @@ export default {
     // Make store fetch the scenes
     this.$store.dispatch("fetchScenes");
     this.$store.dispatch("fetchTimeline");
+    this.$store.dispatch("fetchGalleries");
   },
 };
 </script>

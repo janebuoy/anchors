@@ -9,6 +9,7 @@ export default new Vuetify({
 		options: { customProperties: true },
 		themes: {
 			light: {
+				background: "#FFFFFF",
 				primary: {
 					base: '#36315b',
 					lighten1: "#4a466b",
@@ -80,6 +81,9 @@ export default new Vuetify({
 					darken2: "#1e4f25",
 					darken3: "#0a1a0c"
 				},
+			},
+			dark: {
+				background: "#1E1E1E"
 			}
 		}
 	},

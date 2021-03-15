@@ -1,6 +1,9 @@
 <template>
   <v-card width="100%" flat>
-    <!-- <v-card-title>Timeline of Western colonialism</v-card-title> -->
+    <v-card-title style="word-break: normal !important">
+      {{ currentItem.title }}
+    </v-card-title>
+    <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
     <v-card-text>
       <v-card
         style="width: 100%; height: 46px"
@@ -111,7 +114,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["colSliderStart", "timeline"]),
+    ...mapGetters(["colSliderStart", "timeline", "currentItem"]),
     year: {
       get() {
         return this.colSliderStart;
