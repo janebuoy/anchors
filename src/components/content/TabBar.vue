@@ -2,15 +2,22 @@
   <div id="tabsWrapper" class="d-flex">
     <v-tabs
       :value="pinned"
-      slider-color="accent darken-1"
       dark
       background-color="secondary"
       optional
       style="max-width: 90px"
     >
-      <v-tab @click.stop="openTab('pinned', $event)" title="View Content List">
+      <v-tabs-slider color="accent darken-1" ref="pinnedTabsSlider" />
+      <!-- extended v-tab -->
+      <single-tab
+        @click.stop="openTab('pinned', $event)"
+        title="View Content List"
+        :color="pinned === 0 ? 'white' : 'rgba(255, 255, 255, 0.6)'"
+        :class="{ 'v-tab--active': pinned === 0 }"
+        :aria-selected="pinned === 0 ? 'true' : 'false'"
+      >
         <v-icon>mdi-view-list</v-icon>
-      </v-tab>
+      </single-tab>
     </v-tabs>
     <v-tabs
       :value="active"
@@ -22,13 +29,14 @@
       class="shrunk-tabs"
     >
       <v-tabs-slider color="accent darken-1" ref="tabsSlider" />
-      <v-tab
+      <single-tab
         v-for="item in resources"
         :key="(item.id + 1) * count"
         class="px-1"
         @click.stop="openTab(item.id, $event)"
         style="min-width: 60px"
         :class="{ 'v-tab--active': active === item.id }"
+        :aria-selected="active === item.id ? 'true' : 'false'"
         :title="
           item.type.charAt(0).toUpperCase() +
           item.type.slice(1) +
@@ -57,7 +65,7 @@
             {{ icon(item) }}
           </v-icon>
         </v-badge>
-      </v-tab>
+      </single-tab>
     </v-tabs>
   </div>
 </template>
@@ -65,15 +73,21 @@
 <script>
 import { mapGetters } from "vuex";
 import { eventBus } from "../../main";
+import SingleTab from "@/components/content/SingleTab";
 
 export default {
   name: "TabBar",
+  components: {
+    SingleTab,
+  },
   data() {
     return {
       active: null,
       pinned: 0,
+      pinnedSliderWidth: "90px",
       sliderWidth: "63px",
       count: 100,
+      selected: null,
     };
   },
   computed: {
@@ -86,8 +100,10 @@ export default {
       "audios",
       "completed",
     ]),
-    getRandomArbitrary(min, max) {
-      return Math.random() * (max - min) + min;
+    ariaSelectedRule() {
+      return {
+        "aria-selected-1": true,
+      };
     },
     source() {
       return window.player.attributes.src.nodeValue;
@@ -123,6 +139,9 @@ export default {
       if (Number.isInteger(id)) {
         // add last active ID to tabs.currentUUID.visited in state
         this.$store.dispatch("addVisited", this.active);
+        if (this.selected !== id) {
+          this.selected = id;
+        }
         this.active = id;
         this.pinned = 1;
         // Share state with TabItems component
@@ -130,10 +149,12 @@ export default {
         // Open Item in ContenList
         eventBus.$emit("openItemByID", id, "no-toggle");
         this.preserveSliderWidth();
+        this.shrinkPinnedSliderWidth();
       } else if (id === "pinned") {
         this.active = null;
         this.pinned = 0;
         eventBus.$emit("updateTab", id);
+        this.expandPinnedSliderWidth();
       }
     },
     updateTab(id) {
@@ -154,6 +175,12 @@ export default {
       } else {
         this.count--;
       }
+    },
+    shrinkPinnedSliderWidth() {
+      this.$refs.pinnedTabsSlider.$el.parentElement.style.minWidth = 0;
+    },
+    expandPinnedSliderWidth() {
+      this.$refs.pinnedTabsSlider.$el.parentElement.style.minWidth = this.pinnedSliderWidth;
     },
     preserveSliderWidth() {
       this.$refs.tabsSlider.$el.parentElement.style.minWidth = this.sliderWidth;
