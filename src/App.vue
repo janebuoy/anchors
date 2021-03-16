@@ -46,6 +46,7 @@ export default {
     this.$store.dispatch("fetchScenes");
     this.$store.dispatch("fetchTimeline");
     this.$store.dispatch("fetchGalleries");
+    //this.$store.dispatch("fetchWeserWaterLevels");
   },
 };
 </script>

@@ -12,31 +12,36 @@
       :url="baseLayer.url"
       :attribution="baseLayer.attribution"
     />
+
     <river-correction-layer
       ref="RiverCorrectionLayer"
       v-if="isActiveLayer(activeLayers, 'riverCorrection')"
     />
     <!-- PATTERN LAYER -->
     <PatternLayer
-      :key="'pattern'"
-      ref="patternLayer"
+      ref="speicherXILayer"
       v-if="
         isActiveLayer(activeLayers, 'speicherXI') && JSONLayers.speicherXI.data
       "
       :geojson="JSONLayers.speicherXI.data"
     />
-    <!-- ROUTE PATH -->
-    <RouteLayer
-      ref="routeLayer"
-      :key="'route'"
-      v-if="isActiveLayer(activeLayers, 'route') && JSONLayers.route.data"
-      :geojson="JSONLayers.route.data"
-    />
     <!-- COLONIES LAYER -->
     <ColoniesLayer
+      ref="coloniesLayer"
       v-if="isActiveLayer(activeLayers, 'colonies') && JSONLayers.colonies.data"
       :geojson="JSONLayers.colonies.data"
       :max="thisYear"
+    />
+    <!-- WATER LEVELS LAYER  -->
+    <water-levels-layer
+      ref="WaterLevelsLayer"
+      v-if="isActiveLayer(activeLayers, 'waterLevels')"
+    />
+    <!-- ROUTE PATH -->
+    <RouteLayer
+      ref="routeLayer"
+      v-if="isActiveLayer(activeLayers, 'route') && JSONLayers.route.data"
+      :geojson="JSONLayers.route.data"
     />
     <!-- ACTION BOUNDS -->
     <BoundsLayer
@@ -45,7 +50,6 @@
         useActionBounds === true &&
         scenes
       "
-      :key="'bounds'"
       ref="boundsLayer"
       :geojson="scenes"
     />
@@ -76,6 +80,7 @@ import { latLng } from "leaflet";
 import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 
 import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
+import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
 import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
@@ -96,6 +101,7 @@ export default {
     LocateControl,
     OpacitySlider,
     RiverCorrectionLayer,
+    WaterLevelsLayer,
     PatternLayer,
     ColoniesLayer,
     RouteLayer,
@@ -107,7 +113,9 @@ export default {
       mapOptions: {
         zoomControl: false,
         minZoom: 1,
+        minZoomDefault: 1,
         maxZoom: 18,
+        maxZoomDefault: 18,
         zoomSnap: 0.2,
         opacitySlider: false,
       },
@@ -157,6 +165,7 @@ export default {
       "bottomSheetHeight",
       "contentDrawer",
       "useActionBounds",
+      "waterLevels",
     ]),
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
@@ -240,12 +249,18 @@ export default {
       // Set feature settings
       if (feature.properties.minZoom !== undefined) {
         this.mapOptions.minZoom = feature.properties.minZoom;
+      } else {
+        this.mapOptions.minZoom = this.mapOptions.minZoomDefault;
       }
       if (feature.properties.maxZoom !== undefined) {
         this.mapOptions.maxZoom = feature.properties.maxZoom;
+      } else {
+        this.mapOptions.maxZoom = this.mapOptions.maxZoomDefault;
       }
       if (feature.properties.opacitySlider !== undefined) {
         this.mapOptions.opacitySlider = feature.properties.opacitySlider;
+      } else {
+        this.mapOptions.opacitySlider = false;
       }
       if (feature.properties.selector !== undefined) {
         this.mapOptions.selector = feature.properties.selector;
@@ -348,6 +363,7 @@ export default {
       this.openScene(this.nextUUID);
     });
     eventBus.$on("recentreMap", this.recentreMap);
+    eventBus.$on("setCoords", this.setCoords);
   },
   watch: {
     // Watch for map height size changes

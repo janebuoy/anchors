@@ -33,6 +33,7 @@ export default new Vuex.Store({
 				url: "data/json/galleries.json",
 				data: null,
 			},
+			waterLevels: null,
 			bottomSheetHeight: null,
 			tabItemsHeight: null,
 			drawerRightWidth: null,
@@ -100,6 +101,12 @@ export default new Vuex.Store({
 					console.log(err);
 				});
 		},
+		fetchWeserWaterLevels({ commit }) {
+			ax.get('https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?waters=WESER&includeTimeseries=true&includeCurrentMeasurement=true')
+				.then(response => {
+					commit('setWeserWaterLevels', response.data)
+				})
+		},
 		bottomSheetHeight(context, payload) {
 			context.commit("bottomSheetHeight", payload)
 		},
@@ -152,6 +159,63 @@ export default new Vuex.Store({
 		},
 		setGalleries: (state, payload) => {
 			state.global.galleries.data = payload
+		},
+		setWeserWaterLevels: (state, data) => {
+			console.log(data);
+			const features = data.filter((feature) =>
+				feature.agency === "WSA BREMEN" &&
+				feature.km < 40 &&
+				feature.latitude !== undefined &&
+				feature.timeseries[0].shortname === "W" ||
+				feature.agency === "WSA BREMERHAVEN" &&
+				feature.latitude !== undefined &&
+				feature.timeseries[0].shortname === "W" &&
+				feature.shortname !== "DWARSGAT" &&
+				feature.shortname !== "ROBBENSÜDSTEERT" &&
+				feature.shortname !== "LEUCHTTURM ALTE WESER")
+			let jsonObj = {
+				type: "FeatureCollection",
+				features: []
+			}
+			for (let i = 0; i < features.length; i++) {
+				// Capitalize first Letter of each Word in Name
+				const name = features[i].longname.toLowerCase()
+				const words = name.split(" ")
+				for (let j = 0; j < words.length; j++) {
+					words[j] = words[j][0].toUpperCase() + words[j].substr(1)
+				}
+				const nameCapitalized = words.join(" ")
+				// Single out currentMeasurement
+				const currentMeasurement = features[i].timeseries[0].currentMeasurement
+				// Convert Timestamp to Hours and Minutes
+				const timestamp = new Date(currentMeasurement.timestamp)
+				let measuredHours = timestamp.getHours()
+				measuredHours = ("0" + measuredHours).slice(-2)
+				let measuredMinutes = timestamp.getMinutes()
+				measuredMinutes = ("0" + measuredMinutes).slice(-2)
+
+				const item = {
+					type: "Feature",
+					properties: {
+						uuid: features[i].uuid,
+						name: nameCapitalized,
+						timestamp: {
+							hours: measuredHours,
+							minutes: measuredMinutes,
+						},
+						value: currentMeasurement.value / 100
+					},
+					geometry: {
+						coordinates: [
+							parseFloat(features[i].longitude),
+							parseFloat(features[i].latitude)
+						],
+						type: "Point"
+					}
+				}
+				jsonObj.features.push(item)
+			}
+			state.global.waterLevels = jsonObj
 		},
 		bottomSheetHeight: (state, payload) => {
 			state.global.bottomSheetHeight = payload
@@ -265,6 +329,9 @@ export default new Vuex.Store({
 		},
 		galleries: state => {
 			return state.global.galleries.data
+		},
+		waterLevels: state => {
+			return state.global.waterLevels
 		},
 		bottomSheetHeight: state => {
 			return state.global.bottomSheetHeight
