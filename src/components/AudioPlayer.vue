@@ -1,5 +1,5 @@
 <template>
-  <v-card tile dark elevation="6" color="primary" style="z-index: 200">
+  <v-card tile dark elevation="6" color="primary darken-1" style="z-index: 200">
     <v-row class="d-flex align-center justify-center" no-gutters>
       <v-btn
         icon
@@ -25,6 +25,7 @@
         @click.stop="toggleAudio()"
         :title="!isPlaying ? 'Play Audio' : 'Pause Audio'"
         ref="playButton"
+        :disabled="!localSrc"
       >
         <v-icon large class="white--text" v-if="!isPlaying">mdi-play</v-icon>
         <v-icon v-else large class="white--text">mdi-pause</v-icon>
@@ -64,8 +65,13 @@
         track-fill-color="secondary lighten-1"
         thumb-color="secondary lighten-1"
         :label="elaspedTime"
+        :disabled="!localSrc"
       />
-      <p class="mb-n2 ml-n2 v-label theme--dark" style="margin-top: -5px">
+      <p
+        class="mb-n2 ml-n2 v-label theme--dark"
+        :class="!localSrc ? 'v-label--is-disabled' : null"
+        style="margin-top: -5px"
+      >
         {{ minutes }}:{{ seconds }}
       </p>
     </v-row>

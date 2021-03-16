@@ -67,8 +67,6 @@ export default {
   watch: {
     carouselIndex(v) {
       if (v === this.images.length - 1) {
-        console.log(v);
-        console.log(this.currentItem.id);
         this.$store.dispatch("addCompleted", this.currentItem.id);
       }
     },
