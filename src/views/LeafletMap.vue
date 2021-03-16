@@ -12,6 +12,10 @@
       :url="baseLayer.url"
       :attribution="baseLayer.attribution"
     />
+    <river-correction-layer
+      ref="RiverCorrectionLayer"
+      v-if="isActiveLayer(activeLayers, 'riverCorrection')"
+    />
     <!-- PATTERN LAYER -->
     <PatternLayer
       :key="'pattern'"
@@ -53,6 +57,7 @@
     />
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
+    <OpacitySlider v-if="mapOptions.opacitySlider" />
     <ToggleContentDrawerBtn v-if="currentUUID" />
   </l-map>
 </template>
@@ -70,6 +75,7 @@ import { latLng } from "leaflet";
 
 import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 
+import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
 import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
@@ -77,6 +83,7 @@ import BoundsLayer from "@/components/map/layers/BoundsLayer";
 import StopsLayer from "@/components/map/layers/StopsLayer";
 
 import LocateControl from "@/components/map/controls/LocateControl";
+import OpacitySlider from "@/components/map/controls/OpacitySlider";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -87,6 +94,8 @@ export default {
     LControlZoom,
     ToggleContentDrawerBtn,
     LocateControl,
+    OpacitySlider,
+    RiverCorrectionLayer,
     PatternLayer,
     ColoniesLayer,
     RouteLayer,
@@ -100,18 +109,15 @@ export default {
         minZoom: 1,
         maxZoom: 18,
         zoomSnap: 0.2,
+        opacitySlider: false,
       },
       baseLayer: {
         zoom: 16,
         center: latLng(53.095, 8.7707),
         url:
-          "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-        attribution: `
-            &copy
-            <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
-            contributors &copy
-            <a href="https://carto.com/attributions">CARTO</a>
-            `,
+          "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
+        attribution:
+          '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
       },
       JSONLayers: {
         route: {
@@ -190,13 +196,13 @@ export default {
     openScene(uuid) {
       // Filter out single feature per UUID from scenes
       const feature = this.scenes.features.filter((a) => a.uuid === uuid)[0];
-      this.pushToRoute(feature);
       const payload = {
         uuid: feature.uuid,
         nextID: this.nextID,
         common_name: feature.common_name,
         title: feature.properties.title,
         layers: feature.layers,
+        isSubscene: false,
         content: feature.content,
         tab: 0,
       };
@@ -204,17 +210,45 @@ export default {
       eventBus.$emit("updateMarkerColors", feature.uuid);
       this.$nextTick(() => {
         this.$store.dispatch("toggleContentDrawer", true);
-        this.setCoords(feature);
       });
+      this.applyOptions(feature);
+      this.setCoords(feature);
+      this.pushToRoute(feature);
     },
     openSubscene(uuid) {
       const feature = this.subScenes.features.filter((a) => a.uuid === uuid)[0];
-      this.setCoords(feature);
       const payload = {
         title: feature.properties.title,
         layers: feature.layers,
+        isSubscene: true,
       };
       this.$store.dispatch("updateState", payload);
+      this.applyOptions(feature);
+      this.setCoords(feature);
+    },
+    applyOptions(feature) {
+      // Set feature settings
+      if (feature.properties.minZoom !== undefined) {
+        this.mapOptions.minZoom = feature.properties.minZoom;
+      }
+      if (feature.properties.maxZoom !== undefined) {
+        this.mapOptions.maxZoom = feature.properties.maxZoom;
+      }
+      if (feature.properties.opacitySlider !== undefined) {
+        this.mapOptions.opacitySlider = feature.properties.opacitySlider;
+      }
+      if (feature.properties.selector !== undefined) {
+        this.mapOptions.selector = feature.properties.selector;
+      }
+      if (feature.properties.categorySelector !== undefined) {
+        this.mapOptions.categorySelector = feature.properties.categorySelector;
+      }
+      if (feature.properties.control !== undefined) {
+        this.mapOptions.control = feature.properties.control;
+      }
+      if (feature.properties.waterLevel !== undefined) {
+        this.mapOptions.waterLevel = feature.properties.waterLevel;
+      }
     },
     setCoords(feature) {
       let zoom;
@@ -240,10 +274,12 @@ export default {
       };
       const center = this.map.getCenter();
       let zoom = this.map.getZoom();
-      if (this.isMobile) {
-        zoom--;
-      } else {
-        zoom++;
+      if (!this.isActiveLayer(this.activeLayers, "correctionLayer")) {
+        if (this.isMobile) {
+          zoom--;
+        } else {
+          zoom++;
+        }
       }
       this.map.flyTo(center, zoom, flyToOptions);
     },

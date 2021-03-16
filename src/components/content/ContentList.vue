@@ -59,6 +59,7 @@ export default {
       "currentItem",
       "tabs",
       "currentUUID",
+      "isSubscene",
       "prevAudioID",
       "nextAudioID",
       "isPlaying",
@@ -109,6 +110,7 @@ export default {
       switch (item.type) {
         case "audio":
           if (string !== "no-toggle") eventBus.$emit("toggleAudio");
+          if (this.isSubscene) eventBus.$emit("openScene", this.currentUUID);
           break;
         case "map":
           // target is a subScene UUID

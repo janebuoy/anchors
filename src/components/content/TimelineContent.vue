@@ -88,14 +88,16 @@
             </template>
           </v-slider>
         </v-card>
-        <v-card-title v-if="event !== null" class="headline">
-          {{ event[0] }}
-        </v-card-title>
-        <v-card-text
-          class="event-links"
-          v-if="event !== null"
-          v-html="event[1]"
-        ></v-card-text>
+        <v-card color="neutral darken-2" tile>
+          <v-card-title v-if="event !== null" class="headline">
+            {{ event[0] }}
+          </v-card-title>
+          <v-card-text
+            class="event-links"
+            v-if="event !== null"
+            v-html="event[1]"
+          ></v-card-text>
+        </v-card>
       </v-card>
     </v-card-text>
   </v-card>

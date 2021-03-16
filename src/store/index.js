@@ -45,6 +45,7 @@ export default new Vuex.Store({
 			title: null,
 			currentUUID: null,
 			nextID: null,
+			isSubscene: null,
 			activeLayers: ["route", "scenes", "colonies"],
 			icons: icons.icons,
 			colSliderStart: null,
@@ -185,6 +186,9 @@ export default new Vuex.Store({
 			if (payload.layers) {
 				state.map.activeLayers = payload.layers
 			}
+			if (payload.isSubscene) {
+				state.map.isSubscene = payload.isSubscene
+			}
 			if (payload.content) {
 				state.content.object = payload.content
 			}
@@ -302,6 +306,9 @@ export default new Vuex.Store({
 		},
 		nextID: state => {
 			return state.map.nextID
+		},
+		isSubscene: state => {
+			return state.map.isSubscene
 		},
 		noOfScenes: state => {
 			return state.global.scenes.mainScenes.data.features.length
