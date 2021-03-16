@@ -215,6 +215,16 @@ export default {
       this.setCoords(feature);
       this.pushToRoute(feature);
     },
+    openSceneDefaults(uuid) {
+      const feature = this.scenes.features.filter((a) => a.uuid === uuid)[0];
+      const payload = {
+        layers: feature.layers,
+        isSubscene: false,
+      };
+      this.$store.dispatch("updateState", payload);
+      this.applyOptions(feature);
+      this.setCoords(feature);
+    },
     openSubscene(uuid) {
       const feature = this.subScenes.features.filter((a) => a.uuid === uuid)[0];
       const payload = {
@@ -332,6 +342,7 @@ export default {
   created() {
     this.fetchJSONLayers();
     eventBus.$on("openScene", this.openScene);
+    eventBus.$on("openSceneDefaults", this.openSceneDefaults);
     eventBus.$on("openSubscene", this.openSubscene);
     eventBus.$on("openNextScene", () => {
       this.openScene(this.nextUUID);

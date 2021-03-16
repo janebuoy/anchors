@@ -110,7 +110,8 @@ export default {
       switch (item.type) {
         case "audio":
           if (string !== "no-toggle") eventBus.$emit("toggleAudio");
-          if (this.isSubscene) eventBus.$emit("openScene", this.currentUUID);
+          if (this.isSubscene)
+            eventBus.$emit("openSceneDefaults", this.currentUUID);
           break;
         case "map":
           // target is a subScene UUID
