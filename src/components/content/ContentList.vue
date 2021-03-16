@@ -117,8 +117,13 @@ export default {
           // target is a subScene UUID
           if (item.target) eventBus.$emit("openSubscene", item.target);
           break;
-        case "gallery":
+        case "gallery": {
+          const payload = {
+            isSubscene: false,
+          };
+          this.$store.dispatch("updateState", payload);
           break;
+        }
         case "timeline":
           if (item.target) eventBus.$emit("openSubscene", item.target);
           break;
