@@ -46,7 +46,6 @@ export default {
         layer.on({
           click: function () {
             this.openPopup();
-            console.log(feature);
             const payload = {
               geometry: feature.geometry,
               properties: {
@@ -54,7 +53,6 @@ export default {
               },
               type: feature.type,
             };
-            console.log(payload);
             eventBus.$emit("setCoords", payload);
           },
         });

@@ -161,7 +161,6 @@ export default new Vuex.Store({
 			state.global.galleries.data = payload
 		},
 		setWeserWaterLevels: (state, data) => {
-			console.log(data);
 			const features = data.filter((feature) =>
 				feature.agency === "WSA BREMEN" &&
 				feature.km < 40 &&

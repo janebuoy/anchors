@@ -12,19 +12,6 @@
       :url="baseLayer.url"
       :attribution="baseLayer.attribution"
     />
-
-    <river-correction-layer
-      ref="RiverCorrectionLayer"
-      v-if="isActiveLayer(activeLayers, 'riverCorrection')"
-    />
-    <!-- PATTERN LAYER -->
-    <PatternLayer
-      ref="speicherXILayer"
-      v-if="
-        isActiveLayer(activeLayers, 'speicherXI') && JSONLayers.speicherXI.data
-      "
-      :geojson="JSONLayers.speicherXI.data"
-    />
     <!-- COLONIES LAYER -->
     <ColoniesLayer
       ref="coloniesLayer"
@@ -34,8 +21,26 @@
     />
     <!-- WATER LEVELS LAYER  -->
     <water-levels-layer
-      ref="WaterLevelsLayer"
+      ref="waterLevelsLayer"
       v-if="isActiveLayer(activeLayers, 'waterLevels')"
+    />
+    <river-correction-layer
+      ref="riverCorrectionLayer"
+      v-if="isActiveLayer(activeLayers, 'riverCorrection')"
+    />
+    <!-- COTTON LAYER -->
+    <cotton-layer
+      v-if="isActiveLayer(activeLayers, 'cotton')"
+      :cottonBremen="JSONLayers.cottonBremen.data"
+      :cottonWorld="JSONLayers.cottonWorld.data"
+    />
+    <!-- PATTERN LAYER -->
+    <PatternLayer
+      ref="speicherXILayer"
+      v-if="
+        isActiveLayer(activeLayers, 'speicherXI') && JSONLayers.speicherXI.data
+      "
+      :geojson="JSONLayers.speicherXI.data"
     />
     <!-- ROUTE PATH -->
     <RouteLayer
@@ -61,6 +66,7 @@
     />
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
+    <CottonLayerSelector v-if="mapOptions.cottonLayerSelector" />
     <OpacitySlider v-if="mapOptions.opacitySlider" />
     <ToggleContentDrawerBtn v-if="currentUUID" />
   </l-map>
@@ -79,16 +85,18 @@ import { latLng } from "leaflet";
 
 import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 
+import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
 import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
+import CottonLayer from "@/components/map/layers/CottonLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
-import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
 import BoundsLayer from "@/components/map/layers/BoundsLayer";
 import StopsLayer from "@/components/map/layers/StopsLayer";
 
 import LocateControl from "@/components/map/controls/LocateControl";
 import OpacitySlider from "@/components/map/controls/OpacitySlider";
+import CottonLayerSelector from "@/components/map/controls/CottonLayerSelector";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -100,10 +108,12 @@ export default {
     ToggleContentDrawerBtn,
     LocateControl,
     OpacitySlider,
+    CottonLayerSelector,
+    ColoniesLayer,
     RiverCorrectionLayer,
     WaterLevelsLayer,
+    CottonLayer,
     PatternLayer,
-    ColoniesLayer,
     RouteLayer,
     BoundsLayer,
     StopsLayer,
@@ -138,6 +148,14 @@ export default {
         },
         colonies: {
           url: "data/json/countries.json",
+          data: null,
+        },
+        cottonBremen: {
+          url: "data/json/cottonBremen.json",
+          data: null,
+        },
+        cottonWorld: {
+          url: "data/json/cottonWorld.json",
           data: null,
         },
       },
@@ -261,6 +279,12 @@ export default {
         this.mapOptions.opacitySlider = feature.properties.opacitySlider;
       } else {
         this.mapOptions.opacitySlider = false;
+      }
+      if (feature.properties.cottonLayerSelector !== undefined) {
+        this.mapOptions.cottonLayerSelector =
+          feature.properties.cottonLayerSelector;
+      } else {
+        this.mapOptions.cottonLayerSelector = false;
       }
       if (feature.properties.selector !== undefined) {
         this.mapOptions.selector = feature.properties.selector;

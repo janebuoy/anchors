@@ -16,7 +16,6 @@ export default {
       url: "/data/tiles/{z}/{x}/{-y}.png",
       options: {
         opacity: 0.6, // default
-        showControls: false,
       },
     };
   },
