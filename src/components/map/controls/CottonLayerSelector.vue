@@ -55,6 +55,7 @@
 
 <script>
 import { LControl } from "vue2-leaflet";
+import { eventBus } from "../../../main";
 
 export default {
   name: "CottonLayerSelector",
@@ -91,6 +92,9 @@ export default {
   methods: {
     toggleSlider() {
       this.show = !this.show;
+    },
+    viewSelected(item) {
+      eventBus.$emit("switchLayer", item.id);
     },
   },
 };
