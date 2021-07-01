@@ -71,7 +71,10 @@ export default {
         {
           id: 0,
           name: "Bremen",
-          zoom: 11,
+          properties: {
+            zoom: 11,
+            flyTo: false,
+          },
           geometry: {
             coordinates: [8.7564, 53.1168],
           },
@@ -80,7 +83,10 @@ export default {
         {
           id: 1,
           name: "World",
-          zoom: 3,
+          properties: {
+            zoom: 3,
+            flyTo: false,
+          },
           geometry: {
             coordinates: [8.7564, 53.1168],
           },
@@ -95,6 +101,7 @@ export default {
     },
     viewSelected(item) {
       eventBus.$emit("switchLayer", item.id);
+      eventBus.$emit("setCoords", item);
     },
   },
 };

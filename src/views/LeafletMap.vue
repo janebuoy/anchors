@@ -34,6 +34,11 @@
       :cottonBremen="JSONLayers.cottonBremen.data"
       :cottonWorld="JSONLayers.cottonWorld.data"
     />
+    <!-- COFFEE BREMEN LAYER -->
+    <coffeeBremen-layer
+      v-if="isActiveLayer(activeLayers, 'coffeeBremen')"
+      :coffeeBremen="JSONLayers.coffeeBremen.data"
+    />
     <!-- PATTERN LAYER -->
     <PatternLayer
       ref="speicherXILayer"
@@ -89,6 +94,7 @@ import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
 import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
 import CottonLayer from "@/components/map/layers/CottonLayer";
+import CoffeeBremenLayer from "@/components/map/layers/CoffeeBremenLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
 import BoundsLayer from "@/components/map/layers/BoundsLayer";
@@ -113,6 +119,7 @@ export default {
     RiverCorrectionLayer,
     WaterLevelsLayer,
     CottonLayer,
+    CoffeeBremenLayer,
     PatternLayer,
     RouteLayer,
     BoundsLayer,
@@ -156,6 +163,10 @@ export default {
         },
         cottonWorld: {
           url: "data/json/cottonWorld.json",
+          data: null,
+        },
+        coffeeBremen: {
+          url: "data/json/coffeeBremen.json",
           data: null,
         },
       },
