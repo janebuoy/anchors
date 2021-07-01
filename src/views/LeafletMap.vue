@@ -39,6 +39,11 @@
       v-if="isActiveLayer(activeLayers, 'coffeeBremen')"
       :coffeeBremen="JSONLayers.coffeeBremen.data"
     />
+    <!-- STREETS LAYER -->
+    <streets-layer
+      v-if="isActiveLayer(activeLayers, 'streets')"
+      :streets="JSONLayers.streets.data"
+    />
     <!-- PATTERN LAYER -->
     <PatternLayer
       ref="speicherXILayer"
@@ -95,6 +100,7 @@ import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
 import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
 import CottonLayer from "@/components/map/layers/CottonLayer";
 import CoffeeBremenLayer from "@/components/map/layers/CoffeeBremenLayer";
+import StreetsLayer from "@/components/map/layers/StreetsLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
 import BoundsLayer from "@/components/map/layers/BoundsLayer";
@@ -120,6 +126,7 @@ export default {
     WaterLevelsLayer,
     CottonLayer,
     CoffeeBremenLayer,
+    StreetsLayer,
     PatternLayer,
     RouteLayer,
     BoundsLayer,
@@ -167,6 +174,10 @@ export default {
         },
         coffeeBremen: {
           url: "data/json/coffeeBremen.json",
+          data: null,
+        },
+        streets: {
+          url: "data/json/streets.json",
           data: null,
         },
       },

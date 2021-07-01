@@ -8,21 +8,20 @@
         style="font-size: 0.9em"
         elevation="1"
       >
-        <v-img src="" aspect-ratio="1.7" contain height="160px">
-          <v-btn
-            icon
-            tile
-            x-large
-            style="float: right"
-            class="d-md-flex d-lg-none closeButton"
-            @click.stop="closeDrawer()"
-          >
-            <v-icon> mdi-close </v-icon>
-          </v-btn>
+        <v-img
+          src="data/images/title_img_001.jpg"
+          aspect-ratio="1.7"
+          height="160px"
+        >
           <div class="fill-height bottom-gradient"></div>
         </v-img>
-        <v-card-title>Title</v-card-title>
-        <v-card-subtitle>Subtitle</v-card-subtitle>
+        <v-card-title style="font-size: 1.1em"
+          >Ankerpunkte der Verflechtung</v-card-title
+        >
+        <v-card-subtitle
+          >Ein postkolonialer Rundgang durch die Bremer
+          Überseestadt</v-card-subtitle
+        >
       </v-card>
       <v-list dense>
         <v-list-item-group color="secondary" :value="activeItem">
