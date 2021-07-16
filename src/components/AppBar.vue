@@ -26,9 +26,9 @@ export default {
       if (this.currentUUID === null) {
         text = "Start";
       } else if (this.currentUUID === firstSceneUUID) {
-        text = "Next Scene";
+        text = "Nächste Station";
       } else if (this.nextID === this.noOfScenes - 1) {
-        text = "Restart";
+        text = "Neustart";
       } else {
         text = "Next Scene";
       }

@@ -44,7 +44,14 @@
       v-if="isActiveLayer(activeLayers, 'streets')"
       :streets="JSONLayers.streets.data"
     />
-    <!-- PATTERN LAYER -->
+    <!-- PORT DEVELOPMENT -->
+    <port-development-layer
+      v-if="isActiveLayer(activeLayers, 'portDevelopment')"
+      :ports1882="JSONLayers.ports1882.data"
+      :ports1884="JSONLayers.ports1884.data"
+      :ports1914="JSONLayers.ports1914.data"
+    />
+    <!-- SPEICHER XI LAYER -->
     <PatternLayer
       ref="speicherXILayer"
       v-if="
@@ -77,6 +84,9 @@
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
     <CottonLayerSelector v-if="mapOptions.cottonLayerSelector" />
+    <PortDevelopmentLayerSelector
+      v-if="mapOptions.portDevelopmentLayerSelector"
+    />
     <OpacitySlider v-if="mapOptions.opacitySlider" />
     <ToggleContentDrawerBtn v-if="currentUUID" />
   </l-map>
@@ -101,6 +111,7 @@ import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
 import CottonLayer from "@/components/map/layers/CottonLayer";
 import CoffeeBremenLayer from "@/components/map/layers/CoffeeBremenLayer";
 import StreetsLayer from "@/components/map/layers/StreetsLayer";
+import PortDevelopmentLayer from "@/components/map/layers/PortDevelopmentLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
 import BoundsLayer from "@/components/map/layers/BoundsLayer";
@@ -109,6 +120,7 @@ import StopsLayer from "@/components/map/layers/StopsLayer";
 import LocateControl from "@/components/map/controls/LocateControl";
 import OpacitySlider from "@/components/map/controls/OpacitySlider";
 import CottonLayerSelector from "@/components/map/controls/CottonLayerSelector";
+import PortDevelopmentLayerSelector from "@/components/map/controls/PortDevelopmentLayerSelector";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -121,12 +133,14 @@ export default {
     LocateControl,
     OpacitySlider,
     CottonLayerSelector,
+    PortDevelopmentLayerSelector,
     ColoniesLayer,
     RiverCorrectionLayer,
     WaterLevelsLayer,
     CottonLayer,
     CoffeeBremenLayer,
     StreetsLayer,
+    PortDevelopmentLayer,
     PatternLayer,
     RouteLayer,
     BoundsLayer,
@@ -146,8 +160,7 @@ export default {
       baseLayer: {
         zoom: 16,
         center: latLng(53.095, 8.7707),
-        url:
-          "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+        url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
         attribution:
           '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
       },
@@ -178,6 +191,18 @@ export default {
         },
         streets: {
           url: "data/json/streets.json",
+          data: null,
+        },
+        ports1882: {
+          url: "/data/json/ports_1882+4326.json",
+          data: null,
+        },
+        ports1884: {
+          url: "/data/json/ports_1884+4326.json",
+          data: null,
+        },
+        ports1914: {
+          url: "/data/json/ports_1914+4326.json",
           data: null,
         },
       },
@@ -307,6 +332,12 @@ export default {
           feature.properties.cottonLayerSelector;
       } else {
         this.mapOptions.cottonLayerSelector = false;
+      }
+      if (feature.properties.portDevelopmentLayerSelector !== undefined) {
+        this.mapOptions.portDevelopmentLayerSelector =
+          feature.properties.portDevelopmentLayerSelector;
+      } else {
+        this.mapOptions.portDevelopmentLayerSelector = false;
       }
       if (feature.properties.selector !== undefined) {
         this.mapOptions.selector = feature.properties.selector;
