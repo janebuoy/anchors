@@ -49,3 +49,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.popup_title {
+  font-weight: 600;
+}
+</style>
