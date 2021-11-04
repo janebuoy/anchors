@@ -1,9 +1,10 @@
 <template>
-  <v-card tile dark elevation="6" color="primary" style="z-index: 200">
+  <v-card tile dark elevation="6" color="primary darken-1" style="z-index: 200">
     <v-row class="d-flex align-center justify-center" no-gutters>
       <v-btn
         icon
         @click.stop="prevAudio()"
+        title="Previous Audio"
         :disabled="prevAudioID === false || !localSrc"
       >
         <v-icon>mdi-skip-previous</v-icon>
@@ -12,16 +13,19 @@
         icon
         class="mr-1"
         @click.stop="seekBackwards()"
+        title="Seek Backwards"
         :disabled="!localSrc"
       >
         <v-icon>mdi-replay</v-icon>
       </v-btn>
       <v-btn
         fab
-        color="accent"
+        color="secondary"
         class="mt-n2"
         @click.stop="toggleAudio()"
+        :title="!isPlaying ? 'Play Audio' : 'Pause Audio'"
         ref="playButton"
+        :disabled="!localSrc"
       >
         <v-icon large class="white--text" v-if="!isPlaying">mdi-play</v-icon>
         <v-icon v-else large class="white--text">mdi-pause</v-icon>
@@ -29,6 +33,7 @@
       <v-btn
         icon
         @click.stop="seekForwards()"
+        title="Seek Forwards"
         class="ml-1"
         :disabled="!localSrc"
       >
@@ -37,6 +42,7 @@
       <v-btn
         icon
         @click.stop="nextAudio()"
+        title="Next Audio"
         :disabled="nextAudioID === false || !localSrc"
       >
         <v-icon>mdi-skip-next</v-icon>
@@ -44,6 +50,7 @@
     </v-row>
     <v-row class="d-flex align-center justify-center mt-0 pb-2 px-2" no-gutters>
       <v-slider
+        title="Seek"
         v-model="computedProgress"
         @mousedown="pauseProgress"
         @click.stop="jumpInTime"
@@ -55,13 +62,14 @@
         style="max-width: 500px"
         color="primary"
         track-color="grey lighten-2"
-        track-fill-color="accent lighten-1"
-        thumb-color="accent lighten-1"
+        track-fill-color="secondary lighten-1"
+        thumb-color="secondary lighten-1"
         :label="elaspedTime"
+        :disabled="!localSrc"
       />
       <p
-        class="mb-n2 ml-n2"
-        :class="[localSrc ? 'duration-label' : null]"
+        class="mb-n2 ml-n2 v-label theme--dark"
+        :class="!localSrc ? 'v-label--is-disabled' : null"
         style="margin-top: -5px"
       >
         {{ minutes }}:{{ seconds }}
@@ -83,6 +91,8 @@ export default {
       duration: 0,
       progress: 0,
       currentTime: 0,
+      lastAudioID: null,
+      addCompletedSent: false,
     };
   },
   computed: {
@@ -91,7 +101,9 @@ export default {
       "nextAudioID",
       "prevAudioID",
       "currentItem",
-      "savedAudioState",
+      "currentUUID",
+      "audios",
+      "currentAudioID",
     ]),
     windowWidth() {
       return this.$vuetify.breakpoint.width;
@@ -126,6 +138,8 @@ export default {
       let secs = Math.floor((this.duration - this.currentTime) % 60);
       if (secs < 10 && secs > 0) {
         secs = 0 + String(secs);
+      } else if (secs < 60 && secs > 0) {
+        secs = String(secs);
       } else {
         secs = "00";
       }
@@ -143,26 +157,58 @@ export default {
   methods: {
     toggleAudio() {
       // If nothing is playing, load Audio of selected item and play
-      if (!this.isPlaying) {
+      if (!this.isPlaying && this.currentItem.type === "audio") {
         this.loadAudio();
         this.playAudio();
+        eventBus.$emit("updateTab", this.currentItem.id);
         // If something is playing and selected item is different, load that item's source
-      } else if (this.isPlaying && this.localSrc !== this.currentItem.src) {
+      } else if (
+        this.isPlaying &&
+        this.localSrc !== this.currentItem.src &&
+        this.currentItem.type === "audio"
+      ) {
         this.loadAudio();
         this.playAudio();
         // If selected item is already playing, pause
-      } else if (this.localSrc === this.currentItem.src) {
+      } else if (
+        this.localSrc === this.currentItem.src &&
+        this.currentItem.type === "audio"
+      ) {
         this.pauseAudio();
+      } else if (this.isPlaying && this.currentItem.type !== "audio") {
+        this.pauseAudio();
+      } else if (!this.isPlaying && this.currentItem.type !== "audio") {
+        this.playAudio();
       }
     },
     playAudio() {
+      const newTime = ((this.localProgress * 1000) / 100000) * this.duration;
+      window.player.currentTime = newTime;
       window.player.play();
       this.startTimer(0);
+      const payload = {
+        id: this.lastAudioID,
+        currentTime: this.currentTime,
+        duration: this.duration,
+        progress: this.progress,
+        localSrc: this.localSrc,
+        isPlaying: true,
+      };
+      this.$store.dispatch("saveAudioState", payload);
       this.$store.dispatch("updatePlayingState", true);
     },
     pauseAudio() {
       window.player.pause();
       clearTimeout(this.timer);
+      const payload = {
+        id: this.lastAudioID,
+        currentTime: this.currentTime,
+        duration: this.duration,
+        progress: this.progress,
+        localSrc: this.localSrc,
+        isPlaying: false,
+      };
+      this.$store.dispatch("saveAudioState", payload);
       this.$store.dispatch("updatePlayingState", false);
     },
     pauseProgress() {
@@ -202,6 +248,7 @@ export default {
       this.progress = 0;
       this.duration = 0;
       this.currentTime = 0;
+      this.localProgress = 0;
       window.player = null;
     },
     loadAudio() {
@@ -210,7 +257,10 @@ export default {
         // reset player if exists
         if (window.player !== null) {
           this.resetAudio();
+          this.getAudioState();
         }
+        // store last audio id as safety measure against async state updates
+        this.lastAudioID = this.currentItem.id;
         // assign new source from from currentItem source
         this.localSrc = this.currentItem.src;
 
@@ -223,6 +273,23 @@ export default {
         window.player.addEventListener("loadedmetadata", function () {
           vm.duration = Math.round(this.duration);
         });
+        window.player.addEventListener("ended", this.resetAudio);
+      }
+    },
+    getAudioState() {
+      if (this.audios[this.currentUUID][this.currentItem.id]) {
+        this.currentTime = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].currentTime;
+        this.duration = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].duration;
+        this.progress = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].progress;
+        this.localProgress = this.audios[this.currentUUID][
+          this.currentItem.id
+        ].progress;
       }
     },
   },
@@ -230,16 +297,15 @@ export default {
     eventBus.$on("toggleAudio", this.toggleAudio);
   },
   mounted() {
-    this.currentTime = this.savedAudioState.currentTime;
-    this.duration = this.savedAudioState.duration;
-    this.progress = this.savedAudioState.progress;
-    this.localSrc = this.savedAudioState.localSrc;
+    this.getAudioState();
     if (this.isPlaying) {
       this.startTimer(0);
     }
+    this.loadAudio();
   },
   beforeDestroy() {
     const payload = {
+      id: this.lastAudioID,
       currentTime: this.currentTime,
       duration: this.duration,
       progress: this.progress,
@@ -249,29 +315,31 @@ export default {
     this.$store.dispatch("saveAudioState", payload);
   },
   watch: {
-    currentItem() {
+    currentUUID() {
+      this.getAudioState();
       this.loadAudio();
-      // Set focus to play button
-      // this.$refs.playButton.$el.focus();
+    },
+    currentItem(v) {
+      if (v.type === "audio") {
+        //this.getAudioState();
+        this.loadAudio();
+      }
+    },
+    localProgress(v) {
+      if (v > 99 && !this.addCompletedSent) {
+        this.$store.dispatch("addCompleted", this.currentAudioID);
+        this.addCompletedSent = true;
+      }
+      if (v === 0) {
+        this.addCompletedSent = false;
+      }
     },
   },
 };
 </script>
 
-<style scss scoped>
-.disabledSliderLabel {
-  color: rgba(224, 224, 224, 0.28) !important;
-}
-.duration-label {
-  color: #e0e0e0 !important;
-}
+<style lang="scss" scoped>
 .mirror {
   transform: scale(-1, 1);
-}
->>> .theme--dark.v-label {
-  color: #e0e0e0 !important;
-}
->>> .theme--dark.v-label--is-disabled {
-  color: rgba(224, 224, 224, 0.28) !important;
 }
 </style>

@@ -5154,10 +5154,22 @@ leaflet.locatecontrol@^0.66.2:
   resolved "https://registry.yarnpkg.com/leaflet.locatecontrol/-/leaflet.locatecontrol-0.66.2.tgz#a99023b53a7b71d694b02efe4e8aeab7b1789202"
   integrity sha512-33xCfRydyjLfh9nGvf4kSTM0tA1EFFgM0z4uj75QkUwIc9cz0vJqWABsyDirLm1GBKeEr8/krcnc10X1YuK7oA==
 
+leaflet.pattern@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/leaflet.pattern/-/leaflet.pattern-0.1.0.tgz#c127ac80915b7aa3f450f97fe08c06e7215eb8a7"
+  integrity sha512-E4sxvvK0XHi1EhE1yUTG1bzafXZoXUPqWPjHz5fSpv/pOcT4CtS0qR1lhFSRtSUYios8OwlZmUGB9n91zQEgcw==
+  dependencies:
+    leaflet "~0.7.1"
+
 leaflet@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
   integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==
+
+leaflet@~0.7.1:
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-0.7.7.tgz#1e352ba54e63d076451fa363c900890cb2cf75ee"
+  integrity sha1-HjUrpU5j0HZFH6NjyQCJDLLPde4=
 
 levn@^0.3.0, levn@~0.3.0:
   version "0.3.0"
@@ -8294,6 +8306,11 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
+vue-chat-scroll@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/vue-chat-scroll/-/vue-chat-scroll-1.4.0.tgz#013555d51086438829279c48614e8b8ba9301a68"
+  integrity sha512-taHcwJJadZwJR4C4t/fv+R9ZXXSrwrpQKP17La/ep5q7IyH5i3BvscgSpXwu7s8TPP9T9n5n3JDnO+vRsZ/mBQ==
+
 vue-cli-plugin-vuetify@~2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/vue-cli-plugin-vuetify/-/vue-cli-plugin-vuetify-2.1.0.tgz#1261d5866bca8f5c256f1b13abad2568fbcd6bb2"
@@ -8788,6 +8805,11 @@ ws@^6.0.0, ws@^6.2.1:
   integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
+
+wtf_wikipedia@^8.5.1:
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/wtf_wikipedia/-/wtf_wikipedia-8.5.1.tgz#41a058fe46d2be8b7aeaa40a3a43800aa222a41c"
+  integrity sha512-tvLDPsC9bGG9ABMijCCEFwPhK4678glSVX45UwXwT7KhTJgQFhn3cdm84cMOKSTag+/bRfgBG+qe9qXn3AyStw==
 
 xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.2"

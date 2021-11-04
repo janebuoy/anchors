@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer
-      v-if="$vuetify.breakpoint.mdAndUp"
+      v-if="!$vuetify.breakpoint.smAndDown"
       v-model="contentDrawer"
       absolute
       right
@@ -11,8 +11,9 @@
       class="pt-16"
     >
       <div class="nav-wrapper overflow-hidden">
-        <Content v-if="content" class="overflow-y-auto" />
-        <AudioPlayer v-if="currentItem" class="mt-auto" />
+        <TabBar class="flex-grow-0" v-if="currentUUID" />
+        <TabItems class="overflow-y-auto" v-if="currentUUID" />
+        <AudioPlayer class="mt-auto" v-if="currentUUID" />
       </div>
     </v-navigation-drawer>
     <v-bottom-sheet
@@ -23,13 +24,11 @@
       persistent
       no-click-animation
     >
-      <v-card>
-        <AudioPlayer v-if="currentItem" />
-        <v-divider></v-divider>
-        <v-card-text class="bottomContent px-0">
-          <Content v-if="content" />
-        </v-card-text>
-      </v-card>
+      <div :style="{ height: bottomHeight + 'px' }" class="nav-wrapper">
+        <AudioPlayer v-if="currentUUID" />
+        <TabItems class="overflow-y-auto" v-if="currentUUID" />
+        <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
+      </div>
     </v-bottom-sheet>
   </div>
 </template>
@@ -37,13 +36,15 @@
 <script>
 import { mapGetters } from "vuex";
 
-import Content from "./Content";
+import TabBar from "@/components/content/TabBar";
+import TabItems from "@/components/content/TabItems";
 import AudioPlayer from "./AudioPlayer";
 
 export default {
   name: "ContentDrawer",
   components: {
-    Content,
+    TabBar,
+    TabItems,
     AudioPlayer,
   },
   data() {
@@ -81,6 +82,9 @@ export default {
     windowHeight() {
       return this.$vuetify.breakpoint.height;
     },
+    bottomHeight() {
+      return this.windowHeight * 0.6;
+    },
   },
   methods: {
     onClickOutside() {
@@ -111,13 +115,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 >>> .v-bottom-sheet.v-dialog {
   max-height: 60% !important;
-}
-.bottomContent {
-  height: 400px;
-  overflow: auto;
 }
 .nav-wrapper {
   height: 100%;

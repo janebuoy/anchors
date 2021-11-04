@@ -9,7 +9,7 @@ import L, { DomEvent } from "leaflet";
 import { findRealParent, propsBinder } from "vue2-leaflet";
 import "leaflet.locatecontrol";
 import { mapGetters } from "vuex";
-import { eventBus } from "../main";
+import { eventBus } from "../../../main";
 
 const props = {
   options: {
@@ -33,9 +33,7 @@ const props = {
  */
 export default {
   name: "LocateControl",
-
   props: props,
-
   data() {
     return {
       ready: false,
@@ -50,7 +48,7 @@ export default {
     ]),
     stopBounds() {
       // Make deep copy to mess with
-      const points = JSON.parse(JSON.stringify(this.scenes.data.features));
+      const points = JSON.parse(JSON.stringify(this.scenes.features));
       let boundsArr = [];
       for (let i = 0; i < points.length; i++) {
         const coordinates = points[i].geometry.coordinates;
@@ -98,7 +96,6 @@ export default {
     DomEvent.on(this.mapObject, this.$listeners);
     propsBinder(this, this.mapObject, props);
     this.ready = true;
-    this.active = this.mapObject._active;
     this.parentContainer = findRealParent(this.$parent);
     this.mapObject.addTo(this.parentContainer.mapObject, !this.visible);
     this.enterBounds();
@@ -113,15 +110,15 @@ export default {
   cursor: pointer;
 }
 .leaflet-control-locate.active a {
-  color: var(--v-accent-base);
+  color: var(--v-secondary-base);
   :hover > & {
-    color: var(--v-accent-base);
+    color: var(--v-secondary-base);
   }
 }
 .leaflet-control-locate.active.following a {
-  color: var(--v-accent-base);
+  color: var(--v-secondary-base);
   :hover > & {
-    color: var(--v-accent-base);
+    color: var(--v-secondary-base);
   }
 }
 .leafet-control-locate-location circle {

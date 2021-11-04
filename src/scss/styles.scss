@@ -1,0 +1,68 @@
+#app {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+main {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  height: 100% !important;
+  min-height: 100vh !important;
+  /* mobile viewport bug fix */
+  min-height: -webkit-fill-available !important;
+}
+
+html {
+  height: 100% !important;
+  height: -webkit-fill-available !important;
+}
+
+
+.custom-control {
+  background: #fff;
+  padding: 0 0.5em;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.popup_content {
+  margin: 0 !important;
+}
+
+.mdi-pulseeffect {
+	display: inline-block;
+	-moz-animation: pulse 2s infinite linear;
+	-o-animation: pulse 2s infinite linear;
+	-webkit-animation: pulse 2s infinite linear;
+	animation: pulse 2s infinite linear;
+}
+
+@-webkit-keyframes pulse {
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+}
+@-moz-keyframes pulse {
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+}
+@-o-keyframes pulse {
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+}
+@-ms-keyframes pulse {
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+}
+@keyframes pulse {
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+}

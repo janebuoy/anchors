@@ -8,33 +8,32 @@
         style="font-size: 0.9em"
         elevation="1"
       >
-        <v-img src="" aspect-ratio="1.7" contain height="160px">
-          <v-btn
-            icon
-            tile
-            x-large
-            style="float: right"
-            class="d-md-flex d-lg-none closeButton"
-            @click.stop="closeDrawer()"
-          >
-            <v-icon> mdi-close </v-icon>
-          </v-btn>
+        <v-img
+          src="data/images/title_img_001.jpg"
+          aspect-ratio="1.7"
+          height="160px"
+        >
           <div class="fill-height bottom-gradient"></div>
         </v-img>
-        <v-card-title>Title</v-card-title>
-        <v-card-subtitle>Subtitle</v-card-subtitle>
+        <v-card-title style="font-size: 1.1em"
+          >Ankerpunkte der Verflechtung</v-card-title
+        >
+        <v-card-subtitle
+          >Ein postkolonialer Rundgang durch die Bremer
+          Überseestadt</v-card-subtitle
+        >
       </v-card>
       <v-list dense>
-        <v-list-item-group color="accent" v-model="activeItem">
+        <v-list-item-group color="secondary" :value="activeItem">
           <v-list-item
             link
-            v-for="(item, id) in scenes.data.features"
+            v-for="(item, index) in scenes.features"
             :key="item.uuid"
             @click.stop="openScene(item.uuid)"
           >
             <v-list-item-action>
               <v-icon>
-                {{ listIcon(id) }}
+                {{ listIcon(index) }}
               </v-icon>
             </v-list-item-action>
             <v-list-item-content>
@@ -90,11 +89,10 @@ export default {
     return {
       branch: VUE_APP_GIT_BRANCH,
       revision: VUE_APP_GIT_COMMIT_HASH,
-      activeItem: null,
     };
   },
   computed: {
-    ...mapGetters(["scenes"]),
+    ...mapGetters(["scenes", "currentUUID"]),
     drawerLeft: {
       get() {
         return this.$store.getters.drawerLeft;
@@ -103,10 +101,13 @@ export default {
         return this.$store.dispatch("toggleDrawerLeft", v);
       },
     },
+    activeItem() {
+      return this.scenes.features.findIndex((a) => a.uuid === this.currentUUID);
+    },
   },
   methods: {
-    listIcon(id) {
-      return "mdi-numeric-" + (id + 1) + "-circle";
+    listIcon(index) {
+      return "mdi-numeric-" + (index + 1) + "-circle";
     },
     closeDrawer() {
       this.$store.dispatch("toggleDrawerLeft", false);
