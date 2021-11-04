@@ -25,7 +25,12 @@
       no-click-animation
     >
       <div :style="{ height: bottomHeight + 'px' }" class="nav-wrapper">
-        <AudioPlayer v-if="currentUUID" />
+        <AudioPlayer
+          v-if="currentUUID"
+          v-touch="{
+            down: () => touchDown(),
+          }"
+        />
         <TabItems class="overflow-y-auto" v-if="currentUUID" />
         <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
       </div>
@@ -87,6 +92,9 @@ export default {
     },
   },
   methods: {
+    touchDown() {
+      this.contentDrawer = !this.contentDrawer;
+    },
     onClickOutside() {
       return true;
     },

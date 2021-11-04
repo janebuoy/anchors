@@ -278,18 +278,14 @@ export default {
     },
     getAudioState() {
       if (this.audios[this.currentUUID][this.currentItem.id]) {
-        this.currentTime = this.audios[this.currentUUID][
-          this.currentItem.id
-        ].currentTime;
-        this.duration = this.audios[this.currentUUID][
-          this.currentItem.id
-        ].duration;
-        this.progress = this.audios[this.currentUUID][
-          this.currentItem.id
-        ].progress;
-        this.localProgress = this.audios[this.currentUUID][
-          this.currentItem.id
-        ].progress;
+        this.currentTime =
+          this.audios[this.currentUUID][this.currentItem.id].currentTime;
+        this.duration =
+          this.audios[this.currentUUID][this.currentItem.id].duration;
+        this.progress =
+          this.audios[this.currentUUID][this.currentItem.id].progress;
+        this.localProgress =
+          this.audios[this.currentUUID][this.currentItem.id].progress;
       }
     },
   },
