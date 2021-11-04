@@ -58,7 +58,7 @@ import { LControl } from "vue2-leaflet";
 import { eventBus } from "../../../main";
 
 export default {
-  name: "CottonLayerSelector",
+  name: "PortDevelopmentLayerSelector",
   components: {
     LControl,
   },

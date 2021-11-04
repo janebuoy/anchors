@@ -35,8 +35,8 @@ export default {
       active: 0,
       colors: [
         {
-          name: "eastside",
-          hex: "#ad7fc7",
+          name: "indigo lighten-2",
+          hex: "#7986CB",
         },
       ],
     };

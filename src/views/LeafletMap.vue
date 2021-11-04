@@ -45,7 +45,7 @@
       :streets="JSONLayers.streets.data"
     />
     <!-- PORT DEVELOPMENT -->
-    <port-development-layer
+    <PortDevelopmentLayer
       v-if="isActiveLayer(activeLayers, 'portDevelopment')"
       :ports1882="JSONLayers.ports1882.data"
       :ports1884="JSONLayers.ports1884.data"

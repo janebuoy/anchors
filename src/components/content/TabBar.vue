@@ -180,7 +180,8 @@ export default {
       this.$refs.pinnedTabsSlider.$el.parentElement.style.minWidth = 0;
     },
     expandPinnedSliderWidth() {
-      this.$refs.pinnedTabsSlider.$el.parentElement.style.minWidth = this.pinnedSliderWidth;
+      this.$refs.pinnedTabsSlider.$el.parentElement.style.minWidth =
+        this.pinnedSliderWidth;
     },
     preserveSliderWidth() {
       this.$refs.tabsSlider.$el.parentElement.style.minWidth = this.sliderWidth;
