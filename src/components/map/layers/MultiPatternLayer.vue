@@ -1,20 +1,13 @@
 <template>
   <l-layer-group>
-    <l-geo-json
-      :geojson="ports1882"
-      :options="optionsExhib"
-      v-if="active === 0"
-    />
-    <l-geo-json
-      :geojson="ports1884"
-      :options="optionsExhib"
-      v-if="active === 1"
-    />
-    <l-geo-json
-      :geojson="ports1914"
-      :options="optionsExhib"
-      v-if="active === 2"
-    />
+    <l-layer-group>
+      <l-geo-json
+        v-for="(feature, key) in activeFeatures"
+        :key="key"
+        :geojson="feature"
+        :options="optionsExhib"
+      />
+    </l-layer-group>
   </l-layer-group>
 </template>
 
@@ -25,7 +18,7 @@ import { LLayerGroup, LGeoJson } from "vue2-leaflet";
 import { eventBus } from "../../../main";
 
 export default {
-  name: "PortDevelopmentLayer",
+  name: "MultiPatternLayer",
   components: {
     LLayerGroup,
     LGeoJson,
@@ -41,8 +34,14 @@ export default {
       ],
     };
   },
-  props: ["ports1882", "ports1884", "ports1914"],
+  props: ["geojson"],
   computed: {
+    activeFeatures() {
+      const features = this.geojson.features.filter(
+        (e) => e.properties.id === this.active
+      );
+      return { features };
+    },
     patterns() {
       let result = {};
       for (let i = 0; i < this.colors.length; i++) {

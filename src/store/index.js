@@ -47,7 +47,7 @@ export default new Vuex.Store({
 			currentUUID: null,
 			nextID: null,
 			isSubscene: null,
-			activeLayers: ["route", "scenes", "colonies"],
+			activeLayers: [{"name": "route"}, {"name": "scenes"}],
 			icons: icons.icons,
 			colSliderStart: null,
 			colEventPoint: null

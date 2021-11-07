@@ -4,28 +4,28 @@
       <v-list class="py-0">
         <v-list-item-group v-model="active">
           <v-list-item
-            v-for="(item, i) in features"
+            v-for="(item, i) in items"
             :key="i"
             dense
-            @click.stop="viewSelected(item)"
+            @click.stop="viewSelected(item.props)"
           >
             <template v-slot:default="{ active, toggle }">
               <v-list-item-action class="mr-3">
                 <v-checkbox
                   :input-value="active"
-                  :true-value="item"
+                  :true-value="item.props"
                   color="secondary"
                   @click.stop="
                     toggle();
-                    viewSelected(item);
+                    viewSelected(item.props);
                   "
                 ></v-checkbox>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title v-text="item.name"></v-list-item-title>
-                <v-list-item-subtitle v-text="item.subtitle"
-                  >item.subtitle</v-list-item-subtitle
-                >
+                <v-list-item-title v-text="item.props.name"></v-list-item-title>
+                <v-list-item-subtitle v-text="item.props.subtitle">
+                  item.subtitle
+                </v-list-item-subtitle>
               </v-list-item-content>
             </template>
           </v-list-item>
@@ -58,7 +58,8 @@ import { LControl } from "vue2-leaflet";
 import { eventBus } from "../../../main";
 
 export default {
-  name: "PortDevelopmentLayerSelector",
+  name: "MultiPatternLayerSelector",
+  props: ["properties"],
   components: {
     LControl,
   },
@@ -67,52 +68,24 @@ export default {
       show: true,
       active: 0,
       toggle: 0,
-      features: [
-        {
-          id: 0,
-          name: "1882",
-          properties: {
-            zoom: 11,
-            flyTo: false,
-          },
-          geometry: {
-            coordinates: [8.7564, 53.1168],
-          },
-          type: "Point",
-        },
-        {
-          id: 1,
-          name: "1884",
-          properties: {
-            zoom: 3,
-            flyTo: false,
-          },
-          geometry: {
-            coordinates: [8.7564, 53.1168],
-          },
-          type: "Point",
-        },
-        {
-          id: 2,
-          name: "1914",
-          properties: {
-            zoom: 3,
-            flyTo: false,
-          },
-          geometry: {
-            coordinates: [8.7564, 53.1168],
-          },
-          type: "Point",
-        },
-      ],
     };
+  },
+  computed: {
+    items() {
+      let result = [];
+      for (const feature of this.properties.features) {
+        result.push({ props: feature.properties });
+      }
+      return result;
+    },
   },
   methods: {
     toggleSlider() {
       this.show = !this.show;
     },
-    viewSelected(item) {
-      eventBus.$emit("switchPortLayer", item.id);
+    viewSelected(props) {
+      eventBus.$emit("switchPortLayer", props.id);
+      if (props.coordinates) eventBus.$emit("setCoords", props);
     },
   },
 };

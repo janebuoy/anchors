@@ -29,35 +29,21 @@
       v-if="isActiveLayer(activeLayers, 'riverCorrection')"
     />
     <!-- COTTON LAYER -->
-    <cotton-layer
+    <!-- <cotton-layer
       v-if="isActiveLayer(activeLayers, 'cotton')"
       :cottonBremen="JSONLayers.cottonBremen.data"
       :cottonWorld="JSONLayers.cottonWorld.data"
-    />
+    /> -->
     <!-- COFFEE BREMEN LAYER -->
     <coffeeBremen-layer
       v-if="isActiveLayer(activeLayers, 'coffeeBremen')"
       :coffeeBremen="JSONLayers.coffeeBremen.data"
     />
-    <!-- STREETS LAYER -->
-    <streets-layer
-      v-if="isActiveLayer(activeLayers, 'streets')"
-      :streets="JSONLayers.streets.data"
-    />
-    <!-- PORT DEVELOPMENT -->
-    <PortDevelopmentLayer
-      v-if="isActiveLayer(activeLayers, 'portDevelopment')"
-      :ports1882="JSONLayers.ports1882.data"
-      :ports1884="JSONLayers.ports1884.data"
-      :ports1914="JSONLayers.ports1914.data"
-    />
-    <!-- SPEICHER XI LAYER -->
-    <PatternLayer
-      ref="speicherXILayer"
-      v-if="
-        isActiveLayer(activeLayers, 'speicherXI') && JSONLayers.speicherXI.data
-      "
-      :geojson="JSONLayers.speicherXI.data"
+    <component
+      v-for="(layer, i) in currentLayers"
+      :key="i + '_' + layer.type"
+      :is="layer.type"
+      :geojson="JSONLayers[layer.short].data"
     />
     <!-- ROUTE PATH -->
     <RouteLayer
@@ -83,9 +69,12 @@
     />
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
-    <CottonLayerSelector v-if="mapOptions.cottonLayerSelector" />
-    <PortDevelopmentLayerSelector
-      v-if="mapOptions.portDevelopmentLayerSelector"
+    <!-- <CottonLayerSelector v-if="mapOptions.cottonLayerSelector" /> -->
+    <component
+      v-for="(layer, i) in currentControls"
+      :key="i + '_' + layer.type"
+      :is="layer.type"
+      :properties="JSONLayers[layer.short].data"
     />
     <OpacitySlider v-if="mapOptions.opacitySlider" />
     <ToggleContentDrawerBtn v-if="currentUUID" />
@@ -108,10 +97,9 @@ import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
 import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
-import CottonLayer from "@/components/map/layers/CottonLayer";
 import CoffeeBremenLayer from "@/components/map/layers/CoffeeBremenLayer";
-import StreetsLayer from "@/components/map/layers/StreetsLayer";
-import PortDevelopmentLayer from "@/components/map/layers/PortDevelopmentLayer";
+import PointsLayer from "@/components/map/layers/PointsLayer";
+import MultiPatternLayer from "@/components/map/layers/MultiPatternLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
 import BoundsLayer from "@/components/map/layers/BoundsLayer";
@@ -119,8 +107,8 @@ import StopsLayer from "@/components/map/layers/StopsLayer";
 
 import LocateControl from "@/components/map/controls/LocateControl";
 import OpacitySlider from "@/components/map/controls/OpacitySlider";
-import CottonLayerSelector from "@/components/map/controls/CottonLayerSelector";
-import PortDevelopmentLayerSelector from "@/components/map/controls/PortDevelopmentLayerSelector";
+import PointsLayerSelector from "@/components/map/controls/PointsLayerSelector";
+import MultiPatternLayerSelector from "@/components/map/controls/MultiPatternLayerSelector";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -132,15 +120,14 @@ export default {
     ToggleContentDrawerBtn,
     LocateControl,
     OpacitySlider,
-    CottonLayerSelector,
-    PortDevelopmentLayerSelector,
+    PointsLayerSelector,
+    MultiPatternLayerSelector,
     ColoniesLayer,
     RiverCorrectionLayer,
     WaterLevelsLayer,
-    CottonLayer,
     CoffeeBremenLayer,
-    StreetsLayer,
-    PortDevelopmentLayer,
+    PointsLayer,
+    MultiPatternLayer,
     PatternLayer,
     RouteLayer,
     BoundsLayer,
@@ -177,12 +164,8 @@ export default {
           url: "data/json/countries.json",
           data: null,
         },
-        cottonBremen: {
-          url: "data/json/cottonBremen.json",
-          data: null,
-        },
-        cottonWorld: {
-          url: "data/json/cottonWorld.json",
+        cotton: {
+          url: "data/json/cotton.json",
           data: null,
         },
         coffeeBremen: {
@@ -193,16 +176,8 @@ export default {
           url: "data/json/streets.json",
           data: null,
         },
-        ports1882: {
-          url: "/data/json/ports_1882+4326.json",
-          data: null,
-        },
-        ports1884: {
-          url: "/data/json/ports_1884+4326.json",
-          data: null,
-        },
-        ports1914: {
-          url: "/data/json/ports_1914+4326.json",
+        ports: {
+          url: "data/json/ports.json",
           data: null,
         },
       },
@@ -232,6 +207,38 @@ export default {
       "useActionBounds",
       "waterLevels",
     ]),
+    currentLayers() {
+      const active = this.activeLayers.filter(
+        (e) => e.name !== "route" && e.name !== "scenes"
+      );
+      let result = [];
+      for (const layer of active) {
+        result.push({
+          type: layer.type,
+          source: layer.source,
+          short: layer.short,
+        });
+      }
+      return result;
+    },
+    currentProps() {
+      return null;
+    },
+    currentControls() {
+      const active = this.activeLayers.filter(
+        (e) => e.name !== "route" && e.name !== "scenes"
+      );
+      let result = [];
+      for (const layer of active) {
+        if (layer.selector !== false) {
+          result.push({
+            type: layer.type + "Selector",
+            short: layer.short,
+          });
+        }
+      }
+      return result;
+    },
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
     },
@@ -265,7 +272,8 @@ export default {
   },
   methods: {
     isActiveLayer(array, payload) {
-      return array.includes(payload);
+      const result = array.map((e) => e.name);
+      return result.includes(payload);
     },
     openScene(uuid) {
       // Filter out single feature per UUID from scenes

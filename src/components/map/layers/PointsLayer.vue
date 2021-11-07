@@ -1,43 +1,23 @@
 <template>
-  <l-layer-group>
-    <l-geo-json
-      v-if="active === 0"
-      :geojson="cottonBremen"
-      :options="optionsCotton"
-    />
-    <l-geo-json
-      v-if="active === 1"
-      :geojson="cottonWorld"
-      :options="optionsCotton"
-    />
-  </l-layer-group>
+  <l-geo-json :geojson="geojson" :options="options" />
 </template>
 
 <script>
 import L from "leaflet";
-import { LLayerGroup, LGeoJson } from "vue2-leaflet";
-import { eventBus } from "../../../main";
+import { LGeoJson } from "vue2-leaflet";
 
 export default {
-  name: "CottonLayer",
-  props: ["cottonBremen", "cottonWorld"],
-  components: {
-    LLayerGroup,
-    LGeoJson,
-  },
-  data() {
-    return {
-      active: 0,
-    };
-  },
+  name: "PointsLayer",
+  props: ["geojson"],
+  components: { LGeoJson },
   computed: {
-    optionsCotton() {
+    options() {
       return {
-        onEachFeature: this.onEachFeatureCotton,
+        onEachFeature: this.onEachFeature,
         pointToLayer: this.pointToLayer,
       };
     },
-    onEachFeatureCotton() {
+    onEachFeature() {
       return (feature, layer) => {
         layer.bindPopup(
           "<p class='popup_title'>" +
@@ -67,13 +47,8 @@ export default {
       };
     },
   },
-  methods: {
-    switchLayer(v) {
-      this.active = v;
-    },
-  },
   created() {
-    eventBus.$on("switchLayer", this.switchLayer);
+    console.log(this.geojson);
   },
 };
 </script>
