@@ -60,6 +60,7 @@ export default {
           fillColor: this.$vuetify.theme.themes.light.secondary.lighten3,
           color: this.$vuetify.theme.themes.light.secondary.base,
           fillOpacity: 0.8,
+          opacity: 1,
           weight: 1,
         };
         return L.circleMarker(latlng, style);

@@ -40,16 +40,25 @@ export default {
       );
       return { features };
     },
+    uniqueColors() {
+      let colors = [];
+      for (const feature of this.geojson.features) {
+        colors.push({
+          color: feature.meta.color,
+        });
+      }
+      const unique = [...new Set(colors.map(JSON.stringify))].map(JSON.parse);
+      return unique;
+    },
     patterns() {
       let result = {};
-      for (let i = 0; i < this.colors.length; i++) {
-        const vm = this;
+      for (let color of this.uniqueColors) {
         const pattern = new L.StripePattern({
-          color: vm.colors[i].hex,
+          color: color.color.hex,
           opacity: 1,
           angle: -10,
         });
-        result[this.colors[i].name] = pattern;
+        result[color.color.hex] = pattern;
       }
       return result;
     },
@@ -74,7 +83,7 @@ export default {
     styleExhib() {
       return (feature) => {
         const style = {
-          fillPattern: this.patterns[feature.meta.color.name],
+          fillPattern: this.patterns[feature.meta.color.hex],
           color: "gray",
           fillOpacity: 0.8,
           weight: 1,
