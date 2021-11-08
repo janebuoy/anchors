@@ -56,11 +56,10 @@ export default {
     pointToLayer() {
       return (_, latlng) => {
         const style = {
-          radius: 8,
-          fillColor: "red",
-          color: "red",
-          fillOpacity: 0.5,
-          opacity: 1,
+          radius: 12,
+          fillColor: this.$vuetify.theme.themes.light.secondary.lighten3,
+          color: this.$vuetify.theme.themes.light.secondary.base,
+          fillOpacity: 0.8,
           weight: 1,
         };
         return L.circleMarker(latlng, style);
