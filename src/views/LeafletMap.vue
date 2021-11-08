@@ -28,17 +28,6 @@
       ref="riverCorrectionLayer"
       v-if="isActiveLayer(activeLayers, 'riverCorrection')"
     />
-    <!-- COTTON LAYER -->
-    <!-- <cotton-layer
-      v-if="isActiveLayer(activeLayers, 'cotton')"
-      :cottonBremen="JSONLayers.cottonBremen.data"
-      :cottonWorld="JSONLayers.cottonWorld.data"
-    /> -->
-    <!-- COFFEE BREMEN LAYER -->
-    <coffeeBremen-layer
-      v-if="isActiveLayer(activeLayers, 'coffeeBremen')"
-      :coffeeBremen="JSONLayers.coffeeBremen.data"
-    />
     <component
       v-for="(layer, i) in currentLayers"
       :key="i + '_' + layer.type"
@@ -97,7 +86,6 @@ import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
 import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
-import CoffeeBremenLayer from "@/components/map/layers/CoffeeBremenLayer";
 import PointsLayer from "@/components/map/layers/PointsLayer";
 import MultiPatternLayer from "@/components/map/layers/MultiPatternLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
@@ -125,7 +113,6 @@ export default {
     ColoniesLayer,
     RiverCorrectionLayer,
     WaterLevelsLayer,
-    CoffeeBremenLayer,
     PointsLayer,
     MultiPatternLayer,
     PatternLayer,
@@ -170,6 +157,10 @@ export default {
         },
         coffeeBremen: {
           url: "data/json/coffeeBremen.json",
+          data: null,
+        },
+        coffeeWorld: {
+          url: "data/json/coffeeWorld.json",
           data: null,
         },
         streets: {
