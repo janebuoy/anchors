@@ -58,7 +58,12 @@
     />
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
-    <!-- <CottonLayerSelector v-if="mapOptions.cottonLayerSelector" /> -->
+    <component
+      v-for="(layer, i) in currentInfo"
+      :key="i + '_' + layer.info"
+      :is="layer.info"
+      :properties="JSONLayers[layer.short].data"
+    />
     <component
       v-for="(layer, i) in currentControls"
       :key="i + '_' + layer.selector"
@@ -97,6 +102,7 @@ import LocateControl from "@/components/map/controls/LocateControl";
 import OpacitySlider from "@/components/map/controls/OpacitySlider";
 import PointsLayerSelector from "@/components/map/controls/PointsLayerSelector";
 import LayerSelector from "@/components/map/controls/LayerSelector";
+import LayerInfo from "@/components/map/info/LayerInfo";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -110,6 +116,7 @@ export default {
     OpacitySlider,
     PointsLayerSelector,
     LayerSelector,
+    LayerInfo,
     ColoniesLayer,
     RiverCorrectionLayer,
     WaterLevelsLayer,
@@ -220,6 +227,22 @@ export default {
     currentProps() {
       return null;
     },
+    currentInfo() {
+      const active = this.activeLayers.filter(
+        (e) => e.name !== "route" && e.name !== "scenes"
+      );
+      let result = [];
+      for (const layer of active) {
+        if (layer.selector !== false) {
+          result.push({
+            info: layer.info,
+            short: layer.short,
+          });
+        }
+      }
+      return result;
+    },
+
     currentControls() {
       const active = this.activeLayers.filter(
         (e) => e.name !== "route" && e.name !== "scenes"
