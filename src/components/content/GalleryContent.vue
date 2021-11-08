@@ -1,38 +1,40 @@
 <template>
   <v-card width="100%" flat dark tile class="d-flex">
-    <v-card-text>
+    <v-card-text class="pa-0">
       <v-carousel
+        id="carousel"
         v-model="carouselIndex"
         v-if="currentItem && images && tabItemsHeight"
         :height="
-          !$vuetify.breakpoint.smAndDown ? '100%' : tabItemsHeight - 32 + 'px'
+          !$vuetify.breakpoint.smAndDown ? '100%' : tabItemsHeight + 'px'
         "
         :continuous="false"
         hide-delimiters
         progress
-        progress-color="secondary lighten-3"
+        progress-color="accent darken-2"
       >
         <v-carousel-item v-for="image in images" :key="image.id">
           <v-img
             aspect-ratio="1.4"
             :src="image.src"
             :height="
-              !$vuetify.breakpoint.smAndDown
-                ? '100%'
-                : tabItemsHeight - 32 + 'px'
+              !$vuetify.breakpoint.smAndDown ? '100%' : tabItemsHeight + 'px'
             "
           />
           <div style="position: absolute; bottom: 0; width: 100%">
             <v-card dark tile class="caption" style="width: 100%">
               <v-card-title
-                class="subtitle-1"
+                class="subtitle-1 elevation-25"
                 style="word-break: normal !important"
               >
                 {{ image.title }}
               </v-card-title>
-              <v-card-subtitle style="word-break: normal !important">
-                {{ image.description }}</v-card-subtitle
+              <v-card-subtitle
+                style="word-break: normal !important"
+                class="text-md-body-1"
               >
+                {{ image.description }}
+              </v-card-subtitle>
             </v-card>
           </div>
         </v-carousel-item>
@@ -77,5 +79,8 @@ export default {
 <style lang="scss" scoped>
 .caption {
   background-color: rgba(36, 33, 38, 0.8);
+}
+#carousel ::v-deep .v-progress-linear {
+  height: 3px !important;
 }
 </style>
