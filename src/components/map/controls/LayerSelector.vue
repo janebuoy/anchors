@@ -85,7 +85,6 @@ export default {
         });
       }
       const items = [...new Set(result.map(JSON.stringify))].map(JSON.parse);
-      console.log(items);
       return items;
     },
   },
@@ -95,7 +94,6 @@ export default {
     },
     viewSelected(props) {
       eventBus.$emit("switchLayer", props.categoryID);
-      console.log(props);
       if (props.target) eventBus.$emit("setCoords", props.target);
     },
   },

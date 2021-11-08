@@ -8,10 +8,14 @@
       flat
       style="position: relative; z-index: 300"
     >
-      <v-icon>
+      <v-icon v-if="$vuetify.breakpoint.smAndDown">
         {{ contentDrawer ? "mdi-chevron-down" : "mdi-chevron-up" }}
       </v-icon>
-      <v-row class="d-flex align-center justify-center ml-n6" no-gutters>
+      <v-row
+        class="d-flex align-center justify-center"
+        :class="$vuetify.breakpoint.smAndDown ? 'ml-n6' : null"
+        no-gutters
+      >
         <v-btn
           icon
           @click.stop="prevAudio()"

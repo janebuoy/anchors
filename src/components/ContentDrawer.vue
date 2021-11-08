@@ -95,7 +95,6 @@ export default {
   },
   methods: {
     toggleContentDrawer() {
-      console.log("click");
       this.contentDrawer = !this.contentDrawer;
     },
     onClickOutside() {
