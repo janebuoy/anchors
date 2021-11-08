@@ -72,8 +72,8 @@
     <!-- <CottonLayerSelector v-if="mapOptions.cottonLayerSelector" /> -->
     <component
       v-for="(layer, i) in currentControls"
-      :key="i + '_' + layer.type"
-      :is="layer.type"
+      :key="i + '_' + layer.selector"
+      :is="layer.selector"
       :properties="JSONLayers[layer.short].data"
     />
     <OpacitySlider v-if="mapOptions.opacitySlider" />
@@ -108,7 +108,7 @@ import StopsLayer from "@/components/map/layers/StopsLayer";
 import LocateControl from "@/components/map/controls/LocateControl";
 import OpacitySlider from "@/components/map/controls/OpacitySlider";
 import PointsLayerSelector from "@/components/map/controls/PointsLayerSelector";
-import MultiPatternLayerSelector from "@/components/map/controls/MultiPatternLayerSelector";
+import LayerSelector from "@/components/map/controls/LayerSelector";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -121,7 +121,7 @@ export default {
     LocateControl,
     OpacitySlider,
     PointsLayerSelector,
-    MultiPatternLayerSelector,
+    LayerSelector,
     ColoniesLayer,
     RiverCorrectionLayer,
     WaterLevelsLayer,
@@ -213,11 +213,16 @@ export default {
       );
       let result = [];
       for (const layer of active) {
-        result.push({
-          type: layer.type,
-          source: layer.source,
-          short: layer.short,
-        });
+        if (
+          layer.type === "PointsLayer" ||
+          layer.type === "MultiPatternLayer" ||
+          layer.type === "PatternLayer"
+        )
+          result.push({
+            type: layer.type,
+            source: layer.source,
+            short: layer.short,
+          });
       }
       return result;
     },
@@ -232,7 +237,7 @@ export default {
       for (const layer of active) {
         if (layer.selector !== false) {
           result.push({
-            type: layer.type + "Selector",
+            selector: layer.selector,
             short: layer.short,
           });
         }
@@ -334,27 +339,6 @@ export default {
         this.mapOptions.opacitySlider = feature.properties.opacitySlider;
       } else {
         this.mapOptions.opacitySlider = false;
-      }
-      if (feature.properties.cottonLayerSelector !== undefined) {
-        this.mapOptions.cottonLayerSelector =
-          feature.properties.cottonLayerSelector;
-      } else {
-        this.mapOptions.cottonLayerSelector = false;
-      }
-      if (feature.properties.portDevelopmentLayerSelector !== undefined) {
-        this.mapOptions.portDevelopmentLayerSelector =
-          feature.properties.portDevelopmentLayerSelector;
-      } else {
-        this.mapOptions.portDevelopmentLayerSelector = false;
-      }
-      if (feature.properties.selector !== undefined) {
-        this.mapOptions.selector = feature.properties.selector;
-      }
-      if (feature.properties.categorySelector !== undefined) {
-        this.mapOptions.categorySelector = feature.properties.categorySelector;
-      }
-      if (feature.properties.control !== undefined) {
-        this.mapOptions.control = feature.properties.control;
       }
       if (feature.properties.waterLevel !== undefined) {
         this.mapOptions.waterLevel = feature.properties.waterLevel;

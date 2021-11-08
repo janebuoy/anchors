@@ -9,7 +9,7 @@ import L, { DomEvent } from "leaflet";
 import { findRealParent, propsBinder } from "vue2-leaflet";
 import "leaflet.locatecontrol";
 import { mapGetters } from "vuex";
-import { eventBus } from "../../../main";
+import { eventBus } from "@/main";
 
 const props = {
   options: {

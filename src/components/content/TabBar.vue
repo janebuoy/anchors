@@ -72,7 +72,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { eventBus } from "../../main";
+import { eventBus } from "@/main";
 import SingleTab from "@/components/content/SingleTab";
 
 export default {

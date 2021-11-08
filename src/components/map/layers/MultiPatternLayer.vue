@@ -1,13 +1,11 @@
 <template>
   <l-layer-group>
-    <l-layer-group>
-      <l-geo-json
-        v-for="(feature, key) in activeFeatures"
-        :key="key"
-        :geojson="feature"
-        :options="optionsExhib"
-      />
-    </l-layer-group>
+    <l-geo-json
+      v-for="(feature, key) in activeFeatures"
+      :key="key"
+      :geojson="feature"
+      :options="optionsExhib"
+    />
   </l-layer-group>
 </template>
 
@@ -15,7 +13,7 @@
 import L from "leaflet";
 import "leaflet.pattern";
 import { LLayerGroup, LGeoJson } from "vue2-leaflet";
-import { eventBus } from "../../../main";
+import { eventBus } from "@/main";
 
 export default {
   name: "MultiPatternLayer",
@@ -38,7 +36,7 @@ export default {
   computed: {
     activeFeatures() {
       const features = this.geojson.features.filter(
-        (e) => e.properties.id === this.active
+        (e) => e.properties.categoryID === this.active
       );
       return { features };
     },
@@ -87,12 +85,12 @@ export default {
     },
   },
   methods: {
-    switchPortLayer(v) {
+    switchLayer(v) {
       this.active = v;
     },
   },
   created() {
-    eventBus.$on("switchPortLayer", this.switchPortLayer);
+    eventBus.$on("switchLayer", this.switchLayer);
     this.map = this.$parent.$parent.$refs.lmap.mapObject;
   },
   mounted() {

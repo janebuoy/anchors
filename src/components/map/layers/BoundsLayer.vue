@@ -6,7 +6,7 @@
 import L from "leaflet";
 import { LGeoJson } from "vue2-leaflet";
 import { mapGetters } from "vuex";
-import { eventBus } from "../../../main";
+import { eventBus } from "@/main";
 
 export default {
   name: "BoundsLayer",

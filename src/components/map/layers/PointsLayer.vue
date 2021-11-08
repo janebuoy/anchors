@@ -1,16 +1,36 @@
 <template>
-  <l-geo-json :geojson="geojson" :options="options" />
+  <l-layer-group>
+    <l-geo-json
+      v-for="(feature, key) in activeFeatures"
+      :key="key"
+      :geojson="feature"
+      :options="options"
+    />
+  </l-layer-group>
 </template>
 
 <script>
+import { eventBus } from "@/main";
+
 import L from "leaflet";
-import { LGeoJson } from "vue2-leaflet";
+import { LGeoJson, LLayerGroup } from "vue2-leaflet";
 
 export default {
   name: "PointsLayer",
   props: ["geojson"],
-  components: { LGeoJson },
+  components: { LGeoJson, LLayerGroup },
+  data() {
+    return {
+      active: 0,
+    };
+  },
   computed: {
+    activeFeatures() {
+      const features = this.geojson.features.filter(
+        (e) => e.properties.categoryID === this.active
+      );
+      return { features };
+    },
     options() {
       return {
         onEachFeature: this.onEachFeature,
@@ -47,8 +67,13 @@ export default {
       };
     },
   },
+  methods: {
+    switchLayer(v) {
+      this.active = v;
+    },
+  },
   created() {
-    console.log(this.geojson);
+    eventBus.$on("switchLayer", this.switchLayer);
   },
 };
 </script>

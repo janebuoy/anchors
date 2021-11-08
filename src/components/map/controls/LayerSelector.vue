@@ -22,8 +22,10 @@
                 ></v-checkbox>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title v-text="item.props.name"></v-list-item-title>
-                <v-list-item-subtitle v-text="item.props.subtitle">
+                <v-list-item-title
+                  v-text="item.props.categoryName"
+                ></v-list-item-title>
+                <v-list-item-subtitle v-text="item.props.categorySubtitle">
                   item.subtitle
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -55,10 +57,10 @@
 
 <script>
 import { LControl } from "vue2-leaflet";
-import { eventBus } from "../../../main";
+import { eventBus } from "@/main";
 
 export default {
-  name: "MultiPatternLayerSelector",
+  name: "LayerSelector",
   props: ["properties"],
   components: {
     LControl,
@@ -74,9 +76,17 @@ export default {
     items() {
       let result = [];
       for (const feature of this.properties.features) {
-        result.push({ props: feature.properties });
+        result.push({
+          props: {
+            categoryID: feature.properties.categoryID,
+            categoryName: feature.properties.categoryName,
+            target: feature.properties.target,
+          },
+        });
       }
-      return result;
+      const items = [...new Set(result.map(JSON.stringify))].map(JSON.parse);
+      console.log(items);
+      return items;
     },
   },
   methods: {
@@ -84,8 +94,9 @@ export default {
       this.show = !this.show;
     },
     viewSelected(props) {
-      eventBus.$emit("switchPortLayer", props.id);
-      if (props.coordinates) eventBus.$emit("setCoords", props);
+      eventBus.$emit("switchLayer", props.categoryID);
+      console.log(props);
+      if (props.target) eventBus.$emit("setCoords", props.target);
     },
   },
 };

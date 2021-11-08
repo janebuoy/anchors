@@ -4,7 +4,7 @@
 
 <script>
 import { LTileLayer } from "vue2-leaflet";
-import { eventBus } from "../../../main";
+import { eventBus } from "@/main";
 
 export default {
   name: "RiverCorrectionLayer",

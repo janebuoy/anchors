@@ -36,7 +36,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { eventBus } from "../../main";
+import { eventBus } from "@/main";
 
 import ContentList from "@/components/content/ContentList";
 import GalleryContent from "@/components/content/GalleryContent.vue";
