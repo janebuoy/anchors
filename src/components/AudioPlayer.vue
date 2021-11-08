@@ -1,81 +1,106 @@
 <template>
-  <v-card tile dark elevation="6" color="primary darken-1" style="z-index: 200">
-    <v-row class="d-flex align-center justify-center" no-gutters>
-      <v-btn
-        icon
-        @click.stop="prevAudio()"
-        title="Previous Audio"
-        :disabled="prevAudioID === false || !localSrc"
+  <div>
+    <v-toolbar
+      bottom
+      dark
+      dense
+      color="primary darken-1"
+      flat
+      style="position: relative; z-index: 300"
+    >
+      <v-icon>
+        {{ contentDrawer ? "mdi-chevron-down" : "mdi-chevron-up" }}
+      </v-icon>
+      <v-row class="d-flex align-center justify-center ml-n6" no-gutters>
+        <v-btn
+          icon
+          @click.stop="prevAudio()"
+          title="Previous Audio"
+          :disabled="prevAudioID === false || !localSrc"
+        >
+          <v-icon>mdi-skip-previous</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          class="mr-1"
+          @click.stop="seekBackwards()"
+          title="Seek Backwards"
+          :disabled="!localSrc"
+        >
+          <v-icon>mdi-replay</v-icon>
+        </v-btn>
+        <v-btn
+          fab
+          large
+          color="secondary"
+          class="mt-n2"
+          @click.stop="toggleAudio()"
+          :title="!isPlaying ? 'Play Audio' : 'Pause Audio'"
+          ref="playButton"
+          :disabled="!localSrc"
+          style="position: relative; z-index: 400"
+        >
+          <v-icon large class="white--text" v-if="!isPlaying">mdi-play</v-icon>
+          <v-icon v-else large class="white--text">mdi-pause</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          @click.stop="seekForwards()"
+          title="Seek Forwards"
+          class="ml-1"
+          :disabled="!localSrc"
+        >
+          <v-icon class="mirror">mdi-replay</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          @click.stop="nextAudio()"
+          title="Next Audio"
+          :disabled="nextAudioID === false || !localSrc"
+        >
+          <v-icon>mdi-skip-next</v-icon>
+        </v-btn>
+      </v-row>
+    </v-toolbar>
+    <v-toolbar
+      dark
+      dense
+      color="primary darken-1"
+      style="position: relative; z-index: 200"
+      flat
+    >
+      <v-row
+        class="d-flex align-center justify-center mt-0 pb-2 px-2"
+        no-gutters
       >
-        <v-icon>mdi-skip-previous</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        class="mr-1"
-        @click.stop="seekBackwards()"
-        title="Seek Backwards"
-        :disabled="!localSrc"
-      >
-        <v-icon>mdi-replay</v-icon>
-      </v-btn>
-      <v-btn
-        fab
-        color="secondary"
-        class="mt-n2"
-        @click.stop="toggleAudio()"
-        :title="!isPlaying ? 'Play Audio' : 'Pause Audio'"
-        ref="playButton"
-        :disabled="!localSrc"
-      >
-        <v-icon large class="white--text" v-if="!isPlaying">mdi-play</v-icon>
-        <v-icon v-else large class="white--text">mdi-pause</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="seekForwards()"
-        title="Seek Forwards"
-        class="ml-1"
-        :disabled="!localSrc"
-      >
-        <v-icon class="mirror">mdi-replay</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="nextAudio()"
-        title="Next Audio"
-        :disabled="nextAudioID === false || !localSrc"
-      >
-        <v-icon>mdi-skip-next</v-icon>
-      </v-btn>
-    </v-row>
-    <v-row class="d-flex align-center justify-center mt-0 pb-2 px-2" no-gutters>
-      <v-slider
-        title="Seek"
-        v-model="computedProgress"
-        @mousedown="pauseProgress"
-        @click.stop="jumpInTime"
-        @
-        min="0"
-        max="100"
-        step="0.01"
-        class="pl-4 pr-4 mb-n6 ml-n3"
-        style="max-width: 500px"
-        color="primary"
-        track-color="grey lighten-2"
-        track-fill-color="secondary lighten-1"
-        thumb-color="secondary lighten-1"
-        :label="elaspedTime"
-        :disabled="!localSrc"
-      />
-      <p
-        class="mb-n2 ml-n2 v-label theme--dark"
-        :class="!localSrc ? 'v-label--is-disabled' : null"
-        style="margin-top: -5px"
-      >
-        {{ minutes }}:{{ seconds }}
-      </p>
-    </v-row>
-  </v-card>
+        <v-slider
+          title="Seek"
+          v-model="computedProgress"
+          @mousedown="pauseProgress"
+          @click.stop="jumpInTime"
+          @
+          min="0"
+          max="100"
+          step="0.01"
+          class="pl-4 pr-4 mb-n6 ml-n3"
+          style="max-width: 500px"
+          color="primary"
+          track-color="grey lighten-2"
+          track-fill-color="secondary lighten-1"
+          thumb-color="secondary lighten-1"
+          :label="elaspedTime"
+          :disabled="!localSrc"
+        />
+        <p
+          class="mb-n2 ml-n2 v-label theme--dark"
+          :class="!localSrc ? 'v-label--is-disabled' : null"
+          style="margin-top: -5px"
+        >
+          {{ minutes }}:{{ seconds }}
+        </p>
+      </v-row>
+    </v-toolbar>
+  </div>
 </template>
 
 <script>
@@ -104,7 +129,9 @@ export default {
       "currentUUID",
       "audios",
       "currentAudioID",
+      "contentDrawer",
     ]),
+
     windowWidth() {
       return this.$vuetify.breakpoint.width;
     },

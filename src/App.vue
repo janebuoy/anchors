@@ -5,6 +5,10 @@
         contentDrawer && $vuetify.breakpoint.smAndDown
           ? { paddingBottom: bottomSheetHeight + 'px' }
           : null,
+        !contentDrawer && currentUUID ? { paddingBottom: '144px' } : null,
+        !contentDrawer && $vuetify.breakpoint.mdAndUp
+          ? { paddingBottom: '0px' }
+          : null,
         contentDrawer && $vuetify.breakpoint.mdAndUp
           ? { paddingRight: drawerRightWidth + 'px' }
           : null,
