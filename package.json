@@ -17,6 +17,7 @@
 		"roboto-fontface": "*",
 		"vue": "^2.6.11",
 		"vue-chat-scroll": "^1.4.0",
+		"vue-d3-charts": "^0.2.8",
 		"vue-router": "^3.2.0",
 		"vue2-leaflet": "^2.6.0",
 		"vue2-leaflet-locatecontrol": "^1.0.1",
