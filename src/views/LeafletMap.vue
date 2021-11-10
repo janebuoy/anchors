@@ -12,27 +12,22 @@
       :url="baseLayer.url"
       :attribution="baseLayer.attribution"
     />
+    <component
+      v-for="(layer, i) in currentLayers"
+      :key="i + '_' + layer.type"
+      :is="layer.type"
+      :data="layer.data"
+    />
+    <water-levels-layer
+      :key="'waterLevelsLayer'"
+      v-if="isActiveLayer(activeLayers, 'waterLevels')"
+    />
     <!-- COLONIES LAYER -->
     <ColoniesLayer
       ref="coloniesLayer"
       v-if="isActiveLayer(activeLayers, 'colonies') && JSONLayers.colonies.data"
       :geojson="JSONLayers.colonies.data"
       :max="thisYear"
-    />
-    <!-- WATER LEVELS LAYER  -->
-    <water-levels-layer
-      ref="waterLevelsLayer"
-      v-if="isActiveLayer(activeLayers, 'waterLevels')"
-    />
-    <river-correction-layer
-      ref="riverCorrectionLayer"
-      v-if="isActiveLayer(activeLayers, 'riverCorrection')"
-    />
-    <component
-      v-for="(layer, i) in currentLayers"
-      :key="i + '_' + layer.type"
-      :is="layer.type"
-      :geojson="JSONLayers[layer.short].data"
     />
     <!-- ROUTE PATH -->
     <RouteLayer
@@ -62,15 +57,15 @@
       v-for="(layer, i) in currentInfo"
       :key="i + '_' + layer.info"
       :is="layer.info"
-      :properties="JSONLayers[layer.short].data"
+      :properties="layer.data"
     />
     <component
       v-for="(layer, i) in currentControls"
       :key="i + '_' + layer.selector"
       :is="layer.selector"
-      :properties="JSONLayers[layer.short].data"
+      :properties="layer.data"
     />
-    <OpacitySlider v-if="mapOptions.opacitySlider" />
+    <!-- <OpacitySlider v-if="mapOptions.opacitySlider" /> -->
     <ToggleContentDrawerBtn v-if="currentUUID" />
   </l-map>
 </template>
@@ -90,6 +85,7 @@ import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 
 import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
+import RasterLayer from "@/components/map/layers/RasterLayer";
 import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
 import PointsLayer from "@/components/map/layers/PointsLayer";
 import MultiPatternLayer from "@/components/map/layers/MultiPatternLayer";
@@ -119,6 +115,7 @@ export default {
     LayerInfo,
     ColoniesLayer,
     RiverCorrectionLayer,
+    RasterLayer,
     WaterLevelsLayer,
     PointsLayer,
     MultiPatternLayer,
@@ -178,6 +175,10 @@ export default {
           url: "data/json/ports.json",
           data: null,
         },
+        river: {
+          url: "data/json/river.json",
+          data: null,
+        },
       },
       locateControl: {
         object: Object,
@@ -215,17 +216,21 @@ export default {
           layer.type === "PointsLayer" ||
           layer.type === "MultiPatternLayer" ||
           layer.type === "PatternLayer"
-        )
+        ) {
           result.push({
             type: layer.type,
             source: layer.source,
-            short: layer.short,
+            data: this.JSONLayers[layer.short].data,
           });
+        } else if (layer.type === "RasterLayer") {
+          result.push({
+            type: layer.type,
+            source: layer.source,
+            data: layer.url,
+          });
+        }
       }
       return result;
-    },
-    currentProps() {
-      return null;
     },
     currentInfo() {
       const active = this.activeLayers.filter(
@@ -233,26 +238,29 @@ export default {
       );
       let result = [];
       for (const layer of active) {
-        if (layer.selector !== false) {
+        if (layer.info) {
           result.push({
             info: layer.info,
-            short: layer.short,
+            data: this.JSONLayers[layer.short].data,
           });
         }
       }
       return result;
     },
-
     currentControls() {
       const active = this.activeLayers.filter(
         (e) => e.name !== "route" && e.name !== "scenes"
       );
       let result = [];
       for (const layer of active) {
-        if (layer.selector !== false) {
+        if (layer.selector && layer.selector !== "OpacityControl") {
           result.push({
             selector: layer.selector,
-            short: layer.short,
+            data: this.JSONLayers[layer.short].data,
+          });
+        } else if (layer.selector === "OpacityControl") {
+          result.push({
+            data: layer.type,
           });
         }
       }

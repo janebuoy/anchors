@@ -4,7 +4,7 @@
       v-for="(feature, key) in activeFeatures"
       :key="key"
       :geojson="feature"
-      :options="optionsExhib"
+      :options="options"
     />
   </l-layer-group>
 </template>
@@ -21,6 +21,7 @@ export default {
     LLayerGroup,
     LGeoJson,
   },
+  props: ["data"],
   data() {
     return {
       active: 0,
@@ -32,17 +33,16 @@ export default {
       ],
     };
   },
-  props: ["geojson"],
   computed: {
     activeFeatures() {
-      const features = this.geojson.features.filter(
+      const features = this.data.features.filter(
         (e) => e.properties.categoryID === this.active
       );
       return { features };
     },
     uniqueColors() {
       let colors = [];
-      for (const feature of this.geojson.features) {
+      for (const feature of this.data.features) {
         colors.push({
           color: feature.meta.color,
         });
@@ -62,13 +62,13 @@ export default {
       }
       return result;
     },
-    optionsExhib() {
+    options() {
       return {
-        onEachFeature: this.onEachFeatureExhib,
-        style: this.styleExhib,
+        onEachFeature: this.onEachFeature,
+        style: this.style,
       };
     },
-    onEachFeatureExhib() {
+    onEachFeature() {
       return (feature, layer) => {
         layer.on("click", (e) => {
           L.popup()
@@ -80,7 +80,7 @@ export default {
         });
       };
     },
-    styleExhib() {
+    style() {
       return (feature) => {
         const style = {
           fillPattern: this.patterns[feature.meta.color.hex],

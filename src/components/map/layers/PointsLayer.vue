@@ -17,7 +17,7 @@ import { LGeoJson, LLayerGroup } from "vue2-leaflet";
 
 export default {
   name: "PointsLayer",
-  props: ["geojson"],
+  props: ["data"],
   components: { LGeoJson, LLayerGroup },
   data() {
     return {
@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     activeFeatures() {
-      const features = this.geojson.features.filter(
+      const features = this.data.features.filter(
         (e) => e.properties.categoryID === this.active
       );
       return { features };
