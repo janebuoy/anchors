@@ -9,6 +9,8 @@ import { eventBus } from "../main";
 const ax = axios.create({
 	baseURL: process.env.BASE_URL,
 });
+import { replaceWikiLinks } from "@/plugins/renderWikiText.js";
+
 
 Vue.use(Vuex)
 
@@ -83,9 +85,20 @@ export default new Vuex.Store({
 		},
 		fetchTimeline(context) {
 			ax.get(context.state.global.timeline.url)
-				.then(response => response.data)
-				.then(timeline => {
-					context.commit("setTimeline", timeline)
+				.then(response => {
+					const resp = response.data
+					let timelineArr = []
+					for (let [key, value] of Object.entries(resp)) {
+						timelineArr.push({
+							type: "Feature",
+							properties: {
+								name: key,
+								description: replaceWikiLinks(value.text),
+							},
+							geometry: value.geometry,
+						})
+					}
+					context.commit("setTimeline", timelineArr)
 				})
 				.catch((err) => {
 					console.log(err);

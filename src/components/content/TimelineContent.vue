@@ -1,11 +1,21 @@
 <template>
-  <v-card width="100%" flat dark tile>
+  <v-card flat tile height="100%">
+    <v-card-title style="word-break: normal !important">
+      {{ currentItem.title }}
+    </v-card-title>
+    <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
     <v-card-text>
-      <v-card flat tile :height="tabItemsHeight - 32 + 'px'">
-        <v-card-title style="word-break: normal !important">
-          {{ currentItem.title }}
-        </v-card-title>
-        <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
+      <v-sheet outlined rounded class="mx-1" color="grey lighten-4">
+        <v-card dark color="neutral darken-2" tile v-if="event.properties">
+          <v-card-title class="headline">
+            {{ event.properties.name }}
+          </v-card-title>
+          <v-card-text
+            class="event-links"
+            v-if="event !== null"
+            v-html="event.properties.description"
+          ></v-card-text>
+        </v-card>
         <v-card
           style="width: 100%; height: 46px"
           class="px-4 neutral darken-3"
@@ -88,24 +98,13 @@
             </template>
           </v-slider>
         </v-card>
-        <v-card color="neutral darken-2" tile>
-          <v-card-title v-if="event !== null" class="headline">
-            {{ event[0] }}
-          </v-card-title>
-          <v-card-text
-            class="event-links"
-            v-if="event !== null"
-            v-html="event[1]"
-          ></v-card-text>
-        </v-card>
-      </v-card>
+      </v-sheet>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import wtf from "wtf_wikipedia";
 
 export default {
   name: "TimelineContent",
@@ -115,7 +114,7 @@ export default {
       max: new Date().getFullYear(),
       playing: false,
       speed: 600,
-      event: null,
+      event: {},
       tmpTimeline: null,
       closeOnClick: true,
     };
@@ -134,6 +133,9 @@ export default {
       set(val) {
         this.$store.dispatch("colSliderStart", val);
       },
+    },
+    reverseTimeline() {
+      return [...this.timeline].reverse();
     },
   },
   methods: {
@@ -158,79 +160,11 @@ export default {
       this.interval = false;
     },
     getEvent(val) {
-      let arr = [];
-      for (let [key, value] of Object.entries(this.tmpTimeline)) {
-        const keyStartTime = key.substring(0, 4);
-        if (keyStartTime <= val && keyStartTime > this.min) {
-          arr[0] = key;
-          arr[1] = this.replaceWikiLinks(value.text);
-          delete this.tmpTimeline[key];
-          if (arr.length > 0) {
-            this.event = arr;
-          }
-          const features = [
-            {
-              type: "Feature",
-              properties: {
-                year: arr[0],
-                description: arr[1],
-              },
-              geometry: value.geometry,
-            },
-          ];
-          this.$store.dispatch("colEventPoint", features);
-        }
-      }
-    },
-    replaceWikiLink(value) {
-      const links = wtf(value).links();
-      let text = [];
-      let result = [];
-      text[0] = wtf(value).text();
-      if (links.length === 0) {
-        return text[0];
+      if (this.timeline.find((e) => e.properties.name == val)) {
+        this.event = this.timeline.find((e) => e.properties.name == val);
+        this.$store.dispatch("colEventPoint", [this.event]);
       } else {
-        for (let i = 0; i < links.length; i++) {
-          if (links[i].data.text) {
-            const URL =
-              "<a href='https://en.wikipedia.org/wiki/" +
-              links[i].data.page.split(" ").join("_") +
-              "'>" +
-              links[i].data.text +
-              "</a>";
-            text[i] = text[i].replace(links[i].data.text, URL);
-            text[i + 1] = text[i].split("</a>").pop();
-            result.push(text[i].split("</a>").shift() + "</a>");
-            if (i == links.length - 1) {
-              result.push(text.pop());
-            }
-          } else {
-            const URL =
-              "<a href='https://en.wikipedia.org/wiki/" +
-              links[i].data.page.split(" ").join("_") +
-              "'>" +
-              links[i].data.page +
-              "</a>";
-            text[i] = text[i].replace(links[i].data.page, URL);
-            text[i + 1] = text[i].split("</a>").pop();
-            result.push(text[i].split("</a>").shift() + "</a>");
-            if (i == links.length - 1) {
-              result.push(text.pop());
-            }
-          }
-        }
-      }
-      return result.join("");
-    },
-    replaceWikiLinks(value) {
-      if (Array.isArray(value)) {
-        let result = [];
-        for (let i = 0; i < value.length; i++) {
-          result.push(this.replaceWikiLink(value[i]));
-        }
-        return result.join("\n");
-      } else {
-        return this.replaceWikiLink(value);
+        this.event = this.reverseTimeline.find((e) => e.properties.name <= val);
       }
     },
     playAnimation(s) {

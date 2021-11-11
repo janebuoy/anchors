@@ -368,7 +368,7 @@ export default {
     },
     setCoords(feature) {
       let zoom;
-      if (this.isMobile) {
+      if (this.isMobile && feature.properties.zoom) {
         zoom = feature.properties.zoom - 1;
       } else {
         zoom = feature.properties.zoom;

@@ -54,6 +54,17 @@ export default new Vuetify({
 					darken3: "#39373a",
 					darken4: "#1c1b1d",
 				},
+				grey: {
+					base: colors.grey.lighten1,
+					lighten1: colors.grey.lighten1,
+					lighten2: colors.grey.lighten2,
+					lighten3: colors.grey.lighten3,
+					lighten4: colors.grey.lighten4,
+					darken1: colors.grey.darken1,
+					darken2: colors.grey.darken2,
+					darken3: colors.grey.darken3,
+					darken4: colors.grey.darken4,
+				},
 				error: {
 					base: "#E25455",
 					lighten1: "#e56364",
