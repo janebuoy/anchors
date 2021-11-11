@@ -5,23 +5,20 @@
     </v-card-title>
     <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
     <v-card-text>
-      <v-sheet outlined rounded class="mx-1" color="grey lighten-4">
-        <v-card dark color="neutral darken-2" tile v-if="event.properties">
-          <v-card-title class="headline">
-            {{ event.properties.name }}
-          </v-card-title>
-          <v-card-text
-            class="event-links"
-            v-if="event !== null"
-            v-html="event.properties.description"
-          ></v-card-text>
-        </v-card>
-        <v-card
-          style="width: 100%; height: 46px"
-          class="px-4 neutral darken-3"
-          dark
-          tile
+      <v-card color="grey lighten-4" rounded flat class="mx-1">
+        <v-card-title
+          class="headline"
+          v-if="event !== null && event.properties"
         >
+          {{ event.properties.name }}
+        </v-card-title>
+        <v-card-text
+          v-if="event !== null && event.properties"
+          class="event-links"
+          v-html="event.properties.description"
+        ></v-card-text>
+        <v-divider v-if="event !== null && event.properties" />
+        <v-card-actions>
           <v-slider
             v-model="year"
             :max="max"
@@ -68,8 +65,8 @@
               >
                 <v-icon>
                   {{ !playing ? "mdi-play" : "mdi-pause" }}
-                </v-icon></v-btn
-              >
+                </v-icon>
+              </v-btn>
               <v-menu top offset-y :close-on-click="closeOnClick">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
@@ -97,8 +94,8 @@
               </v-menu>
             </template>
           </v-slider>
-        </v-card>
-      </v-sheet>
+        </v-card-actions>
+      </v-card>
     </v-card-text>
   </v-card>
 </template>
@@ -114,8 +111,7 @@ export default {
       max: new Date().getFullYear(),
       playing: false,
       speed: 600,
-      event: {},
-      tmpTimeline: null,
+      event: null,
       closeOnClick: true,
     };
   },
@@ -160,11 +156,13 @@ export default {
       this.interval = false;
     },
     getEvent(val) {
-      if (this.timeline.find((e) => e.properties.name == val)) {
-        this.event = this.timeline.find((e) => e.properties.name == val);
+      if (this.timeline.find((e) => e.properties.name.includes(val))) {
+        this.event = this.timeline.find((e) => e.properties.name.includes(val));
         this.$store.dispatch("colEventPoint", [this.event]);
       } else {
-        this.event = this.reverseTimeline.find((e) => e.properties.name <= val);
+        this.event = this.reverseTimeline.find(
+          (e) => e.properties.start <= val
+        );
       }
     },
     playAnimation(s) {
@@ -196,7 +194,6 @@ export default {
     year(val, old) {
       if (this.timeline) {
         if (val <= old) {
-          this.tmpTimeline = JSON.parse(JSON.stringify(this.timeline));
           this.getEvent(val);
         }
         if (val > old) {
@@ -207,20 +204,6 @@ export default {
         }
       }
     },
-    timeline(v) {
-      if (v) {
-        this.tmpTimeline = JSON.parse(JSON.stringify(v));
-      }
-    },
-  },
-  mounted() {
-    this.tmpTimeline = JSON.parse(JSON.stringify(this.timeline));
   },
 };
 </script>
-
-<style>
-.event-links a {
-  color: var(--v-accent-darken2) !important;
-}
-</style>

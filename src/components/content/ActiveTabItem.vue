@@ -7,21 +7,36 @@
     <v-card-text
       v-if="currentItem.target === '8808cb18-8334-11eb-8dcd-0242ac130003'"
     >
-      <v-sheet outlined rounded class="mx-1" color="grey lighten-4">
-        <v-sheet
-          v-if="!loaded"
-          height="300"
-          tile
-          class="my-5"
-          color="grey lighten-4"
-        ></v-sheet>
-        <D3LineChart
-          :key="uuid"
-          v-else
-          :config="chart_config"
-          :datum="measurements"
-        ></D3LineChart>
-        <p v-if="this.waterLevels" class="mx-6">
+      <v-card outlined rounded class="mx-1" color="grey lighten-4">
+        <v-card-title v-if="waterLevels">
+          <v-select
+            v-model="uuid"
+            :items="items"
+            item-text="properties.name"
+            item-value="properties.uuid"
+            @input="fetchStation(uuid)"
+            solo
+            dense
+            flat
+            single-line
+            hide-details
+          ></v-select>
+        </v-card-title>
+        <v-divider />
+        <v-card-text v-if="this.waterLevels">
+          <v-sheet
+            v-if="!loaded"
+            height="120"
+            tile
+            color="grey lighten-4"
+          ></v-sheet>
+          <D3LineChart
+            v-if="loaded"
+            :key="uuid"
+            :config="chart_config"
+            :datum="measurements"
+            height="120"
+          ></D3LineChart>
           {{
             "Letzte Messung: " +
             currentFeature.properties.timestamp.hours +
@@ -39,18 +54,8 @@
           <a href="https://www.pegelonline.wsv.de/webservice" target="_blank"
             >pegelonline.wsv.de/webservice</a
           >
-        </p>
-      </v-sheet>
-      <v-select
-        v-if="waterLevels"
-        v-model="uuid"
-        :items="items"
-        item-text="properties.name"
-        item-value="properties.uuid"
-        @input="fetchStation(uuid)"
-        dense
-        class="mx-3 pt-2"
-      ></v-select>
+        </v-card-text>
+      </v-card>
     </v-card-text>
   </v-card>
 </template>
@@ -109,6 +114,12 @@ export default {
           duration: 320,
           ease: "easeBackInOut",
         },
+        margin: {
+          top: 20,
+          right: 0,
+          bottom: 20,
+          left: 0,
+        },
       },
     };
   },
@@ -158,3 +169,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-input__slot {
+  background-color: var(--v-grey-lighten4) !important;
+}
+</style>

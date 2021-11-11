@@ -93,6 +93,7 @@ export default new Vuex.Store({
 							type: "Feature",
 							properties: {
 								name: key,
+								start: key.slice(0, 4),
 								description: replaceWikiLinks(value.text),
 							},
 							geometry: value.geometry,
