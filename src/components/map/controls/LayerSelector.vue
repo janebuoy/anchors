@@ -2,34 +2,32 @@
   <l-control position="bottomright">
     <div v-if="show" class="custom-control pa-0 mb-2">
       <v-list class="py-0">
-        <v-list-item-group v-model="active">
+        <v-list-item-group v-model="active" mandatory>
           <v-list-item
             v-for="(item, i) in items"
             :key="i"
             dense
             @click.stop="viewSelected(item.props)"
           >
-            <template v-slot:default="{ active, toggle }">
-              <v-list-item-action class="mr-3">
-                <v-checkbox
-                  :input-value="active"
-                  :true-value="item.props"
-                  color="secondary"
-                  @click.stop="
-                    toggle();
-                    viewSelected(item.props);
-                  "
-                ></v-checkbox>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title
-                  v-text="item.props.categoryName"
-                ></v-list-item-title>
-                <v-list-item-subtitle v-text="item.props.categorySubtitle">
-                  item.subtitle
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </template>
+            <v-list-item-icon>
+              <v-icon
+                :color="active === item.props.categoryID ? 'secondary' : null"
+              >
+                {{
+                  active === item.props.categoryID
+                    ? "mdi-checkbox-marked"
+                    : "mdi-checkbox-blank-outline"
+                }}</v-icon
+              >
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title
+                v-text="item.props.categoryName"
+              ></v-list-item-title>
+              <v-list-item-subtitle v-text="item.props.categorySubtitle">
+                item.subtitle
+              </v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -69,7 +67,6 @@ export default {
     return {
       show: true,
       active: 0,
-      toggle: 0,
     };
   },
   computed: {
@@ -99,3 +96,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-list-item__icon {
+  margin-right: 16px !important;
+}
+</style>
