@@ -74,7 +74,9 @@ export default {
           L.popup()
             .setLatLng(e.latlng)
             .setContent(
-              "<p class='popup_title'>" + feature.properties.name + "</p>"
+              "<p class='popup_title'>" +
+                feature.properties.categoryName +
+                "</p>"
             )
             .openOn(this.map);
         });
