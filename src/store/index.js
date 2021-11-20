@@ -25,10 +25,6 @@ export default new Vuex.Store({
 					data: null,
 				},
 			},
-			timeline: {
-				url: "data/json/timeline.json",
-				data: null,
-			},
 			galleries: {
 				url: "data/json/galleries.json",
 				data: null,
@@ -47,7 +43,7 @@ export default new Vuex.Store({
 			currentUUID: null,
 			nextID: null,
 			isSubscene: null,
-			activeLayers: ["route", "scenes", "colonies"],
+			activeLayers: [{ "name": "route" }, { "name": "scenes" }],
 			icons: icons.icons,
 			colSliderStart: null,
 			colEventPoint: null
@@ -80,16 +76,6 @@ export default new Vuex.Store({
 						console.log(err);
 					});
 			}
-		},
-		fetchTimeline(context) {
-			ax.get(context.state.global.timeline.url)
-				.then(response => response.data)
-				.then(timeline => {
-					context.commit("setTimeline", timeline)
-				})
-				.catch((err) => {
-					console.log(err);
-				});
 		},
 		fetchGalleries(context) {
 			ax.get(context.state.global.galleries.url)
@@ -153,9 +139,6 @@ export default new Vuex.Store({
 		// * Global Mutations
 		setScenes: (state, payload) => {
 			state.global.scenes[payload.key].data = payload.scenes
-		},
-		setTimeline: (state, payload) => {
-			state.global.timeline.data = payload
 		},
 		setGalleries: (state, payload) => {
 			state.global.galleries.data = payload
@@ -323,9 +306,6 @@ export default new Vuex.Store({
 		subScenes: state => {
 			return state.global.scenes.subScenes.data
 		},
-		timeline: state => {
-			return state.global.timeline.data
-		},
 		galleries: state => {
 			return state.global.galleries.data
 		},
@@ -403,7 +383,7 @@ export default new Vuex.Store({
 					"audio": "mdi-headphones",
 					"map": "mdi-map",
 					"gallery": "mdi-view-carousel",
-					"timeline": "mdi-timeline"
+					"timeline": "mdi-play-box-outline"
 				}
 				for (let value of Object.values(resources)) {
 					value["icon"] = icons[value.type]

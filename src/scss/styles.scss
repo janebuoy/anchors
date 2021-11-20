@@ -33,6 +33,25 @@ html {
   margin: 0 !important;
 }
 
+.popup_title {
+	font-weight: 600;
+}
+// D3
+.chart{
+	&__grid--linechart {
+		font-family: 'Roboto', sans-serif;
+		font-size: 0.8rem;
+	}
+  &__axis-x--linechart {
+		font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
+		font-weight: 400;
+  }
+  &__line--linechart {
+    stroke-width: 3;
+  }
+}
+
 .mdi-pulseeffect {
 	display: inline-block;
 	-moz-animation: pulse 2s infinite linear;

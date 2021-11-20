@@ -1,43 +1,43 @@
 <template>
   <l-layer-group>
     <l-geo-json
-      v-if="active === 0"
-      :geojson="cottonBremen"
-      :options="optionsCotton"
-    />
-    <l-geo-json
-      v-if="active === 1"
-      :geojson="cottonWorld"
-      :options="optionsCotton"
+      v-for="(feature, key) in activeFeatures"
+      :key="key"
+      :geojson="feature"
+      :options="options"
     />
   </l-layer-group>
 </template>
 
 <script>
+import { eventBus } from "@/main";
+
 import L from "leaflet";
-import { LLayerGroup, LGeoJson } from "vue2-leaflet";
-import { eventBus } from "../../../main";
+import { LGeoJson, LLayerGroup } from "vue2-leaflet";
 
 export default {
-  name: "CottonLayer",
-  props: ["cottonBremen", "cottonWorld"],
-  components: {
-    LLayerGroup,
-    LGeoJson,
-  },
+  name: "PointsLayer",
+  props: ["data"],
+  components: { LGeoJson, LLayerGroup },
   data() {
     return {
       active: 0,
     };
   },
   computed: {
-    optionsCotton() {
+    activeFeatures() {
+      const features = this.data.features.filter(
+        (e) => e.properties.categoryID === this.active
+      );
+      return { features };
+    },
+    options() {
       return {
-        onEachFeature: this.onEachFeatureCotton,
+        onEachFeature: this.onEachFeature,
         pointToLayer: this.pointToLayer,
       };
     },
-    onEachFeatureCotton() {
+    onEachFeature() {
       return (feature, layer) => {
         layer.bindPopup(
           "<p class='popup_title'>" +
@@ -56,10 +56,10 @@ export default {
     pointToLayer() {
       return (_, latlng) => {
         const style = {
-          radius: 8,
-          fillColor: "red",
-          color: "red",
-          fillOpacity: 0.5,
+          radius: 12,
+          fillColor: this.$vuetify.theme.themes.light.secondary.lighten3,
+          color: this.$vuetify.theme.themes.light.secondary.base,
+          fillOpacity: 0.8,
           opacity: 1,
           weight: 1,
         };

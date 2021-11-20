@@ -1,5 +1,5 @@
 <template>
-  <l-geo-json :geojson="geojson" :options="optionsExhib" />
+  <l-geo-json :geojson="data" :options="options" />
 </template>
 
 <script>
@@ -13,15 +13,15 @@ export default {
   components: {
     LGeoJson,
   },
-  props: ["geojson"],
+  props: ["data"],
   computed: {
     uniqueColors() {
-      if (this.geojson) {
+      if (this.data) {
         const colorNames = [
-          ...new Set(this.geojson.features.map((a) => a.meta.color.name)),
+          ...new Set(this.data.features.map((a) => a.meta.color.name)),
         ];
         const colorValues = [
-          ...new Set(this.geojson.features.map((a) => a.meta.color.hex)),
+          ...new Set(this.data.features.map((a) => a.meta.color.hex)),
         ];
         let uniqueColors = [];
         for (let i = 0; i < colorNames.length; i++) {
@@ -45,13 +45,13 @@ export default {
       }
       return result;
     },
-    optionsExhib() {
+    options() {
       return {
-        onEachFeature: this.onEachFeatureExhib,
-        style: this.styleExhib,
+        onEachFeature: this.onEachFeature,
+        style: this.style,
       };
     },
-    onEachFeatureExhib() {
+    onEachFeature() {
       return (feature, layer) => {
         layer.on("click", (e) => {
           L.popup()
@@ -63,7 +63,7 @@ export default {
         });
       };
     },
-    styleExhib() {
+    style() {
       return (feature) => {
         const style = {
           fillPattern: this.patterns[feature.meta.color.name],

@@ -16,20 +16,27 @@
         <AudioPlayer class="mt-auto" v-if="currentUUID" />
       </div>
     </v-navigation-drawer>
-    <v-bottom-sheet
+    <div
       v-if="$vuetify.breakpoint.smAndDown"
       ref="bottomSheet"
-      v-model="contentDrawer"
-      hide-overlay
-      persistent
-      no-click-animation
+      :style="[
+        contentDrawer ? { height: bottomHeight + 'px' } : { height: '144px' },
+      ]"
+      class="nav-wrapper"
+      style="position: fixed; bottom: 0"
     >
-      <div :style="{ height: bottomHeight + 'px' }" class="nav-wrapper">
-        <AudioPlayer v-if="currentUUID" />
-        <TabItems class="overflow-y-auto" v-if="currentUUID" />
-        <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
-      </div>
-    </v-bottom-sheet>
+      <AudioPlayer
+        v-if="currentUUID"
+        v-touch="{
+          up: () => toggleContentDrawer(),
+          down: () => toggleContentDrawer(),
+        }"
+        @click.native="toggleContentDrawer()"
+      />
+      <TabItems class="overflow-y-auto" />
+
+      <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
+    </div>
   </div>
 </template>
 
@@ -87,15 +94,18 @@ export default {
     },
   },
   methods: {
+    toggleContentDrawer() {
+      this.contentDrawer = !this.contentDrawer;
+    },
     onClickOutside() {
       return true;
     },
     updateBottomSheetHeight() {
       // Make sure the refs are available, otherwise vue might throw errors
-      if (this.$refs.bottomSheet && this.$refs.bottomSheet.$refs.dialog) {
+      if (this.$refs.bottomSheet) {
         const vm = this;
         this.$nextTick(() => {
-          vm.bottomSheetHeight = vm.$refs.bottomSheet.$refs.dialog.clientHeight;
+          vm.bottomSheetHeight = vm.$refs.bottomSheet.scrollHeight;
         });
       }
     },
@@ -120,6 +130,7 @@ export default {
   max-height: 60% !important;
 }
 .nav-wrapper {
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;

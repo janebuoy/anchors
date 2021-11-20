@@ -12,52 +12,22 @@
       :url="baseLayer.url"
       :attribution="baseLayer.attribution"
     />
+    <component
+      v-for="(layer, i) in currentLayers"
+      :key="i + '_' + layer.type"
+      :is="layer.type"
+      :data="layer.data"
+    />
+    <water-levels-layer
+      :key="'waterLevelsLayer'"
+      v-if="isActiveLayer(activeLayers, 'waterLevels')"
+    />
     <!-- COLONIES LAYER -->
     <ColoniesLayer
       ref="coloniesLayer"
       v-if="isActiveLayer(activeLayers, 'colonies') && JSONLayers.colonies.data"
       :geojson="JSONLayers.colonies.data"
       :max="thisYear"
-    />
-    <!-- WATER LEVELS LAYER  -->
-    <water-levels-layer
-      ref="waterLevelsLayer"
-      v-if="isActiveLayer(activeLayers, 'waterLevels')"
-    />
-    <river-correction-layer
-      ref="riverCorrectionLayer"
-      v-if="isActiveLayer(activeLayers, 'riverCorrection')"
-    />
-    <!-- COTTON LAYER -->
-    <cotton-layer
-      v-if="isActiveLayer(activeLayers, 'cotton')"
-      :cottonBremen="JSONLayers.cottonBremen.data"
-      :cottonWorld="JSONLayers.cottonWorld.data"
-    />
-    <!-- COFFEE BREMEN LAYER -->
-    <coffeeBremen-layer
-      v-if="isActiveLayer(activeLayers, 'coffeeBremen')"
-      :coffeeBremen="JSONLayers.coffeeBremen.data"
-    />
-    <!-- STREETS LAYER -->
-    <streets-layer
-      v-if="isActiveLayer(activeLayers, 'streets')"
-      :streets="JSONLayers.streets.data"
-    />
-    <!-- PORT DEVELOPMENT -->
-    <port-development-layer
-      v-if="isActiveLayer(activeLayers, 'portDevelopment')"
-      :ports1882="JSONLayers.ports1882.data"
-      :ports1884="JSONLayers.ports1884.data"
-      :ports1914="JSONLayers.ports1914.data"
-    />
-    <!-- SPEICHER XI LAYER -->
-    <PatternLayer
-      ref="speicherXILayer"
-      v-if="
-        isActiveLayer(activeLayers, 'speicherXI') && JSONLayers.speicherXI.data
-      "
-      :geojson="JSONLayers.speicherXI.data"
     />
     <!-- ROUTE PATH -->
     <RouteLayer
@@ -83,11 +53,19 @@
     />
     <l-control-zoom position="topleft"></l-control-zoom>
     <LocateControl ref="locateControl" :options="locateControl.options" />
-    <CottonLayerSelector v-if="mapOptions.cottonLayerSelector" />
-    <PortDevelopmentLayerSelector
-      v-if="mapOptions.portDevelopmentLayerSelector"
+    <component
+      v-for="(layer, i) in currentInfo"
+      :key="i + '_' + layer.info"
+      :is="layer.info"
+      :properties="layer.data"
     />
-    <OpacitySlider v-if="mapOptions.opacitySlider" />
+    <component
+      v-for="(layer, i) in currentControls"
+      :key="i + '_' + layer.selector"
+      :is="layer.selector"
+      :properties="layer.data"
+    />
+    <!-- <OpacitySlider v-if="mapOptions.opacitySlider" /> -->
     <ToggleContentDrawerBtn v-if="currentUUID" />
   </l-map>
 </template>
@@ -107,11 +85,10 @@ import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
 
 import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
 import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
+import RasterLayer from "@/components/map/layers/RasterLayer";
 import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
-import CottonLayer from "@/components/map/layers/CottonLayer";
-import CoffeeBremenLayer from "@/components/map/layers/CoffeeBremenLayer";
-import StreetsLayer from "@/components/map/layers/StreetsLayer";
-import PortDevelopmentLayer from "@/components/map/layers/PortDevelopmentLayer";
+import PointsLayer from "@/components/map/layers/PointsLayer";
+import MultiPatternLayer from "@/components/map/layers/MultiPatternLayer";
 import PatternLayer from "@/components/map/layers/PatternLayer";
 import RouteLayer from "@/components/map/layers/RouteLayer";
 import BoundsLayer from "@/components/map/layers/BoundsLayer";
@@ -119,8 +96,9 @@ import StopsLayer from "@/components/map/layers/StopsLayer";
 
 import LocateControl from "@/components/map/controls/LocateControl";
 import OpacitySlider from "@/components/map/controls/OpacitySlider";
-import CottonLayerSelector from "@/components/map/controls/CottonLayerSelector";
-import PortDevelopmentLayerSelector from "@/components/map/controls/PortDevelopmentLayerSelector";
+import PointsLayerSelector from "@/components/map/controls/PointsLayerSelector";
+import LayerSelector from "@/components/map/controls/LayerSelector";
+import LayerInfo from "@/components/map/info/LayerInfo";
 import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
 
 export default {
@@ -132,15 +110,15 @@ export default {
     ToggleContentDrawerBtn,
     LocateControl,
     OpacitySlider,
-    CottonLayerSelector,
-    PortDevelopmentLayerSelector,
+    PointsLayerSelector,
+    LayerSelector,
+    LayerInfo,
     ColoniesLayer,
     RiverCorrectionLayer,
+    RasterLayer,
     WaterLevelsLayer,
-    CottonLayer,
-    CoffeeBremenLayer,
-    StreetsLayer,
-    PortDevelopmentLayer,
+    PointsLayer,
+    MultiPatternLayer,
     PatternLayer,
     RouteLayer,
     BoundsLayer,
@@ -177,32 +155,28 @@ export default {
           url: "data/json/countries.json",
           data: null,
         },
-        cottonBremen: {
-          url: "data/json/cottonBremen.json",
-          data: null,
-        },
-        cottonWorld: {
-          url: "data/json/cottonWorld.json",
+        cotton: {
+          url: "data/json/cotton.json",
           data: null,
         },
         coffeeBremen: {
           url: "data/json/coffeeBremen.json",
           data: null,
         },
+        coffeeWorld: {
+          url: "data/json/coffeeWorld.json",
+          data: null,
+        },
         streets: {
           url: "data/json/streets.json",
           data: null,
         },
-        ports1882: {
-          url: "/data/json/ports_1882+4326.json",
+        ports: {
+          url: "data/json/ports.json",
           data: null,
         },
-        ports1884: {
-          url: "/data/json/ports_1884+4326.json",
-          data: null,
-        },
-        ports1914: {
-          url: "/data/json/ports_1914+4326.json",
+        river: {
+          url: "data/json/river.json",
           data: null,
         },
       },
@@ -232,6 +206,66 @@ export default {
       "useActionBounds",
       "waterLevels",
     ]),
+    currentLayers() {
+      const active = this.activeLayers.filter(
+        (e) => e.name !== "route" && e.name !== "scenes"
+      );
+      let result = [];
+      for (const layer of active) {
+        if (
+          layer.type === "PointsLayer" ||
+          layer.type === "MultiPatternLayer" ||
+          layer.type === "PatternLayer"
+        ) {
+          result.push({
+            type: layer.type,
+            source: layer.source,
+            data: this.JSONLayers[layer.short].data,
+          });
+        } else if (layer.type === "RasterLayer") {
+          result.push({
+            type: layer.type,
+            source: layer.source,
+            data: layer.url,
+          });
+        }
+      }
+      return result;
+    },
+    currentInfo() {
+      const active = this.activeLayers.filter(
+        (e) => e.name !== "route" && e.name !== "scenes"
+      );
+      let result = [];
+      for (const layer of active) {
+        if (layer.info) {
+          result.push({
+            info: layer.info,
+            data: this.JSONLayers[layer.short].data,
+          });
+        }
+      }
+      return result;
+    },
+    currentControls() {
+      const active = this.activeLayers.filter(
+        (e) => e.name !== "route" && e.name !== "scenes"
+      );
+      let result = [];
+      for (const layer of active) {
+        if (layer.selector && layer.selector !== "OpacityControl") {
+          result.push({
+            selector: layer.selector,
+            data: this.JSONLayers[layer.short].data,
+          });
+        } else if (layer.selector === "OpacityControl") {
+          result.push({
+            data: layer.type,
+          });
+        }
+      }
+      return result;
+    },
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
     },
@@ -265,7 +299,8 @@ export default {
   },
   methods: {
     isActiveLayer(array, payload) {
-      return array.includes(payload);
+      const result = array.map((e) => e.name);
+      return result.includes(payload);
     },
     openScene(uuid) {
       // Filter out single feature per UUID from scenes
@@ -327,34 +362,13 @@ export default {
       } else {
         this.mapOptions.opacitySlider = false;
       }
-      if (feature.properties.cottonLayerSelector !== undefined) {
-        this.mapOptions.cottonLayerSelector =
-          feature.properties.cottonLayerSelector;
-      } else {
-        this.mapOptions.cottonLayerSelector = false;
-      }
-      if (feature.properties.portDevelopmentLayerSelector !== undefined) {
-        this.mapOptions.portDevelopmentLayerSelector =
-          feature.properties.portDevelopmentLayerSelector;
-      } else {
-        this.mapOptions.portDevelopmentLayerSelector = false;
-      }
-      if (feature.properties.selector !== undefined) {
-        this.mapOptions.selector = feature.properties.selector;
-      }
-      if (feature.properties.categorySelector !== undefined) {
-        this.mapOptions.categorySelector = feature.properties.categorySelector;
-      }
-      if (feature.properties.control !== undefined) {
-        this.mapOptions.control = feature.properties.control;
-      }
       if (feature.properties.waterLevel !== undefined) {
         this.mapOptions.waterLevel = feature.properties.waterLevel;
       }
     },
     setCoords(feature) {
       let zoom;
-      if (this.isMobile) {
+      if (this.isMobile && feature.properties.zoom) {
         zoom = feature.properties.zoom - 1;
       } else {
         zoom = feature.properties.zoom;

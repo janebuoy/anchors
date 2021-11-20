@@ -31,29 +31,21 @@ export default {
         layer.bindPopup(
           "<p class='popup_title'>" +
             feature.properties.name +
-            "</p><p class='popup_subtitle'>" +
-            "Letzte Messung: " +
-            feature.properties.timestamp.hours +
-            ":" +
-            feature.properties.timestamp.minutes +
-            "</br>" +
-            "Wasserstand: " +
-            feature.properties.value +
-            " Meter" +
-            "</p>"
+            "</p><p class='popup_subtitle'>"
         );
 
         layer.on({
           click: function () {
-            this.openPopup();
+            // this.openPopup();
             const payload = {
               geometry: feature.geometry,
               properties: {
-                zoom: 14,
+                zoom: 12,
               },
               type: feature.type,
             };
             eventBus.$emit("setCoords", payload);
+            eventBus.$emit("updateChart", feature.properties);
           },
         });
       };
@@ -61,10 +53,10 @@ export default {
     pointToLayer() {
       return (_, latlng) => {
         const style = {
-          radius: 8,
-          fillColor: "red",
-          color: "red",
-          fillOpacity: 0.5,
+          radius: 12,
+          fillColor: this.$vuetify.theme.themes.light.secondary.lighten3,
+          color: this.$vuetify.theme.themes.light.secondary.base,
+          fillOpacity: 0.8,
           opacity: 1,
           weight: 1,
         };

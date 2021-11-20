@@ -1,19 +1,10 @@
 <template>
   <l-layer-group>
     <l-geo-json
-      :geojson="ports1882"
-      :options="optionsExhib"
-      v-if="active === 0"
-    />
-    <l-geo-json
-      :geojson="ports1884"
-      :options="optionsExhib"
-      v-if="active === 1"
-    />
-    <l-geo-json
-      :geojson="ports1914"
-      :options="optionsExhib"
-      v-if="active === 2"
+      v-for="(feature, key) in activeFeatures"
+      :key="key"
+      :geojson="feature"
+      :options="options"
     />
   </l-layer-group>
 </template>
@@ -22,62 +13,79 @@
 import L from "leaflet";
 import "leaflet.pattern";
 import { LLayerGroup, LGeoJson } from "vue2-leaflet";
-import { eventBus } from "../../../main";
+import { eventBus } from "@/main";
 
 export default {
-  name: "PortDevelopmentLayer",
+  name: "MultiPatternLayer",
   components: {
     LLayerGroup,
     LGeoJson,
   },
+  props: ["data"],
   data() {
     return {
       active: 0,
       colors: [
         {
-          name: "eastside",
-          hex: "#ad7fc7",
+          name: "indigo lighten-2",
+          hex: "#7986CB",
         },
       ],
     };
   },
-  props: ["ports1882", "ports1884", "ports1914"],
   computed: {
+    activeFeatures() {
+      const features = this.data.features.filter(
+        (e) => e.properties.categoryID === this.active
+      );
+      return { features };
+    },
+    uniqueColors() {
+      let colors = [];
+      for (const feature of this.data.features) {
+        colors.push({
+          color: feature.meta.color,
+        });
+      }
+      const unique = [...new Set(colors.map(JSON.stringify))].map(JSON.parse);
+      return unique;
+    },
     patterns() {
       let result = {};
-      for (let i = 0; i < this.colors.length; i++) {
-        const vm = this;
+      for (let color of this.uniqueColors) {
         const pattern = new L.StripePattern({
-          color: vm.colors[i].hex,
+          color: color.color.hex,
           opacity: 1,
           angle: -10,
         });
-        result[this.colors[i].name] = pattern;
+        result[color.color.hex] = pattern;
       }
       return result;
     },
-    optionsExhib() {
+    options() {
       return {
-        onEachFeature: this.onEachFeatureExhib,
-        style: this.styleExhib,
+        onEachFeature: this.onEachFeature,
+        style: this.style,
       };
     },
-    onEachFeatureExhib() {
+    onEachFeature() {
       return (feature, layer) => {
         layer.on("click", (e) => {
           L.popup()
             .setLatLng(e.latlng)
             .setContent(
-              "<p class='popup_title'>" + feature.properties.name + "</p>"
+              "<p class='popup_title'>" +
+                feature.properties.categoryName +
+                "</p>"
             )
             .openOn(this.map);
         });
       };
     },
-    styleExhib() {
+    style() {
       return (feature) => {
         const style = {
-          fillPattern: this.patterns[feature.meta.color.name],
+          fillPattern: this.patterns[feature.meta.color.hex],
           color: "gray",
           fillOpacity: 0.8,
           weight: 1,
@@ -88,12 +96,12 @@ export default {
     },
   },
   methods: {
-    switchPortLayer(v) {
+    switchLayer(v) {
       this.active = v;
     },
   },
   created() {
-    eventBus.$on("switchPortLayer", this.switchPortLayer);
+    eventBus.$on("switchLayer", this.switchLayer);
     this.map = this.$parent.$parent.$refs.lmap.mapObject;
   },
   mounted() {

@@ -14,17 +14,6 @@
       </v-icon>
       {{ contentDrawer ? "Close Panel" : "Open Panel" }}
     </v-btn>
-    <v-btn
-      v-else
-      fab
-      color="neutral darken-3"
-      dark
-      @click.stop="toggleContentDrawer()"
-    >
-      <v-icon large>
-        {{ icon }}
-      </v-icon>
-    </v-btn>
   </l-control>
 </template>
 

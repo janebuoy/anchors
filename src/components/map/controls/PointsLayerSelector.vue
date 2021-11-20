@@ -55,10 +55,10 @@
 
 <script>
 import { LControl } from "vue2-leaflet";
-import { eventBus } from "../../../main";
+import { eventBus } from "@/main";
 
 export default {
-  name: "CottonLayerSelector",
+  name: "PointsLayerSelector",
   components: {
     LControl,
   },

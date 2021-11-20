@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CI @ v4-dev
 
 # Controls when the action will run. 
 on:
@@ -41,7 +41,7 @@ jobs:
           path: dist/
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/v4-dev'
     needs:
       - lint
       - build

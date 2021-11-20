@@ -1,18 +1,26 @@
 <template>
-  <v-card width="100%" flat dark tile>
+  <v-card flat tile height="100%">
+    <v-card-title style="word-break: normal !important">
+      {{ currentItem.title }}
+    </v-card-title>
+    <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
     <v-card-text>
-      <v-card flat tile :height="tabItemsHeight - 32 + 'px'">
-        <v-card-title style="word-break: normal !important">
-          {{ currentItem.title }}
-        </v-card-title>
-        <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
-        <v-card
-          style="width: 100%; height: 46px"
-          class="px-4 neutral darken-3"
-          dark
-          tile
+      <v-card color="grey lighten-4" rounded flat class="mx-1">
+        <v-card-title
+          class="headline"
+          v-if="event !== null && event.properties"
         >
+          {{ event.properties.name }}
+        </v-card-title>
+        <v-card-text
+          v-if="event !== null && event.properties"
+          class="event-links"
+          v-html="event.properties.description"
+        ></v-card-text>
+        <v-divider v-if="event !== null && event.properties" />
+        <v-card-actions>
           <v-slider
+            v-if="timeline"
             v-model="year"
             :max="max"
             :min="min"
@@ -54,12 +62,24 @@
               <v-btn
                 icon
                 @click.stop="toggleAnimation"
-                :title="!playing ? 'Play Animation' : 'Pause Animation'"
+                :title="
+                  !playing
+                    ? year == max
+                      ? 'Restart Animation'
+                      : 'Play Animation'
+                    : 'Pause Animation'
+                "
               >
                 <v-icon>
-                  {{ !playing ? "mdi-play" : "mdi-pause" }}
-                </v-icon></v-btn
-              >
+                  {{
+                    !playing
+                      ? year == max
+                        ? "mdi-restart"
+                        : "mdi-play"
+                      : "mdi-pause"
+                  }}
+                </v-icon>
+              </v-btn>
               <v-menu top offset-y :close-on-click="closeOnClick">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
@@ -87,17 +107,7 @@
               </v-menu>
             </template>
           </v-slider>
-        </v-card>
-        <v-card color="neutral darken-2" tile>
-          <v-card-title v-if="event !== null" class="headline">
-            {{ event[0] }}
-          </v-card-title>
-          <v-card-text
-            class="event-links"
-            v-if="event !== null"
-            v-html="event[1]"
-          ></v-card-text>
-        </v-card>
+        </v-card-actions>
       </v-card>
     </v-card-text>
   </v-card>
@@ -105,28 +115,22 @@
 
 <script>
 import { mapGetters } from "vuex";
-import wtf from "wtf_wikipedia";
+import axios from "axios";
+import { replaceWikiLinks } from "@/plugins/renderWikiText.js";
 
 export default {
   name: "TimelineContent",
   data() {
     return {
-      min: 1400,
-      max: new Date().getFullYear(),
       playing: false,
       speed: 600,
       event: null,
-      tmpTimeline: null,
       closeOnClick: true,
+      timeline: null,
     };
   },
   computed: {
-    ...mapGetters([
-      "colSliderStart",
-      "timeline",
-      "currentItem",
-      "tabItemsHeight",
-    ]),
+    ...mapGetters(["colSliderStart", "currentItem", "tabItemsHeight"]),
     year: {
       get() {
         return this.colSliderStart;
@@ -134,6 +138,15 @@ export default {
       set(val) {
         this.$store.dispatch("colSliderStart", val);
       },
+    },
+    reverseTimeline() {
+      return [...this.timeline].reverse();
+    },
+    min() {
+      return this.timeline[0].properties.start;
+    },
+    max() {
+      return this.reverseTimeline[0].properties.start;
     },
   },
   methods: {
@@ -158,79 +171,13 @@ export default {
       this.interval = false;
     },
     getEvent(val) {
-      let arr = [];
-      for (let [key, value] of Object.entries(this.tmpTimeline)) {
-        const keyStartTime = key.substring(0, 4);
-        if (keyStartTime <= val && keyStartTime > this.min) {
-          arr[0] = key;
-          arr[1] = this.replaceWikiLinks(value.text);
-          delete this.tmpTimeline[key];
-          if (arr.length > 0) {
-            this.event = arr;
-          }
-          const features = [
-            {
-              type: "Feature",
-              properties: {
-                year: arr[0],
-                description: arr[1],
-              },
-              geometry: value.geometry,
-            },
-          ];
-          this.$store.dispatch("colEventPoint", features);
-        }
-      }
-    },
-    replaceWikiLink(value) {
-      const links = wtf(value).links();
-      let text = [];
-      let result = [];
-      text[0] = wtf(value).text();
-      if (links.length === 0) {
-        return text[0];
+      if (this.timeline.find((e) => e.properties.name.includes(val))) {
+        this.event = this.timeline.find((e) => e.properties.name.includes(val));
+        this.$store.dispatch("colEventPoint", [this.event]);
       } else {
-        for (let i = 0; i < links.length; i++) {
-          if (links[i].data.text) {
-            const URL =
-              "<a href='https://en.wikipedia.org/wiki/" +
-              links[i].data.page.split(" ").join("_") +
-              "'>" +
-              links[i].data.text +
-              "</a>";
-            text[i] = text[i].replace(links[i].data.text, URL);
-            text[i + 1] = text[i].split("</a>").pop();
-            result.push(text[i].split("</a>").shift() + "</a>");
-            if (i == links.length - 1) {
-              result.push(text.pop());
-            }
-          } else {
-            const URL =
-              "<a href='https://en.wikipedia.org/wiki/" +
-              links[i].data.page.split(" ").join("_") +
-              "'>" +
-              links[i].data.page +
-              "</a>";
-            text[i] = text[i].replace(links[i].data.page, URL);
-            text[i + 1] = text[i].split("</a>").pop();
-            result.push(text[i].split("</a>").shift() + "</a>");
-            if (i == links.length - 1) {
-              result.push(text.pop());
-            }
-          }
-        }
-      }
-      return result.join("");
-    },
-    replaceWikiLinks(value) {
-      if (Array.isArray(value)) {
-        let result = [];
-        for (let i = 0; i < value.length; i++) {
-          result.push(this.replaceWikiLink(value[i]));
-        }
-        return result.join("\n");
-      } else {
-        return this.replaceWikiLink(value);
+        this.event = this.reverseTimeline.find(
+          (e) => e.properties.start <= val
+        );
       }
     },
     playAnimation(s) {
@@ -254,15 +201,38 @@ export default {
       if (this.playing) {
         this.stopAnimation();
       } else {
-        this.playAnimation("begin");
+        if (this.year == this.max) {
+          this.year = this.min;
+          this.playAnimation("begin");
+        } else {
+          this.playAnimation("begin");
+        }
       }
     },
+  },
+  created() {
+    axios.get(this.currentItem.src).then((response) => {
+      const resp = response.data;
+      let timelineArr = [];
+      for (let [key, value] of Object.entries(resp)) {
+        timelineArr.push({
+          type: "Feature",
+          properties: {
+            name: key,
+            start: key.slice(0, 4),
+            description: replaceWikiLinks(value.text),
+          },
+          geometry: value.geometry,
+        });
+      }
+      this.timeline = timelineArr;
+      this.year = this.min;
+    });
   },
   watch: {
     year(val, old) {
       if (this.timeline) {
         if (val <= old) {
-          this.tmpTimeline = JSON.parse(JSON.stringify(this.timeline));
           this.getEvent(val);
         }
         if (val > old) {
@@ -273,20 +243,6 @@ export default {
         }
       }
     },
-    timeline(v) {
-      if (v) {
-        this.tmpTimeline = JSON.parse(JSON.stringify(v));
-      }
-    },
-  },
-  mounted() {
-    this.tmpTimeline = JSON.parse(JSON.stringify(this.timeline));
   },
 };
 </script>
-
-<style>
-.event-links a {
-  color: var(--v-accent-darken2) !important;
-}
-</style>

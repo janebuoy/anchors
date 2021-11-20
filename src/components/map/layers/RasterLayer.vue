@@ -1,5 +1,5 @@
 <template>
-  <l-tile-layer ref="RiverCorrectionLayer" :url="url" :options="options" />
+  <l-tile-layer ref="RasterLayer" :url="data" :options="options" />
 </template>
 
 <script>
@@ -7,13 +7,13 @@ import { LTileLayer } from "vue2-leaflet";
 import { eventBus } from "@/main";
 
 export default {
-  name: "RiverCorrectionLayer",
+  name: "RasterLayer",
   components: {
     LTileLayer,
   },
+  props: ["data"],
   data() {
     return {
-      url: "/data/tiles/{z}/{x}/{-y}.png",
       options: {
         opacity: 0.6, // default
       },
@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     changeOpacity(v) {
-      this.$refs.RiverCorrectionLayer.mapObject.setOpacity(v / 100);
+      this.$refs.RasterLayer.mapObject.setOpacity(v / 100);
     },
   },
   created() {
