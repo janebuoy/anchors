@@ -9,8 +9,6 @@ import { eventBus } from "../main";
 const ax = axios.create({
 	baseURL: process.env.BASE_URL,
 });
-import { replaceWikiLinks } from "@/plugins/renderWikiText.js";
-
 
 Vue.use(Vuex)
 
@@ -26,10 +24,6 @@ export default new Vuex.Store({
 					url: "data/json/subScenes.json",
 					data: null,
 				},
-			},
-			timeline: {
-				url: "data/json/timeline.json",
-				data: null,
 			},
 			galleries: {
 				url: "data/json/galleries.json",
@@ -82,28 +76,6 @@ export default new Vuex.Store({
 						console.log(err);
 					});
 			}
-		},
-		fetchTimeline(context) {
-			ax.get(context.state.global.timeline.url)
-				.then(response => {
-					const resp = response.data
-					let timelineArr = []
-					for (let [key, value] of Object.entries(resp)) {
-						timelineArr.push({
-							type: "Feature",
-							properties: {
-								name: key,
-								start: key.slice(0, 4),
-								description: replaceWikiLinks(value.text),
-							},
-							geometry: value.geometry,
-						})
-					}
-					context.commit("setTimeline", timelineArr)
-				})
-				.catch((err) => {
-					console.log(err);
-				});
 		},
 		fetchGalleries(context) {
 			ax.get(context.state.global.galleries.url)
@@ -167,9 +139,6 @@ export default new Vuex.Store({
 		// * Global Mutations
 		setScenes: (state, payload) => {
 			state.global.scenes[payload.key].data = payload.scenes
-		},
-		setTimeline: (state, payload) => {
-			state.global.timeline.data = payload
 		},
 		setGalleries: (state, payload) => {
 			state.global.galleries.data = payload
@@ -337,9 +306,6 @@ export default new Vuex.Store({
 		subScenes: state => {
 			return state.global.scenes.subScenes.data
 		},
-		timeline: state => {
-			return state.global.timeline.data
-		},
 		galleries: state => {
 			return state.global.galleries.data
 		},
@@ -417,7 +383,7 @@ export default new Vuex.Store({
 					"audio": "mdi-headphones",
 					"map": "mdi-map",
 					"gallery": "mdi-view-carousel",
-					"timeline": "mdi-timeline"
+					"timeline": "mdi-play-box-outline"
 				}
 				for (let value of Object.values(resources)) {
 					value["icon"] = icons[value.type]

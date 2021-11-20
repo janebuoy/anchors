@@ -20,6 +20,7 @@
         <v-divider v-if="event !== null && event.properties" />
         <v-card-actions>
           <v-slider
+            v-if="timeline"
             v-model="year"
             :max="max"
             :min="min"
@@ -61,10 +62,22 @@
               <v-btn
                 icon
                 @click.stop="toggleAnimation"
-                :title="!playing ? 'Play Animation' : 'Pause Animation'"
+                :title="
+                  !playing
+                    ? year == max
+                      ? 'Restart Animation'
+                      : 'Play Animation'
+                    : 'Pause Animation'
+                "
               >
                 <v-icon>
-                  {{ !playing ? "mdi-play" : "mdi-pause" }}
+                  {{
+                    !playing
+                      ? year == max
+                        ? "mdi-restart"
+                        : "mdi-play"
+                      : "mdi-pause"
+                  }}
                 </v-icon>
               </v-btn>
               <v-menu top offset-y :close-on-click="closeOnClick">
@@ -102,26 +115,22 @@
 
 <script>
 import { mapGetters } from "vuex";
+import axios from "axios";
+import { replaceWikiLinks } from "@/plugins/renderWikiText.js";
 
 export default {
   name: "TimelineContent",
   data() {
     return {
-      min: 1400,
-      max: new Date().getFullYear(),
       playing: false,
       speed: 600,
       event: null,
       closeOnClick: true,
+      timeline: null,
     };
   },
   computed: {
-    ...mapGetters([
-      "colSliderStart",
-      "timeline",
-      "currentItem",
-      "tabItemsHeight",
-    ]),
+    ...mapGetters(["colSliderStart", "currentItem", "tabItemsHeight"]),
     year: {
       get() {
         return this.colSliderStart;
@@ -132,6 +141,12 @@ export default {
     },
     reverseTimeline() {
       return [...this.timeline].reverse();
+    },
+    min() {
+      return this.timeline[0].properties.start;
+    },
+    max() {
+      return this.reverseTimeline[0].properties.start;
     },
   },
   methods: {
@@ -186,9 +201,33 @@ export default {
       if (this.playing) {
         this.stopAnimation();
       } else {
-        this.playAnimation("begin");
+        if (this.year == this.max) {
+          this.year = this.min;
+          this.playAnimation("begin");
+        } else {
+          this.playAnimation("begin");
+        }
       }
     },
+  },
+  created() {
+    axios.get(this.currentItem.src).then((response) => {
+      const resp = response.data;
+      let timelineArr = [];
+      for (let [key, value] of Object.entries(resp)) {
+        timelineArr.push({
+          type: "Feature",
+          properties: {
+            name: key,
+            start: key.slice(0, 4),
+            description: replaceWikiLinks(value.text),
+          },
+          geometry: value.geometry,
+        });
+      }
+      this.timeline = timelineArr;
+      this.year = this.min;
+    });
   },
   watch: {
     year(val, old) {

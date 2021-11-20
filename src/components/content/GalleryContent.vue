@@ -31,9 +31,12 @@
               </v-card-title>
               <v-card-subtitle
                 style="word-break: normal !important"
-                class="text-md-body-1"
+                :class="image.credit ? 'pb-2' : null"
               >
-                {{ image.description }}
+                <span class="subtitle-2">{{ image.description }}</span>
+              </v-card-subtitle>
+              <v-card-subtitle class="pt-0 pt-1" v-if="image.credit">
+                <span class="subtitle-2">Credit: {{ image.credit }}</span>
               </v-card-subtitle>
             </v-card>
           </div>

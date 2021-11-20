@@ -48,7 +48,6 @@ export default {
   created() {
     // Make store fetch the scenes
     this.$store.dispatch("fetchScenes");
-    this.$store.dispatch("fetchTimeline");
     this.$store.dispatch("fetchGalleries");
     //this.$store.dispatch("fetchWeserWaterLevels");
   },
