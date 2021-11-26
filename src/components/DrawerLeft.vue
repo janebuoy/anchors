@@ -45,9 +45,9 @@
         </v-list-item-group>
       </v-list>
       <v-divider></v-divider>
-      <span class="px-4 caption font-weight-bold mt-auto">Dev Info</span>
+      <!-- <span class="px-4 caption font-weight-bold mt-auto">Dev Info</span>
       <span class="px-4 caption">Branch: {{ branch }}</span>
-      <span class="px-4 caption">Commit: {{ revision }}</span>
+      <span class="px-4 caption">Commit: {{ revision }}</span> -->
       <v-card
         dark
         tile
@@ -57,17 +57,13 @@
         style="width: 100%"
       >
         <v-row justify="center" class="mt-1 mb-0">
-          <v-btn class="mx-2" icon href="">
+          <v-btn class="mx-2" icon :href="this.config.websiteLink">
             <v-icon>mdi-home</v-icon>
           </v-btn>
-          <v-btn class="mx-2" icon href="">
+          <v-btn class="mx-2" icon :href="this.config.twitterLink">
             <v-icon>mdi-twitter</v-icon>
           </v-btn>
-          <v-btn
-            class="mx-2"
-            icon
-            href="https://github.com/janebuoy/vue-leaflet-audio-guide"
-          >
+          <v-btn class="mx-2" icon :href="this.config.repoLink">
             <v-icon>mdi-github</v-icon>
           </v-btn>
         </v-row>
@@ -82,11 +78,13 @@ import { mapGetters } from "vuex";
 import { VUE_APP_GIT_BRANCH } from "@/plugins/git-rev";
 import { VUE_APP_GIT_COMMIT_HASH } from "@/plugins/git-rev";
 import { eventBus } from "../main";
+import { config } from "../../config.js";
 
 export default {
   name: "DrawerLeft",
   data() {
     return {
+      config: config,
       branch: VUE_APP_GIT_BRANCH,
       revision: VUE_APP_GIT_COMMIT_HASH,
     };
@@ -115,6 +113,10 @@ export default {
     openScene(uuid) {
       eventBus.$emit("openScene", uuid);
     },
+  },
+  created() {
+    console.log("Branch: ", this.branch);
+    console.log("Commit: ", this.config.repoLink + "/commit/" + this.revision);
   },
 };
 </script>
