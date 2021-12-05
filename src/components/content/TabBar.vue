@@ -5,7 +5,7 @@
       dark
       background-color="secondary"
       optional
-      style="max-width: 90px"
+      style="max-width: 90px; height: 100%"
     >
       <v-tabs-slider color="accent darken-1" ref="pinnedTabsSlider" />
       <!-- extended v-tab -->
