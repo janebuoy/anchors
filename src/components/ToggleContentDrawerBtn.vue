@@ -7,24 +7,38 @@
       color="neutral darken-3"
       dark
       @click.stop="toggleContentDrawer()"
-      :title="contentDrawer ? 'Close Panel' : 'Open Panel'"
+      :title="
+        contentDrawer
+          ? this.config.toggleContentBtn.close
+          : this.config.toggleContentBtn.open
+      "
     >
       <v-icon left style="margin-top: 2px">
         {{ icon }}
       </v-icon>
-      {{ contentDrawer ? "Close Panel" : "Open Panel" }}
+      {{
+        contentDrawer
+          ? this.config.toggleContentBtn.close
+          : this.config.toggleContentBtn.open
+      }}
     </v-btn>
   </l-control>
 </template>
 
 <script>
 import { LControl } from "vue2-leaflet";
+import { config } from "../../config.js";
 
 import { mapGetters } from "vuex";
 export default {
   name: "ToggleContentDrawerBtn",
   components: {
     LControl,
+  },
+  data() {
+    return {
+      config: config,
+    };
   },
   computed: {
     ...mapGetters(["contentDrawer"]),

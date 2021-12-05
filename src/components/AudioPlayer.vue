@@ -19,7 +19,7 @@
         <v-btn
           icon
           @click.stop="prevAudio()"
-          title="Previous Audio"
+          :title="config.player.prevAudio"
           :disabled="prevAudioID === false || !localSrc"
         >
           <v-icon>mdi-skip-previous</v-icon>
@@ -28,7 +28,7 @@
           icon
           class="mr-1"
           @click.stop="seekBackwards()"
-          title="Seek Backwards"
+          :title="config.player.seekBackwards"
           :disabled="!localSrc"
         >
           <v-icon>mdi-replay</v-icon>
@@ -39,7 +39,7 @@
           color="secondary"
           class="mt-n2"
           @click.stop="toggleAudio()"
-          :title="!isPlaying ? 'Play Audio' : 'Pause Audio'"
+          :title="!isPlaying ? config.player.play : config.player.pause"
           ref="playButton"
           :disabled="!localSrc"
           style="position: relative; z-index: 400"
@@ -50,7 +50,7 @@
         <v-btn
           icon
           @click.stop="seekForwards()"
-          title="Seek Forwards"
+          :title="config.player.seekForwards"
           class="ml-1"
           :disabled="!localSrc"
         >
@@ -59,7 +59,7 @@
         <v-btn
           icon
           @click.stop="nextAudio()"
-          title="Next Audio"
+          :title="config.player.nextAudio"
           :disabled="nextAudioID === false || !localSrc"
         >
           <v-icon>mdi-skip-next</v-icon>
@@ -110,11 +110,13 @@
 <script>
 import { mapGetters } from "vuex";
 import { eventBus } from "../main.js";
+import { config } from "../../config.js";
 
 export default {
   name: "AudioPlayer",
   data() {
     return {
+      config: config,
       localSrc: null,
       localProgress: null,
       duration: 0,

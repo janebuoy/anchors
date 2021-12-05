@@ -7,7 +7,11 @@
     <v-spacer />
 
     <v-btn @click="openNextScene()">
-      {{ nextSceneText }}
+      {{
+        currentUUID === null
+          ? config.nextSceneText.start
+          : config.nextSceneText.next
+      }}
     </v-btn>
   </v-app-bar>
 </template>
@@ -15,25 +19,17 @@
 <script>
 import { mapGetters } from "vuex";
 import { eventBus } from "../main.js";
+import { config } from "../../config.js";
 
 export default {
   name: "AppBar",
+  data() {
+    return {
+      config: config,
+    };
+  },
   computed: {
     ...mapGetters(["scenes", "nextID", "currentUUID", "noOfScenes", "content"]),
-    nextSceneText() {
-      const firstSceneUUID = this.scenes.features.find((a) => a.uuid).uuid;
-      let text;
-      if (this.currentUUID === null) {
-        text = "Start";
-      } else if (this.currentUUID === firstSceneUUID) {
-        text = "Nächste Station";
-      } else if (this.nextID === this.noOfScenes - 1) {
-        text = "Neustart";
-      } else {
-        text = "Next Scene";
-      }
-      return text;
-    },
   },
   methods: {
     toggleDrawerLeft() {
