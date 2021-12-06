@@ -12,7 +12,6 @@
     >
       <div class="nav-wrapper overflow-hidden">
         <TabBar class="flex-grow-0" v-if="currentUUID" />
-        <!-- <TabItems class="overflow-y-auto" v-if="currentUUID" /> -->
         <content-windows class="overflow-y-auto" v-if="currentUUID" />
         <AudioPlayer class="mt-auto" v-if="currentUUID" />
       </div>
@@ -34,8 +33,7 @@
         }"
         @click.native="toggleContentDrawer()"
       />
-      <TabItems class="overflow-y-auto" />
-
+      <content-windows class="overflow-y-auto" />
       <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
     </div>
   </div>
@@ -43,9 +41,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-
 import TabBar from "@/components/content/TabBar";
-//import TabItems from "@/components/content/TabItems";
 import ContentWindows from "@/components/content/ContentWindows";
 import AudioPlayer from "./AudioPlayer";
 
@@ -53,7 +49,6 @@ export default {
   name: "ContentDrawer",
   components: {
     TabBar,
-    //TabItems,
     ContentWindows,
     AudioPlayer,
   },

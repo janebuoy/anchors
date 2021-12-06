@@ -1,11 +1,12 @@
 <template>
-  <div id="tabsWrapper" class="d-flex">
+  <div id="tabsWrapper" class="d-flex tabs-wrapper">
     <v-tabs
       :value="pinned"
       dark
       background-color="secondary"
       optional
-      style="max-width: 90px; height: 100%"
+      style="max-width: 90px"
+      fixed-tabs
     >
       <v-tabs-slider color="accent darken-1" ref="pinnedTabsSlider" />
       <!-- extended v-tab -->
@@ -26,6 +27,7 @@
       optional
       center-active
       right
+      style="height: 100%"
       class="shrunk-tabs"
     >
       <v-tabs-slider color="accent darken-1" ref="tabsSlider" />
@@ -189,7 +191,8 @@ export default {
     resetTabs() {
       this.active = null;
       this.pinned = 0;
-      this.$refs.tabsSlider.$el.parentElement.style.minWidth = 0;
+      if (this.$refs.tabsSlider)
+        this.$refs.tabsSlider.$el.parentElement.style.minWidth = 0;
     },
   },
   mounted() {
@@ -213,6 +216,9 @@ export default {
 </script>
 
 <style scoped>
+.tabs-wrapper {
+  height: 48px;
+}
 .shrunk-tabs {
   width: calc(100% - 90px);
 }
