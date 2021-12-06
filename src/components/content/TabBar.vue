@@ -6,16 +6,16 @@
       background-color="secondary"
       optional
       style="max-width: 90px"
-      fixed-tabs
     >
       <v-tabs-slider color="accent darken-1" ref="pinnedTabsSlider" />
       <!-- extended v-tab -->
       <single-tab
         @click.stop="openTab('pinned', $event)"
-        title="View Content List"
+        :title="config.tabs.overview"
         :color="pinned === 0 ? 'white' : 'rgba(255, 255, 255, 0.6)'"
         :class="{ 'v-tab--active': pinned === 0 }"
         :aria-selected="pinned === 0 ? 'true' : 'false'"
+        style="height: 48px"
       >
         <v-icon>mdi-view-list</v-icon>
       </single-tab>
@@ -36,7 +36,7 @@
         :key="(item.id + 1) * count"
         class="px-1"
         @click.stop="openTab(item.id, $event)"
-        style="min-width: 60px"
+        style="min-width: 60px; height: 48px"
         :class="{ 'v-tab--active': active === item.id }"
         :aria-selected="active === item.id ? 'true' : 'false'"
         :title="
@@ -76,6 +76,7 @@
 import { mapGetters } from "vuex";
 import { eventBus } from "@/main";
 import SingleTab from "@/components/content/SingleTab";
+import { config } from "../../../config.js";
 
 export default {
   name: "TabBar",
@@ -84,6 +85,7 @@ export default {
   },
   data() {
     return {
+      config: config,
       active: null,
       pinned: 0,
       pinnedSliderWidth: "90px",

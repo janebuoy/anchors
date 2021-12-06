@@ -15,16 +15,13 @@
         >
           <div class="fill-height bottom-gradient"></div>
         </v-img>
-        <v-card-title style="font-size: 1.1em"
-          >Ankerpunkte der Verflechtung</v-card-title
-        >
-        <v-card-subtitle
-          >Ein postkolonialer Rundgang durch die Bremer
-          Überseestadt</v-card-subtitle
-        >
+        <v-card-title style="font-size: 1.1em">
+          {{ config.app.title }}
+        </v-card-title>
+        <v-card-subtitle> {{ config.app.subtitle }} </v-card-subtitle>
       </v-card>
       <v-list dense>
-        <v-list-item-group color="secondary" :value="activeItem">
+        <v-list-item-group color="secondary" :value="activeItem" mandatory>
           <v-list-item
             link
             v-for="(item, index) in scenes.features"
@@ -32,12 +29,14 @@
             @click.stop="openScene(item.uuid)"
           >
             <v-list-item-action>
-              <v-icon>
+              <v-icon :color="index !== activeItem ? 'neutral' : null">
                 {{ listIcon(index) }}
               </v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>
+              <v-list-item-title
+                :class="index !== activeItem ? 'de-emphasize' : null"
+              >
                 {{ item.properties.title }}
               </v-list-item-title>
             </v-list-item-content>
@@ -57,13 +56,13 @@
         style="width: 100%"
       >
         <v-row justify="center" class="mt-1 mb-0">
-          <v-btn class="mx-2" icon :href="this.config.websiteLink">
+          <v-btn class="mx-2" icon :href="config.websiteLink">
             <v-icon>mdi-home</v-icon>
           </v-btn>
-          <v-btn class="mx-2" icon :href="this.config.twitterLink">
+          <v-btn class="mx-2" icon :href="config.twitterLink">
             <v-icon>mdi-twitter</v-icon>
           </v-btn>
-          <v-btn class="mx-2" icon :href="this.config.repoLink">
+          <v-btn class="mx-2" icon :href="config.repoLink">
             <v-icon>mdi-github</v-icon>
           </v-btn>
         </v-row>
@@ -121,7 +120,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .nav-wrapper {
   height: 100%;
   display: flex;
@@ -140,5 +139,12 @@ export default {
 }
 .closeButton {
   background-color: rgba(42, 39, 43, 0.1);
+}
+.de-emphasize {
+  font-weight: 400 !important;
+  color: rgba(0, 0, 0, 0.6);
+}
+::v-deep .v-list-item__title {
+  font-size: 0.9rem !important;
 }
 </style>
