@@ -6,12 +6,21 @@
     </v-toolbar-title>
     <v-spacer />
 
-    <v-btn @click="openNextScene()">
+    <v-btn
+      @click="openNextScene()"
+      class="secondary"
+      :title="
+        currentUUID === null
+          ? config.nextSceneText.start
+          : config.nextSceneText.next
+      "
+    >
       {{
         currentUUID === null
           ? config.nextSceneText.start
           : config.nextSceneText.next
       }}
+      <v-icon right>mdi-sign-direction</v-icon>
     </v-btn>
   </v-app-bar>
 </template>

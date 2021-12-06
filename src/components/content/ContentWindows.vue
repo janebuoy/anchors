@@ -45,7 +45,7 @@ import TimelineContent from "./TimelineContent.vue";
 import ActiveTabItem from "./ActiveTabItem.vue";
 
 export default {
-  name: "TabItems",
+  name: "ContentWindows",
   components: {
     ContentList,
     GalleryContent,
@@ -66,6 +66,8 @@ export default {
     },
   },
   methods: {
+    onSwipeLeft() {},
+    onSwipeRight() {},
     updateTab(id) {
       if (Number.isInteger(id)) {
         this.active = id;

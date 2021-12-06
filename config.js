@@ -4,7 +4,7 @@ export const config = {
 	"twitterLink": "https://twitter.com/ak_hafen",
 	"nextSceneText": {
 		"start": "Start",
-		"next": "Nächste Station"
+		"next": "Nächste Station",
 	},
 	"toggleContentBtn": {
 		"open": "Seitenleiste einblenden",
@@ -17,5 +17,12 @@ export const config = {
 		"seekBackwards": "zurück springen",
 		"nextAudio": "nächste Audiodatei abspielen",
 		"prevAudio": "letzte Audiodatei abspielen"
+	},
+	"tabs": {
+		"overview": "Übersicht anzeigen"
+	},
+	"app": {
+		"title": "Ankerpunkte der Verflechtung",
+		"subtitle": "Ein postkolonialer Rundgang durch die Bremer Überseestadt"
 	}
 }
