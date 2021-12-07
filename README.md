@@ -1,2 +1,2 @@
-# vue-leaflet-audio-guide
-Leaflet Audio Guide Framework built with Vue &amp; Vuetify.
+# Anchors
+Anchors is a tool to create and publish self-hosted, geo-located audio walks.
