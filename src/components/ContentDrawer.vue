@@ -13,7 +13,9 @@
       <div class="nav-wrapper overflow-hidden">
         <TabBar class="flex-grow-0" v-if="currentUUID" />
         <content-windows class="overflow-y-auto" v-if="currentUUID" />
-        <AudioPlayer class="mt-auto" v-if="currentUUID" />
+        <keep-alive>
+          <AudioPlayer class="mt-auto" v-if="currentUUID" />
+        </keep-alive>
       </div>
     </v-navigation-drawer>
     <div
@@ -25,14 +27,16 @@
       class="nav-wrapper"
       style="position: fixed; bottom: 0"
     >
-      <AudioPlayer
-        v-if="currentUUID"
-        v-touch="{
-          up: () => toggleContentDrawer(),
-          down: () => toggleContentDrawer(),
-        }"
-        @click.native="toggleContentDrawer()"
-      />
+      <keep-alive>
+        <AudioPlayer
+          v-if="currentUUID"
+          v-touch="{
+            up: () => toggleContentDrawer(),
+            down: () => toggleContentDrawer(),
+          }"
+          @click.native="toggleContentDrawer()"
+        />
+      </keep-alive>
       <content-windows class="overflow-y-auto" />
       <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
     </div>
@@ -130,6 +134,7 @@ export default {
 .nav-wrapper {
   width: 100%;
   height: 100%;
+  height: -webkit-fill-available !important;
   display: flex;
   flex-direction: column;
 }

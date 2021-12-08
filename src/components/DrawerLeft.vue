@@ -123,6 +123,7 @@ export default {
 <style scoped lang="scss">
 .nav-wrapper {
   height: 100%;
+  height: -webkit-fill-available !important;
   display: flex;
   flex-direction: column;
 }

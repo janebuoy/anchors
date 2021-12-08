@@ -22,6 +22,10 @@ html {
   height: -webkit-fill-available !important;
 }
 
+.full-height {
+  height: 100%;
+  height: -webkit-fill-available !important;
+}
 
 .custom-control {
   background: #fff;
@@ -36,6 +40,7 @@ html {
 .popup_title {
 	font-weight: 600;
 }
+
 // D3
 .chart{
 	&__grid--linechart {
