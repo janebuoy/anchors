@@ -6,6 +6,7 @@
       class="ml-2"
       color="neutral darken-3"
       dark
+      small
       @click.stop="toggleContentDrawer()"
       :title="
         contentDrawer

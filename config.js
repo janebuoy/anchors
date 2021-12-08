@@ -4,7 +4,7 @@ export const config = {
 	"twitterLink": "https://twitter.com/ak_hafen",
 	"nextSceneText": {
 		"start": "Start",
-		"next": "Nächste Station",
+		"next": "Nächste Station:",
 	},
 	"toggleContentBtn": {
 		"open": "Einblenden",

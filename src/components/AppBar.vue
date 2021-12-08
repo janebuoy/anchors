@@ -2,7 +2,13 @@
   <v-app-bar app dark color="primary" elevate-on-scroll clipped-right>
     <v-app-bar-nav-icon @click="toggleDrawerLeft()"></v-app-bar-nav-icon>
     <v-toolbar-title style="cursor: default">
+      <v-icon class="mt-n1 pr-2">
+        {{ listIcon }}
+      </v-icon>
       {{ content.title }}
+      <span style="font-weight: 300; font-size: 1rem" v-if="currentUUID">
+        {{ "(" + (currentItem.id + 1) + "/" + content.resources.length + ")" }}
+      </span>
     </v-toolbar-title>
     <v-spacer />
 
@@ -14,13 +20,16 @@
           ? config.nextSceneText.start
           : config.nextSceneText.next
       "
+      small
     >
       {{
         currentUUID === null
           ? config.nextSceneText.start
           : config.nextSceneText.next
       }}
-      <v-icon right>mdi-sign-direction</v-icon>
+      <v-icon right class="pr-2" v-if="currentUUID !== null">
+        {{ nextIcon }}
+      </v-icon>
     </v-btn>
   </v-app-bar>
 </template>
@@ -38,7 +47,23 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["scenes", "nextID", "currentUUID", "noOfScenes", "content"]),
+    ...mapGetters([
+      "scenes",
+      "nextID",
+      "currentUUID",
+      "noOfScenes",
+      "content",
+      "currentItem",
+    ]),
+    listIcon() {
+      return "mdi-numeric-" + (this.content.id + 1) + "-circle";
+    },
+    nextIcon() {
+      console.log(this.content.id);
+      return this.content.id + 1 === this.noOfScenes
+        ? "mdi-numeric-1-circle"
+        : "mdi-numeric-" + (this.content.id + 2) + "-circle";
+    },
   },
   methods: {
     toggleDrawerLeft() {
