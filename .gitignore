@@ -3,6 +3,7 @@ node_modules
 dist
 data
 public/data
+*.code-workspace
 
 
 # local env files

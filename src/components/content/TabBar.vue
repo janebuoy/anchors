@@ -5,7 +5,7 @@
       dark
       background-color="secondary"
       optional
-      style="max-width: 90px"
+      style="max-width: 90px, height: 48px"
     >
       <v-tabs-slider color="accent darken-1" ref="pinnedTabsSlider" />
       <!-- extended v-tab -->
@@ -27,7 +27,7 @@
       optional
       center-active
       right
-      style="height: 100%"
+      style="height: 48px"
       class="shrunk-tabs"
     >
       <v-tabs-slider color="accent darken-1" ref="tabsSlider" />
