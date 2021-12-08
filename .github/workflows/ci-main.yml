@@ -57,7 +57,7 @@ jobs:
           USER: ${{secrets.DEPLOY_SSH_USER}}
           HOST: ${{secrets.DEPLOY_SSH_HOST}}
           KEY: ${{secrets.DEPLOY_SSH_KEY}}
-          ARGS: -rzh -O --delete-before
+          ARGS: -rzh -O --delete-before --filter='P data' # protect data folder
           SSH_ARGS: '-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
           SOURCE: dist/
           TARGET: ${{secrets.DEPLOY_SSH_V4_TARGET}}

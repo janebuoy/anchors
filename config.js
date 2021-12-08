@@ -7,8 +7,8 @@ export const config = {
 		"next": "Nächste Station",
 	},
 	"toggleContentBtn": {
-		"open": "Seitenleiste einblenden",
-		"close": "Seitenleiste ausblenden"
+		"open": "Einblenden",
+		"close": "Ausblenden"
 	},
 	"player": {
 		"play": "Audiodatei abspielen",
