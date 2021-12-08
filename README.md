@@ -5,11 +5,7 @@ Anchors is a tool to create and publish self-hosted, geo-located audio walks.
 
 - [x] integrated audio player
 - [x] geo-located audio bounds
-- [x] 'typed' chapters
-  - audio
-  - map
-  - timeline
-  - gallery
+- [x] 'typed' chapters (`audio`, `map`, `timeline`, `gallery`)
 - [x] paster overlays
 - [x] pattern overlays
 - [x] per layer controls
