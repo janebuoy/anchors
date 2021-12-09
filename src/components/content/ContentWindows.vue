@@ -7,7 +7,9 @@
       style="overflow-y: auto"
       :touch="{ left: onSwipeLeft, right: onSwipeRight }"
     >
-      <ContentList />
+      <keep-alive>
+        <ContentList />
+      </keep-alive>
     </v-window>
     <v-window
       v-else

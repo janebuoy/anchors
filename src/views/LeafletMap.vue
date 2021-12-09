@@ -443,9 +443,9 @@ export default {
       const vm = this;
       setTimeout(function () {
         vm.$nextTick(() => {
-          vm.mapInvalidate({ pan: true });
+          vm.mapInvalidate({ pan: false });
         });
-      }, 200);
+      }, 300);
     },
   },
 };

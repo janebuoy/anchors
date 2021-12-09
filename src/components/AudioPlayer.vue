@@ -8,7 +8,7 @@
       flat
       style="position: relative; z-index: 300"
     >
-      <v-btn icon small @click.native="toggleContentDrawer()">
+      <v-btn icon small @click.native="toggleContentDrawer()" class="ml-0">
         <v-icon v-if="$vuetify.breakpoint.smAndDown">
           {{ contentDrawer ? "mdi-chevron-down" : "mdi-chevron-up" }}
         </v-icon>
@@ -222,8 +222,6 @@ export default {
       }
     },
     playAudio() {
-      const newTime = ((this.localProgress * 1000) / 100000) * this.duration;
-      window.player.currentTime = newTime;
       window.player.play();
       this.startTimer(0);
       const payload = {
@@ -260,10 +258,14 @@ export default {
       this.startTimer(0);
     },
     seekForwards() {
+      this.currentTime += 10;
       window.player.currentTime += 10;
+      this.progress = (window.player.currentTime / this.duration) * 100;
     },
     seekBackwards() {
+      this.currentTime -= 10;
       window.player.currentTime -= 10;
+      this.progress = (window.player.currentTime / this.duration) * 100;
     },
     prevAudio() {
       eventBus.$emit("prevAudio");

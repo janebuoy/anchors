@@ -131,7 +131,6 @@ export default {
     },
     toggleContentDrawer() {
       this.contentDrawer = !this.contentDrawer;
-      console.log(this.contentDrawer);
       if (!this.contentDrawer) {
         this.diff = this.max;
       } else {
@@ -151,9 +150,9 @@ export default {
     },
     contentDrawer() {
       this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+      this.mapInvalidate({ pan: true });
     },
     allowedDiff() {
-      console.log(this.allowedDiff);
       if (this.allowedDiff >= this.max) {
         this.contentDrawer = false;
       } else if (this.allowedDiff > 0) {
