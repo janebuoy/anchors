@@ -1,18 +1,18 @@
 <template>
   <div ref="tabItemsWrapper" class="full-height" v-if="mounted">
-    <v-window
-      v-if="pinned === 0"
-      :value="pinned"
-      reverse
-      style="overflow-y: auto"
-      :touch="{ left: onSwipeLeft, right: onSwipeRight }"
-    >
-      <keep-alive>
+    <keep-alive>
+      <v-window
+        v-if="pinned === 0"
+        :value="pinned"
+        reverse
+        style="overflow-y: auto"
+        :touch="{ left: onSwipeLeft, right: onSwipeRight }"
+      >
         <ContentList />
-      </keep-alive>
-    </v-window>
+      </v-window>
+    </keep-alive>
     <v-window
-      v-else
+      v-if="pinned !== 0"
       :value="active"
       class="full-height"
       style="overflow-y: auto"

@@ -31,7 +31,7 @@
           class="mr-1"
           @click.stop="seekBackwards()"
           :title="config.player.seekBackwards"
-          :disabled="!localSrc"
+          :disabled="!localSrc || this.currentTime === 0"
         >
           <v-icon>mdi-replay</v-icon>
         </v-btn>
@@ -121,7 +121,7 @@ export default {
       localSrc: null,
       localProgress: null,
       duration: 0,
-      progress: 0,
+      progress: null,
       currentTime: 0,
       lastAudioID: null,
       addCompletedSent: false,
@@ -222,6 +222,7 @@ export default {
       }
     },
     playAudio() {
+      window.player.currentTime = this.currentTime;
       window.player.play();
       this.startTimer(0);
       const payload = {
@@ -259,11 +260,18 @@ export default {
     },
     seekForwards() {
       this.currentTime += 10;
-      window.player.currentTime += 10;
+      if (this.duration - this.currentTime < 10) {
+        window.player.currentTime = this.duration - this.currentTime;
+        this.resetAudio();
+      } else {
+        window.player.currentTime += 10;
+      }
       this.progress = (window.player.currentTime / this.duration) * 100;
     },
     seekBackwards() {
-      this.currentTime -= 10;
+      this.currentTime >= 10
+        ? (this.currentTime -= 10)
+        : (this.currentTime = 0);
       window.player.currentTime -= 10;
       this.progress = (window.player.currentTime / this.duration) * 100;
     },
@@ -277,8 +285,7 @@ export default {
       const vm = this;
       vm.timer = setTimeout(function () {
         vm.currentTime = window.player.currentTime;
-        vm.progress =
-          Math.round((vm.currentTime / vm.duration) * 100000) / 1000;
+        vm.progress = (vm.currentTime / vm.duration) * 100;
         if (vm.progress <= 100 || isNaN(vm.progress)) {
           vm.startTimer(100);
         }
@@ -286,12 +293,9 @@ export default {
     },
     resetAudio() {
       this.pauseAudio();
-      this.localSrc = "";
       this.progress = 0;
-      this.duration = 0;
       this.currentTime = 0;
-      this.localProgress = 0;
-      window.player = null;
+      this.computedProgress = 0;
     },
     loadAudio() {
       // Load source if local source is different from currentItem source
