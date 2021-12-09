@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer
+      @transitionend.self="mapInvalidate({ pan: true })"
       v-if="!$vuetify.breakpoint.smAndDown"
       v-model="contentDrawer"
       absolute
@@ -13,26 +14,44 @@
       <div class="nav-wrapper overflow-hidden">
         <TabBar class="flex-grow-0" v-if="currentUUID" />
         <content-windows class="overflow-y-auto" v-if="currentUUID" />
-        <AudioPlayer class="mt-auto" v-if="currentUUID" />
+        <keep-alive>
+          <AudioPlayer class="mt-auto" v-if="currentUUID" />
+        </keep-alive>
       </div>
     </v-navigation-drawer>
     <div
+      @transitionend.self="
+        {
+          updateBottomHeight(bottomHeight - allowedDiff);
+          mapInvalidate({ pan: true });
+        }
+      "
       v-if="$vuetify.breakpoint.smAndDown"
       ref="bottomSheet"
-      :style="[
-        contentDrawer ? { height: bottomHeight + 'px' } : { height: '144px' },
-      ]"
+      :style="{ height: bottomHeight - allowedDiff + 'px' }"
       class="nav-wrapper"
-      style="position: fixed; bottom: 0"
+      :class="!dragging ? 'expand-transition' : null"
+      style="position: fixed; bottom: 0; cursor: ns-resize"
     >
-      <AudioPlayer
-        v-if="currentUUID"
-        v-touch="{
-          up: () => toggleContentDrawer(),
-          down: () => toggleContentDrawer(),
-        }"
-        @click.native="toggleContentDrawer()"
-      />
+      <keep-alive>
+        <AudioPlayer
+          @toggleContentDrawer="toggleContentDrawer()"
+          v-if="currentUUID"
+          v-touch="{
+            start: () => {
+              this.dragging = true;
+            },
+            move: (e) => resize(e),
+            end: () => {
+              this.dragging = false;
+              this.$nextTick(() => {
+                this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+                this.mapInvalidate({ pan: true });
+              });
+            },
+          }"
+        />
+      </keep-alive>
       <content-windows class="overflow-y-auto" />
       <TabBar class="mt-auto flex-grow-0" v-if="currentUUID" />
     </div>
@@ -44,6 +63,7 @@ import { mapGetters } from "vuex";
 import TabBar from "@/components/content/TabBar";
 import ContentWindows from "@/components/content/ContentWindows";
 import AudioPlayer from "./AudioPlayer";
+import { eventBus } from "../main";
 
 export default {
   name: "ContentDrawer",
@@ -57,28 +77,18 @@ export default {
       drawerRightWidth: 480,
       contentKey: 0,
       scrollTimer: 120,
+      diff: 0,
+      dragging: false,
     };
   },
   computed: {
-    ...mapGetters(["currentUUID", "content", "currentItem"]),
+    ...mapGetters(["currentUUID", "content", "currentItem", "contentDrawer"]),
     contentDrawer: {
       get() {
         return this.$store.getters.contentDrawer;
       },
       set(v) {
         return this.$store.dispatch("toggleContentDrawer", v);
-      },
-    },
-    bottomSheetHeight: {
-      get() {
-        if (this.$vuetify.breakpoint.smAndDown) {
-          return this.$refs.bottomSheet.$refs.dialog.clientHeight;
-        } else {
-          return null;
-        }
-      },
-      set(v) {
-        return this.$store.dispatch("bottomSheetHeight", v);
       },
     },
     keepOpen() {
@@ -90,34 +100,64 @@ export default {
     bottomHeight() {
       return this.windowHeight * 0.6;
     },
+    min() {
+      return this.windowHeight * 0.5 - this.bottomHeight;
+    },
+    max() {
+      return this.bottomHeight - 144;
+    },
+    allowedDiff() {
+      if (this.diff < this.max && this.diff > this.min) {
+        return this.diff;
+      } else if (this.diff >= this.max) {
+        return this.max;
+      } else {
+        return this.min;
+      }
+    },
   },
   methods: {
-    toggleContentDrawer() {
-      this.contentDrawer = !this.contentDrawer;
+    mapInvalidate(payload) {
+      eventBus.$emit("mapInvalidate", payload);
+    },
+    resize(e) {
+      this.diff = e.touchmoveY - (this.windowHeight - this.bottomHeight);
     },
     onClickOutside() {
       return true;
     },
-    updateBottomSheetHeight() {
-      // Make sure the refs are available, otherwise vue might throw errors
-      if (this.$refs.bottomSheet) {
-        const vm = this;
-        this.$nextTick(() => {
-          vm.bottomSheetHeight = vm.$refs.bottomSheet.scrollHeight;
-        });
+    updateBottomHeight(height) {
+      this.$store.dispatch("bottomHeight", height);
+    },
+    toggleContentDrawer() {
+      this.contentDrawer = !this.contentDrawer;
+      if (!this.contentDrawer) {
+        this.diff = this.max;
+      } else {
+        this.diff = 0;
       }
     },
   },
   updated() {
-    this.updateBottomSheetHeight();
     this.$store.dispatch("drawerRightWidth", this.drawerRightWidth);
   },
   watch: {
     currentUUID() {
-      this.updateBottomSheetHeight();
+      this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
     },
     windowHeight() {
-      this.updateBottomSheetHeight();
+      this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+    },
+    contentDrawer() {
+      this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+      this.mapInvalidate({ pan: true });
+    },
+    allowedDiff() {
+      if (this.allowedDiff >= this.max) {
+        this.contentDrawer = false;
+      } else if (this.allowedDiff > 0) {
+        this.contentDrawer = true;
+      }
     },
   },
 };
@@ -130,7 +170,15 @@ export default {
 .nav-wrapper {
   width: 100%;
   height: 100%;
+  height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
+}
+.expand-transition {
+  -webkit-transition: height 0.2s;
+  -moz-transition: height 0.2s;
+  -ms-transition: height 0.2s;
+  -o-transition: height 0.2s;
+  transition: height 0.2s;
 }
 </style>

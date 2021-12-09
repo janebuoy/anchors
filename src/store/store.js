@@ -30,7 +30,7 @@ export default new Vuex.Store({
 				data: null,
 			},
 			waterLevels: null,
-			bottomSheetHeight: null,
+			bottomHeight: null,
 			tabItemsHeight: null,
 			drawerRightWidth: null,
 			drawerLeft: false,
@@ -93,8 +93,8 @@ export default new Vuex.Store({
 					commit('setWeserWaterLevels', response.data)
 				})
 		},
-		bottomSheetHeight(context, payload) {
-			context.commit("bottomSheetHeight", payload)
+		bottomHeight(context, payload) {
+			context.commit("bottomHeight", payload)
 		},
 		drawerRightWidth(context, payload) {
 			context.commit("drawerRightWidth", payload)
@@ -199,8 +199,8 @@ export default new Vuex.Store({
 			}
 			state.global.waterLevels = jsonObj
 		},
-		bottomSheetHeight: (state, payload) => {
-			state.global.bottomSheetHeight = payload
+		bottomHeight: (state, payload) => {
+			state.global.bottomHeight = payload
 		},
 		tabItemsHeight: (state, payload) => {
 			state.global.tabItemsHeight = payload
@@ -312,8 +312,8 @@ export default new Vuex.Store({
 		waterLevels: state => {
 			return state.global.waterLevels
 		},
-		bottomSheetHeight: state => {
-			return state.global.bottomSheetHeight
+		bottomHeight: state => {
+			return state.global.bottomHeight
 		},
 		tabItemsHeight: state => {
 			return state.global.tabItemsHeight

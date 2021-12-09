@@ -1,37 +1,36 @@
 <template>
-  <div ref="tabItemsWrapper" style="height: 100%" v-if="mounted">
-    <v-window
-      v-show="pinned === 0"
-      :value="pinned"
-      reverse
-      style="height: 100%; overflow-y: auto"
-      :touch="{ left: onSwipeLeft, right: onSwipeRight }"
-    >
-      <ContentList />
-    </v-window>
-
-    <div style="height: 100%" v-if="pinned !== 0">
+  <div ref="tabItemsWrapper" class="full-height" v-if="mounted">
+    <keep-alive>
       <v-window
-        :value="active"
-        style="overflow-y: auto; height: 100%"
+        v-if="pinned === 0"
+        :value="pinned"
+        reverse
+        style="overflow-y: auto"
         :touch="{ left: onSwipeLeft, right: onSwipeRight }"
       >
-        <v-window-item
-          v-for="item in resources"
-          :key="item.id"
-          :style="!$vuetify.breakpoint.smAndDown ? 'height: 100%' : null"
-        >
-          <active-tab-item
-            v-if="item.type === 'audio' || item.type === 'map'"
-          />
-          <gallery-content
-            v-if="item.type === 'gallery'"
-            :style="!$vuetify.breakpoint.smAndDown ? 'height: 100%' : null"
-          />
-          <timeline-content v-if="item.type === 'timeline'" />
-        </v-window-item>
+        <ContentList />
       </v-window>
-    </div>
+    </keep-alive>
+    <v-window
+      v-if="pinned !== 0"
+      :value="active"
+      class="full-height"
+      style="overflow-y: auto"
+      :touch="{ left: onSwipeLeft, right: onSwipeRight }"
+    >
+      <v-window-item
+        v-for="item in resources"
+        :key="item.id"
+        :class="!$vuetify.breakpoint.smAndDown ? 'full-height' : null"
+      >
+        <active-tab-item v-if="item.type === 'audio' || item.type === 'map'" />
+        <gallery-content
+          v-if="item.type === 'gallery'"
+          :class="!$vuetify.breakpoint.smAndDown ? 'full-height' : null"
+        />
+        <timeline-content v-if="item.type === 'timeline'" />
+      </v-window-item>
+    </v-window>
   </div>
 </template>
 

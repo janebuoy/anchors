@@ -1,14 +1,14 @@
 export const config = {
-	"repoLink": "https://github.com/janebuoy/vue-leaflet-audio-guide",
+	"repoLink": "https://github.com/janebuoy/anchors",
 	"websiteLink": "https://ak-hafen.de",
 	"twitterLink": "https://twitter.com/ak_hafen",
 	"nextSceneText": {
 		"start": "Start",
-		"next": "Nächste Station",
+		"next": "Nächste Station:",
 	},
 	"toggleContentBtn": {
-		"open": "Seitenleiste einblenden",
-		"close": "Seitenleiste ausblenden"
+		"open": "Einblenden",
+		"close": "Ausblenden"
 	},
 	"player": {
 		"play": "Audiodatei abspielen",

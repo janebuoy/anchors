@@ -8,9 +8,11 @@
       flat
       style="position: relative; z-index: 300"
     >
-      <v-icon v-if="$vuetify.breakpoint.smAndDown">
-        {{ contentDrawer ? "mdi-chevron-down" : "mdi-chevron-up" }}
-      </v-icon>
+      <v-btn icon small @click.native="toggleContentDrawer()" class="ml-0">
+        <v-icon v-if="$vuetify.breakpoint.smAndDown">
+          {{ contentDrawer ? "mdi-chevron-down" : "mdi-chevron-up" }}
+        </v-icon>
+      </v-btn>
       <v-row
         class="d-flex align-center justify-center"
         :class="$vuetify.breakpoint.smAndDown ? 'ml-n6' : null"
@@ -29,7 +31,7 @@
           class="mr-1"
           @click.stop="seekBackwards()"
           :title="config.player.seekBackwards"
-          :disabled="!localSrc"
+          :disabled="!localSrc || this.currentTime === 0"
         >
           <v-icon>mdi-replay</v-icon>
         </v-btn>
@@ -82,7 +84,6 @@
           v-model="computedProgress"
           @mousedown="pauseProgress"
           @click.stop="jumpInTime"
-          @
           min="0"
           max="100"
           step="0.01"
@@ -120,7 +121,7 @@ export default {
       localSrc: null,
       localProgress: null,
       duration: 0,
-      progress: 0,
+      progress: null,
       currentTime: 0,
       lastAudioID: null,
       addCompletedSent: false,
@@ -186,8 +187,14 @@ export default {
         this.localProgress = value;
       },
     },
+    contentDrawer() {
+      return this.$store.getters.contentDrawer;
+    },
   },
   methods: {
+    toggleContentDrawer() {
+      this.$emit("toggleContentDrawer");
+    },
     toggleAudio() {
       // If nothing is playing, load Audio of selected item and play
       if (!this.isPlaying && this.currentItem.type === "audio") {
@@ -215,8 +222,7 @@ export default {
       }
     },
     playAudio() {
-      const newTime = ((this.localProgress * 1000) / 100000) * this.duration;
-      window.player.currentTime = newTime;
+      window.player.currentTime = this.currentTime;
       window.player.play();
       this.startTimer(0);
       const payload = {
@@ -253,10 +259,21 @@ export default {
       this.startTimer(0);
     },
     seekForwards() {
-      window.player.currentTime += 10;
+      this.currentTime += 10;
+      if (this.duration - this.currentTime < 10) {
+        window.player.currentTime = this.duration - this.currentTime;
+        this.resetAudio();
+      } else {
+        window.player.currentTime += 10;
+      }
+      this.progress = (window.player.currentTime / this.duration) * 100;
     },
     seekBackwards() {
+      this.currentTime >= 10
+        ? (this.currentTime -= 10)
+        : (this.currentTime = 0);
       window.player.currentTime -= 10;
+      this.progress = (window.player.currentTime / this.duration) * 100;
     },
     prevAudio() {
       eventBus.$emit("prevAudio");
@@ -268,8 +285,7 @@ export default {
       const vm = this;
       vm.timer = setTimeout(function () {
         vm.currentTime = window.player.currentTime;
-        vm.progress =
-          Math.round((vm.currentTime / vm.duration) * 100000) / 1000;
+        vm.progress = (vm.currentTime / vm.duration) * 100;
         if (vm.progress <= 100 || isNaN(vm.progress)) {
           vm.startTimer(100);
         }
@@ -277,12 +293,9 @@ export default {
     },
     resetAudio() {
       this.pauseAudio();
-      this.localSrc = "";
       this.progress = 0;
-      this.duration = 0;
       this.currentTime = 0;
-      this.localProgress = 0;
-      window.player = null;
+      this.computedProgress = 0;
     },
     loadAudio() {
       // Load source if local source is different from currentItem source
@@ -350,7 +363,6 @@ export default {
     },
     currentItem(v) {
       if (v.type === "audio") {
-        //this.getAudioState();
         this.loadAudio();
       }
     },

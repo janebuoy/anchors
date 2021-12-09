@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer v-model="drawerLeft" app left style="z-index: 1001">
+  <v-navigation-drawer
+    v-model="drawerLeft"
+    left
+    style="z-index: 1001"
+    @transitionend="mapInvalidate"
+    app
+  >
     <div class="nav-wrapper">
       <v-card
         tile
@@ -27,6 +33,7 @@
             v-for="(item, index) in scenes.features"
             :key="item.uuid"
             @click.stop="openScene(item.uuid)"
+            two-line
           >
             <v-list-item-action>
               <v-icon :color="index !== activeItem ? 'neutral' : null">
@@ -37,8 +44,12 @@
               <v-list-item-title
                 :class="index !== activeItem ? 'de-emphasize' : null"
               >
-                {{ item.properties.title }}
+                {{ item.content.title }}
               </v-list-item-title>
+              <v-list-item-subtitle>
+                <v-icon x-small> mdi-map-marker </v-icon>
+                {{ item.properties.title }}
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -103,6 +114,9 @@ export default {
     },
   },
   methods: {
+    mapInvalidate() {
+      eventBus.$emit("mapInvalidate", { pan: false });
+    },
     listIcon(index) {
       return "mdi-numeric-" + (index + 1) + "-circle";
     },
@@ -111,6 +125,7 @@ export default {
     },
     openScene(uuid) {
       eventBus.$emit("openScene", uuid);
+      this.closeDrawer();
     },
   },
   created() {
@@ -123,6 +138,7 @@ export default {
 <style scoped lang="scss">
 .nav-wrapper {
   height: 100%;
+  height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
 }
