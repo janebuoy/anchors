@@ -8,9 +8,11 @@
       flat
       style="position: relative; z-index: 300"
     >
-      <v-icon v-if="$vuetify.breakpoint.smAndDown">
-        {{ contentDrawer ? "mdi-chevron-down" : "mdi-chevron-up" }}
-      </v-icon>
+      <v-btn icon small @click.native="toggleContentDrawer()">
+        <v-icon v-if="$vuetify.breakpoint.smAndDown">
+          {{ contentDrawer ? "mdi-chevron-down" : "mdi-chevron-up" }}
+        </v-icon>
+      </v-btn>
       <v-row
         class="d-flex align-center justify-center"
         :class="$vuetify.breakpoint.smAndDown ? 'ml-n6' : null"
@@ -82,7 +84,6 @@
           v-model="computedProgress"
           @mousedown="pauseProgress"
           @click.stop="jumpInTime"
-          @
           min="0"
           max="100"
           step="0.01"
@@ -186,8 +187,14 @@ export default {
         this.localProgress = value;
       },
     },
+    contentDrawer() {
+      return this.$store.getters.contentDrawer;
+    },
   },
   methods: {
+    toggleContentDrawer() {
+      this.$emit("toggleContentDrawer");
+    },
     toggleAudio() {
       // If nothing is playing, load Audio of selected item and play
       if (!this.isPlaying && this.currentItem.type === "audio") {
@@ -350,7 +357,6 @@ export default {
     },
     currentItem(v) {
       if (v.type === "audio") {
-        //this.getAudioState();
         this.loadAudio();
       }
     },

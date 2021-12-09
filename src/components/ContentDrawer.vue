@@ -22,26 +22,34 @@
     <div
       @transitionend.self="
         {
+          updateBottomHeight(bottomHeight - allowedDiff);
           mapInvalidate({ pan: true });
-          updateBottomHeight();
         }
       "
       v-if="$vuetify.breakpoint.smAndDown"
       ref="bottomSheet"
-      :style="[
-        contentDrawer ? { height: bottomHeight + 'px' } : { height: '144px' },
-      ]"
-      class="nav-wrapper expand-transition"
-      style="position: fixed; bottom: 0"
+      :style="{ height: bottomHeight - allowedDiff + 'px' }"
+      class="nav-wrapper"
+      :class="!dragging ? 'expand-transition' : null"
+      style="position: fixed; bottom: 0; cursor: ns-resize"
     >
       <keep-alive>
         <AudioPlayer
+          @toggleContentDrawer="toggleContentDrawer()"
           v-if="currentUUID"
           v-touch="{
-            up: () => toggleContentDrawer(),
-            down: () => toggleContentDrawer(),
+            start: () => {
+              this.dragging = true;
+            },
+            move: (e) => resize(e),
+            end: () => {
+              this.dragging = false;
+              this.$nextTick(() => {
+                this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+                this.mapInvalidate({ pan: true });
+              });
+            },
           }"
-          @click.native="toggleContentDrawer()"
         />
       </keep-alive>
       <content-windows class="overflow-y-auto" />
@@ -69,6 +77,8 @@ export default {
       drawerRightWidth: 480,
       contentKey: 0,
       scrollTimer: 120,
+      diff: 0,
+      dragging: false,
     };
   },
   computed: {
@@ -90,19 +100,43 @@ export default {
     bottomHeight() {
       return this.windowHeight * 0.6;
     },
+    min() {
+      return this.windowHeight * 0.5 - this.bottomHeight;
+    },
+    max() {
+      return this.bottomHeight - 144;
+    },
+    allowedDiff() {
+      if (this.diff < this.max && this.diff > this.min) {
+        return this.diff;
+      } else if (this.diff >= this.max) {
+        return this.max;
+      } else {
+        return this.min;
+      }
+    },
   },
   methods: {
     mapInvalidate(payload) {
       eventBus.$emit("mapInvalidate", payload);
     },
-    toggleContentDrawer() {
-      this.contentDrawer = !this.contentDrawer;
+    resize(e) {
+      this.diff = e.touchmoveY - (this.windowHeight - this.bottomHeight);
     },
     onClickOutside() {
       return true;
     },
-    updateBottomHeight() {
-      this.$store.dispatch("bottomHeight", this.bottomHeight);
+    updateBottomHeight(height) {
+      this.$store.dispatch("bottomHeight", height);
+    },
+    toggleContentDrawer() {
+      this.contentDrawer = !this.contentDrawer;
+      console.log(this.contentDrawer);
+      if (!this.contentDrawer) {
+        this.diff = this.max;
+      } else {
+        this.diff = 0;
+      }
     },
   },
   updated() {
@@ -110,10 +144,21 @@ export default {
   },
   watch: {
     currentUUID() {
-      this.updateBottomHeight();
+      this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
     },
     windowHeight() {
-      this.updateBottomHeight();
+      this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+    },
+    contentDrawer() {
+      this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+    },
+    allowedDiff() {
+      console.log(this.allowedDiff);
+      if (this.allowedDiff >= this.max) {
+        this.contentDrawer = false;
+      } else if (this.allowedDiff > 0) {
+        this.contentDrawer = true;
+      }
     },
   },
 };
@@ -126,7 +171,7 @@ export default {
 .nav-wrapper {
   width: 100%;
   height: 100%;
-  height: -webkit-fill-available !important;
+  height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
 }

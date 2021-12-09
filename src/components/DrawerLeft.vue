@@ -1,10 +1,10 @@
 <template>
   <v-navigation-drawer
     v-model="drawerLeft"
-    app
     left
     style="z-index: 1001"
     @transitionend="mapInvalidate"
+    app
   >
     <div class="nav-wrapper">
       <v-card
@@ -125,6 +125,7 @@ export default {
     },
     openScene(uuid) {
       eventBus.$emit("openScene", uuid);
+      this.closeDrawer();
     },
   },
   created() {
@@ -137,7 +138,7 @@ export default {
 <style scoped lang="scss">
 .nav-wrapper {
   height: 100%;
-  height: -webkit-fill-available !important;
+  height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
 }
