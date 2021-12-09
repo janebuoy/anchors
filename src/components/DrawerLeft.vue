@@ -4,7 +4,7 @@
     app
     left
     style="z-index: 1001"
-    absolute
+    @transitionend="mapInvalidate"
   >
     <div class="nav-wrapper">
       <v-card
@@ -114,6 +114,9 @@ export default {
     },
   },
   methods: {
+    mapInvalidate() {
+      eventBus.$emit("mapInvalidate", { pan: false });
+    },
     listIcon(index) {
       return "mdi-numeric-" + (index + 1) + "-circle";
     },

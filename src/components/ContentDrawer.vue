@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer
+      @transitionend.self="mapInvalidate({ pan: true })"
       v-if="!$vuetify.breakpoint.smAndDown"
       v-model="contentDrawer"
       absolute
@@ -19,12 +20,18 @@
       </div>
     </v-navigation-drawer>
     <div
+      @transitionend.self="
+        {
+          mapInvalidate({ pan: true });
+          updateBottomHeight();
+        }
+      "
       v-if="$vuetify.breakpoint.smAndDown"
       ref="bottomSheet"
       :style="[
         contentDrawer ? { height: bottomHeight + 'px' } : { height: '144px' },
       ]"
-      class="nav-wrapper"
+      class="nav-wrapper expand-transition"
       style="position: fixed; bottom: 0"
     >
       <keep-alive>
@@ -48,6 +55,7 @@ import { mapGetters } from "vuex";
 import TabBar from "@/components/content/TabBar";
 import ContentWindows from "@/components/content/ContentWindows";
 import AudioPlayer from "./AudioPlayer";
+import { eventBus } from "../main";
 
 export default {
   name: "ContentDrawer",
@@ -64,25 +72,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentUUID", "content", "currentItem"]),
+    ...mapGetters(["currentUUID", "content", "currentItem", "contentDrawer"]),
     contentDrawer: {
       get() {
         return this.$store.getters.contentDrawer;
       },
       set(v) {
         return this.$store.dispatch("toggleContentDrawer", v);
-      },
-    },
-    bottomSheetHeight: {
-      get() {
-        if (this.$vuetify.breakpoint.smAndDown) {
-          return this.$refs.bottomSheet.$refs.dialog.clientHeight;
-        } else {
-          return null;
-        }
-      },
-      set(v) {
-        return this.$store.dispatch("bottomSheetHeight", v);
       },
     },
     keepOpen() {
@@ -96,32 +92,28 @@ export default {
     },
   },
   methods: {
+    mapInvalidate(payload) {
+      eventBus.$emit("mapInvalidate", payload);
+    },
     toggleContentDrawer() {
       this.contentDrawer = !this.contentDrawer;
     },
     onClickOutside() {
       return true;
     },
-    updateBottomSheetHeight() {
-      // Make sure the refs are available, otherwise vue might throw errors
-      if (this.$refs.bottomSheet) {
-        const vm = this;
-        this.$nextTick(() => {
-          vm.bottomSheetHeight = vm.$refs.bottomSheet.scrollHeight;
-        });
-      }
+    updateBottomHeight() {
+      this.$store.dispatch("bottomHeight", this.bottomHeight);
     },
   },
   updated() {
-    this.updateBottomSheetHeight();
     this.$store.dispatch("drawerRightWidth", this.drawerRightWidth);
   },
   watch: {
     currentUUID() {
-      this.updateBottomSheetHeight();
+      this.updateBottomHeight();
     },
     windowHeight() {
-      this.updateBottomSheetHeight();
+      this.updateBottomHeight();
     },
   },
 };
@@ -137,5 +129,12 @@ export default {
   height: -webkit-fill-available !important;
   display: flex;
   flex-direction: column;
+}
+.expand-transition {
+  -webkit-transition: height 0.2s;
+  -moz-transition: height 0.2s;
+  -ms-transition: height 0.2s;
+  -o-transition: height 0.2s;
+  transition: height 0.2s;
 }
 </style>

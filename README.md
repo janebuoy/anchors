@@ -13,6 +13,7 @@ Anchors is a tool to create and publish self-hosted, geo-located audio walks.
 - [x] galleries
 - [x] responsive layout
 - [ ] sane data structure
+- [ ] proper routing
 - [ ] creator mode
 
 ## Limitations

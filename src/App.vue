@@ -3,7 +3,7 @@
     <v-main
       :style="[
         contentDrawer && $vuetify.breakpoint.smAndDown
-          ? { paddingBottom: bottomSheetHeight + 'px' }
+          ? { paddingBottom: bottomHeight + 'px' }
           : null,
         !contentDrawer && currentUUID ? { paddingBottom: '144px' } : null,
         !contentDrawer && $vuetify.breakpoint.mdAndUp
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "bottomSheetHeight",
+      "bottomHeight",
       "contentDrawer",
       "drawerRightWidth",
       "scenes",

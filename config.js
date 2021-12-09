@@ -1,5 +1,5 @@
 export const config = {
-	"repoLink": "https://github.com/janebuoy/vue-leaflet-audio-guide",
+	"repoLink": "https://github.com/janebuoy/anchors",
 	"websiteLink": "https://ak-hafen.de",
 	"twitterLink": "https://twitter.com/ak_hafen",
 	"nextSceneText": {

@@ -201,7 +201,7 @@ export default {
       "activeLayers",
       "currentUUID",
       "currentItem",
-      "bottomSheetHeight",
+      "bottomHeight",
       "contentDrawer",
       "useActionBounds",
       "waterLevels",
@@ -211,12 +211,9 @@ export default {
         (e) => e.name !== "route" && e.name !== "scenes"
       );
       let result = [];
+      const layerTypes = ["PointsLayer", "MultiPatternLayer", "PatternLayer"];
       for (const layer of active) {
-        if (
-          layer.type === "PointsLayer" ||
-          layer.type === "MultiPatternLayer" ||
-          layer.type === "PatternLayer"
-        ) {
+        if (layerTypes.includes(layer.type)) {
           result.push({
             type: layer.type,
             source: layer.source,
@@ -322,7 +319,6 @@ export default {
       });
       this.applyOptions(feature);
       this.setCoords(feature);
-      this.pushToRoute(feature);
     },
     openSceneDefaults(uuid) {
       const feature = this.scenes.features.filter((a) => a.uuid === uuid)[0];
@@ -399,33 +395,14 @@ export default {
       }
       this.map.flyTo(center, zoom, flyToOptions);
     },
-    pushToRoute(feature) {
-      const station = feature.common_name;
-      const uuid = feature.uuid;
-      if (this.$route.query !== station) {
-        try {
-          this.$router.push({ query: { station }, params: { uuid } });
-        } catch (error) {
-          // eslint-disable-next-line
-          if (!(error instanceof NavigationDuplicated)) {
-            throw error;
-          }
-        }
-      }
-    },
-    mapInvalidate() {
+    mapInvalidate(payload) {
       // make sure "ref" is not exactly "map"
       // See: https://github.com/xkjyeah/vue-google-maps/issues/260#issuecomment-429323819
-      this.map.invalidateSize({ animate: true, debounceMoveend: true });
-    },
-    recentreMap() {
-      const vm = this;
-      setTimeout(function () {
-        //vm.mapInvalidate();
-        vm.$nextTick(() => {
-          vm.mapInvalidate();
-        });
-      }, 200);
+      this.map.invalidateSize({
+        pan: payload.pan,
+        animate: true,
+        debounceMoveend: true,
+      });
     },
     async fetchJSONLayers() {
       for (let layer in this.JSONLayers) {
@@ -453,24 +430,22 @@ export default {
     eventBus.$on("openNextScene", () => {
       this.openScene(this.nextUUID);
     });
-    eventBus.$on("recentreMap", this.recentreMap);
     eventBus.$on("setCoords", this.setCoords);
+    eventBus.$on("mapInvalidate", this.mapInvalidate);
   },
   watch: {
     // Watch for map height size changes
-    bottomSheetHeight() {
-      this.recentreMap();
-    },
-    // Watch for contentDrawer changes
-    contentDrawer() {
-      this.recentreMap();
+    bottomHeight() {
+      this.mapInvalidate({ pan: false });
     },
     isMobile() {
       this.updateZoom();
-      this.recentreMap();
-    },
-    windowHeight() {
-      this.recentreMap();
+      const vm = this;
+      setTimeout(function () {
+        vm.$nextTick(() => {
+          vm.mapInvalidate({ pan: true });
+        });
+      }, 200);
     },
   },
 };
