@@ -59,7 +59,6 @@ export default {
       return "mdi-numeric-" + (this.content.id + 1) + "-circle";
     },
     nextIcon() {
-      console.log(this.content.id);
       return this.content.id + 1 === this.noOfScenes
         ? "mdi-numeric-1-circle"
         : "mdi-numeric-" + (this.content.id + 2) + "-circle";
