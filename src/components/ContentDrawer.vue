@@ -35,6 +35,13 @@
     >
       <div
         class="resizer"
+        :class="
+          allowedDiff === max
+            ? 'resizer-n'
+            : allowedDiff === min
+            ? 'resizer-s'
+            : 'resizer-ns'
+        "
         @mousedown="(e) => mouseDownHandler(e)"
         v-touch="{
           start: () => down(),
@@ -213,8 +220,16 @@ export default {
   z-index: 3000;
   top: 0;
   left: 0;
-  cursor: ns-resize;
   height: 5px;
   width: 100%;
+}
+.resizer-ns {
+  cursor: row-resize;
+}
+.resizer-s {
+  cursor: s-resize;
+}
+.resizer-n {
+  cursor: n-resize;
 }
 </style>
