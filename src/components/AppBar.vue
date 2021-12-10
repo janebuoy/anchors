@@ -11,8 +11,8 @@
       </span>
     </v-toolbar-title>
     <v-spacer />
-
     <v-btn
+      v-if="$vuetify.breakpoint.mdAndUp"
       @click="openNextScene()"
       class="secondary"
       :title="
@@ -21,13 +21,34 @@
           : config.nextSceneText.next
       "
       small
+      rounded
     >
       {{
         currentUUID === null
           ? config.nextSceneText.start
           : config.nextSceneText.next
       }}
-      <v-icon right class="pr-2" v-if="currentUUID !== null">
+      <v-icon right v-if="currentUUID !== null">
+        {{ nextIcon }}
+      </v-icon>
+    </v-btn>
+    <v-btn
+      v-else
+      @click="openNextScene()"
+      class="secondary"
+      :title="
+        currentUUID === null
+          ? config.nextSceneText.start
+          : config.nextSceneText.next
+      "
+      small
+      rounded
+    >
+      <span v-if="currentUUID === null">{{ config.nextSceneText.start }}</span>
+      <v-icon v-if="currentUUID !== null">
+        {{ "mdi-transfer-right" }}
+      </v-icon>
+      <v-icon right v-if="currentUUID !== null">
         {{ nextIcon }}
       </v-icon>
     </v-btn>
