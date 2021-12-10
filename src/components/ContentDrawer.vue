@@ -31,24 +31,25 @@
       :style="{ height: bottomHeight - allowedDiff + 'px' }"
       class="nav-wrapper"
       :class="!dragging ? 'expand-transition' : null"
-      style="position: fixed; bottom: 0; cursor: ns-resize"
+      style="position: fixed; bottom: 0"
     >
+      <div
+        class="resizer"
+        @mousedown="(e) => mouseDownHandler(e)"
+        v-touch="{
+          start: () => down(),
+          move: (e) => resize(e),
+          end: () => up(),
+        }"
+      ></div>
       <keep-alive>
         <AudioPlayer
           @toggleContentDrawer="toggleContentDrawer()"
           v-if="currentUUID"
           v-touch="{
-            start: () => {
-              this.dragging = true;
-            },
+            start: () => down(),
             move: (e) => resize(e),
-            end: () => {
-              this.dragging = false;
-              this.$nextTick(() => {
-                this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
-                this.mapInvalidate({ pan: true });
-              });
-            },
+            end: () => up(),
           }"
         />
       </keep-alive>
@@ -120,8 +121,33 @@ export default {
     mapInvalidate(payload) {
       eventBus.$emit("mapInvalidate", payload);
     },
+    mouseDownHandler() {
+      this.dragging = true;
+      // Attach the listeners to `document`
+      document.addEventListener("mousemove", this.mouseMoveHandler);
+      document.addEventListener("mouseup", this.mouseUpHandler);
+    },
+    mouseMoveHandler(e) {
+      this.diff = e.clientY - (this.windowHeight - this.bottomHeight);
+    },
+    mouseUpHandler() {
+      // Remove the handlers of `mousemove` and `mouseup`
+      document.removeEventListener("mousemove", this.mouseMoveHandler);
+      document.removeEventListener("mouseup", this.mouseUpHandler);
+      this.up();
+    },
+    down() {
+      this.dragging = true;
+    },
     resize(e) {
       this.diff = e.touchmoveY - (this.windowHeight - this.bottomHeight);
+    },
+    up() {
+      this.dragging = false;
+      this.$nextTick(() => {
+        this.updateBottomHeight(this.bottomHeight - this.allowedDiff);
+        this.mapInvalidate({ pan: true });
+      });
     },
     onClickOutside() {
       return true;
@@ -173,6 +199,7 @@ export default {
   height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
+  background: var(--v-background-base);
 }
 .expand-transition {
   -webkit-transition: height 0.2s;
@@ -180,5 +207,14 @@ export default {
   -ms-transition: height 0.2s;
   -o-transition: height 0.2s;
   transition: height 0.2s;
+}
+.resizer {
+  position: absolute;
+  z-index: 3000;
+  top: 0;
+  left: 0;
+  cursor: ns-resize;
+  height: 5px;
+  width: 100%;
 }
 </style>
