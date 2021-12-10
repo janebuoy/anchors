@@ -4,7 +4,7 @@
       <v-list-item
         v-for="item in resources"
         :key="item.id"
-        @click.stop="openItemByID(item.id, 'no-toggle')"
+        @click.stop="openItemByID(item.id)"
         :title="
           item.type.charAt(0).toUpperCase() +
           item.type.slice(1) +

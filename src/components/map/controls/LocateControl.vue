@@ -37,6 +37,8 @@ export default {
   data() {
     return {
       ready: false,
+      userLocation: null,
+      audioReady: false,
     };
   },
   computed: {
@@ -68,19 +70,26 @@ export default {
     enterBounds() {
       // Check if ActionBounds is used (may be able to be changed in settings)
       if (this.useActionBounds) {
-        let vm = this;
-        setInterval(function () {
+        setInterval(() => {
           // Check if user location is set by LocateControl
-          if (vm.mapObject._event && vm.mapObject._event.latlng !== undefined) {
+          if (
+            this.mapObject._event &&
+            this.mapObject._event.latlng !== undefined
+          ) {
             // Compare the position against all the bounds
             // and open scene if the user has entered a bound that is not that of the current stop
-            for (let i = 0; i < vm.stopBounds.length; i++) {
+            this.userLocation = this.mapObject._event.latlng;
+            for (let i = 0; i < this.stopBounds.length; i++) {
               if (
-                vm.stopBounds[i].bounds.contains(vm.mapObject._event.latlng) &&
-                vm.stopBounds[i].uuid !== vm.currentUUID &&
-                vm.mapObject._active
+                this.stopBounds[i].bounds.contains(this.userLocation) &&
+                this.stopBounds[i].uuid !== this.currentUUID &&
+                this.mapObject._active
               ) {
-                eventBus.$emit("openScene", vm.stopBounds[i].uuid);
+                eventBus.$emit("openScene", this.stopBounds[i].uuid);
+                eventBus.$on("audio-player-ready", () => {
+                  this.audioReady = true;
+                  eventBus.$emit("toggleAudio");
+                });
               }
             }
           }

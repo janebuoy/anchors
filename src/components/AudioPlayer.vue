@@ -82,8 +82,16 @@
         <v-slider
           title="Seek"
           v-model="computedProgress"
-          @mousedown="pauseProgress"
-          @click.stop="jumpInTime"
+          @mousedown="pauseProgress()"
+          @click.stop="jumpInTime()"
+          v-touch="{
+            start: () => {
+              pauseProgress();
+            },
+            end: () => {
+              jumpInTime();
+            },
+          }"
           min="0"
           max="100"
           step="0.01"
@@ -196,11 +204,12 @@ export default {
       this.$emit("toggleContentDrawer");
     },
     toggleAudio() {
+      console.log("toggled");
       // If nothing is playing, load Audio of selected item and play
       if (!this.isPlaying && this.currentItem.type === "audio") {
         this.loadAudio();
         this.playAudio();
-        eventBus.$emit("updateTab", this.currentItem.id);
+        // eventBus.$emit("updateTab", this.currentItem.id);
         // If something is playing and selected item is different, load that item's source
       } else if (
         this.isPlaying &&
@@ -221,6 +230,7 @@ export default {
         this.playAudio();
       }
     },
+    // TODO: look into https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
     playAudio() {
       window.player.currentTime = this.currentTime;
       window.player.play();
@@ -254,8 +264,8 @@ export default {
       clearTimeout(this.timer);
     },
     jumpInTime() {
-      const newTime = ((this.localProgress * 1000) / 100000) * this.duration;
-      window.player.currentTime = newTime;
+      this.currentTime = (this.localProgress / 100) * this.duration;
+      window.player.currentTime = (this.localProgress / 100) * this.duration;
       this.startTimer(0);
     },
     seekForwards() {
@@ -310,7 +320,7 @@ export default {
         // assign new source from from currentItem source
         this.localSrc = this.currentItem.src;
 
-        // assign a new player to windiw.player and attach the local source
+        // assign a new player to window.player and attach the local source
         window.player = new Audio();
         window.player.preload = true;
         window.player.src = this.localSrc;
@@ -318,6 +328,7 @@ export default {
         let vm = this;
         window.player.addEventListener("loadedmetadata", function () {
           vm.duration = Math.round(this.duration);
+          eventBus.$emit("audio-player-ready");
         });
         window.player.addEventListener("ended", this.resetAudio);
       }
