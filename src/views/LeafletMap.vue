@@ -65,7 +65,6 @@
       :is="layer.selector"
       :properties="layer.data"
     />
-    <!-- <OpacitySlider v-if="mapOptions.opacitySlider" /> -->
     <ToggleContentDrawerBtn v-if="currentUUID" />
   </l-map>
 </template>
@@ -133,7 +132,6 @@ export default {
         maxZoom: 18,
         maxZoomDefault: 18,
         zoomSnap: 0.2,
-        opacitySlider: false,
       },
       baseLayer: {
         zoom: 16,
@@ -352,14 +350,6 @@ export default {
         this.mapOptions.maxZoom = feature.properties.maxZoom;
       } else {
         this.mapOptions.maxZoom = this.mapOptions.maxZoomDefault;
-      }
-      if (feature.properties.opacitySlider !== undefined) {
-        this.mapOptions.opacitySlider = feature.properties.opacitySlider;
-      } else {
-        this.mapOptions.opacitySlider = false;
-      }
-      if (feature.properties.waterLevel !== undefined) {
-        this.mapOptions.waterLevel = feature.properties.waterLevel;
       }
     },
     setCoords(feature) {

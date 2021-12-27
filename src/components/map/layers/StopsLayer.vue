@@ -71,23 +71,20 @@ export default {
       }
     },
     populateMarkerColors() {
-      for (let i = 0; i <= 11; i++) {
+      for (let i = 0; i <= this.geojson.features.length; i++) {
         this.markerIconColors[i] = this.colors.neutral.darken2;
       }
     },
     updateMarkerColors(uuid) {
       const index = this.geojson.features.findIndex((a) => a.uuid === uuid) + 1;
-
       // Set color of visited
-      this.markerIconColors[this.prevID] = this.colors.neutral.lighten2;
+      this.markerIconColors[this.prevID] = this.colors.neutral.base;
       // Set color of active
       this.markerIconColors[index] = this.colors.secondary.base;
       // Redraw Markers on Key Change
-      if (this.stopKeyIndex === 0) {
-        this.stopKeyIndex = 1;
-      } else {
-        this.stopKeyIndex = 0;
-      }
+      this.stopKeyIndex === 0
+        ? (this.stopKeyIndex = 1)
+        : (this.stopKeyIndex = 0);
       // Store current ID as prevID for next run
       this.prevID = index;
     },
