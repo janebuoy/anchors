@@ -61,7 +61,7 @@ export default {
     images() {
       if (this.galleries && this.currentItem.type === "gallery") {
         const images = this.galleries.features.filter(
-          (a) => a.uuid === this.currentItem.target
+          (a) => a.uuid === this.currentItem.targetUUID
         )[0].sources;
         return images;
       } else {

@@ -114,8 +114,8 @@ export default {
             eventBus.$emit("openSceneDefaults", this.currentUUID);
           break;
         case "map":
-          // target is a subScene UUID
-          if (item.target) eventBus.$emit("openSubscene", item.target);
+          // targetUUID is a subScene UUID
+          if (item.targetUUID) eventBus.$emit("openSubscene", item.targetUUID);
           break;
         case "gallery": {
           const payload = {
@@ -125,7 +125,7 @@ export default {
           break;
         }
         case "timeline":
-          if (item.target) eventBus.$emit("openSubscene", item.target);
+          if (item.targetUUID) eventBus.$emit("openSubscene", item.targetUUID);
           break;
       }
     },

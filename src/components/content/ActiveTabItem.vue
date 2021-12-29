@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
     <v-card-text
-      v-if="currentItem.target === '8808cb18-8334-11eb-8dcd-0242ac130003'"
+      v-if="currentItem.targetUUID === '8808cb18-8334-11eb-8dcd-0242ac130003'"
     >
       <v-card outlined rounded class="mx-1" color="grey lighten-4">
         <v-card-title v-if="waterLevels">

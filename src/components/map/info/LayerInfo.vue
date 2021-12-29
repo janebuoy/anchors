@@ -30,7 +30,7 @@ export default {
           props: {
             categoryID: feature.properties.categoryID,
             categoryName: feature.properties.categoryName,
-            target: feature.properties.target,
+            targetUUID: feature.properties.targetUUID,
           },
         });
       }

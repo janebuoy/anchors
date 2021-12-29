@@ -211,7 +211,7 @@ export default {
     },
   },
   created() {
-    axios.get(this.currentItem.src).then((response) => {
+    axios.get(this.currentItem.audioSrc).then((response) => {
       const resp = response.data;
       let timelineArr = [];
       for (let [key, value] of Object.entries(resp)) {

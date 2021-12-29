@@ -51,7 +51,9 @@
           overlap
           :key="item.id"
           :value="
-            item.type === 'audio' && isPlaying && item.src === currentAudioSrc
+            item.type === 'audio' &&
+            isPlaying &&
+            item.audioSrc === currentAudioSrc
           "
         >
           <template v-slot:badge>
@@ -116,7 +118,7 @@ export default {
       const item = this.resources.filter(
         (a) => a.id === this.currentAudioID
       )[0];
-      return item.src;
+      return item.audioSrc;
     },
   },
   methods: {

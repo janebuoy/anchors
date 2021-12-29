@@ -204,7 +204,6 @@ export default {
       this.$emit("toggleContentDrawer");
     },
     toggleAudio() {
-      console.log("toggled");
       // If nothing is playing, load Audio of selected item and play
       if (!this.isPlaying && this.currentItem.type === "audio") {
         this.loadAudio();
@@ -213,14 +212,14 @@ export default {
         // If something is playing and selected item is different, load that item's source
       } else if (
         this.isPlaying &&
-        this.localSrc !== this.currentItem.src &&
+        this.localSrc !== this.currentItem.audioSrc &&
         this.currentItem.type === "audio"
       ) {
         this.loadAudio();
         this.playAudio();
         // If selected item is already playing, pause
       } else if (
-        this.localSrc === this.currentItem.src &&
+        this.localSrc === this.currentItem.audioSrc &&
         this.currentItem.type === "audio"
       ) {
         this.pauseAudio();
@@ -309,7 +308,7 @@ export default {
     },
     loadAudio() {
       // Load source if local source is different from currentItem source
-      if (this.localSrc !== this.currentItem.src) {
+      if (this.localSrc !== this.currentItem.audioSrc) {
         // reset player if exists
         if (window.player !== null) {
           this.resetAudio();
@@ -318,7 +317,7 @@ export default {
         // store last audio id as safety measure against async state updates
         this.lastAudioID = this.currentItem.id;
         // assign new source from from currentItem source
-        this.localSrc = this.currentItem.src;
+        this.localSrc = this.currentItem.audioSrc;
 
         // assign a new player to window.player and attach the local source
         window.player = new Audio();
