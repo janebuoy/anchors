@@ -2,6 +2,14 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
+  devServer: {
+		proxy: {
+			'^/scenes': {
+				target: 'http://localhost:8080',
+				changeOrigin: true,
+			},
+		},
+	},
   pluginOptions: {
     compression:{
       gzip: {

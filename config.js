@@ -1,4 +1,6 @@
 export const config = {
+	//"scenesURL": `${location.protocol}//${location.host}/scenes`,
+	"scenesURL": `${location.protocol}//${location.host}/data/json/scenes.json`,
 	"repoLink": "https://github.com/janebuoy/anchors",
 	"websiteLink": "https://ak-hafen.de",
 	"twitterLink": "https://twitter.com/ak_hafen",

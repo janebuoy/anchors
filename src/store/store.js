@@ -3,12 +3,10 @@ import Vuex from "vuex"
 import Vuetify from "@/plugins/vuetify"
 
 import icons from "@/assets/icons.json"
-
+import {config} from "../../config.js"
 import axios from "axios";
 import { eventBus } from "../main";
-const ax = axios.create({
-	baseURL: process.env.BASE_URL,
-});
+const baseURL = process.env.BASE_URL;
 
 Vue.use(Vuex)
 
@@ -17,16 +15,16 @@ export default new Vuex.Store({
 		global: {
 			scenes: {
 				mainScenes: {
-					url: "data/json/scenes.json",
+					url: config.scenesURL,
 					data: null,
 				},
 				subScenes: {
-					url: "data/json/subScenes.json",
+					url: baseURL + "data/json/subScenes.json",
 					data: null,
 				},
 			},
 			galleries: {
-				url: "data/json/galleries.json",
+				url: baseURL + "data/json/galleries.json",
 				data: null,
 			},
 			waterLevels: null,
@@ -63,7 +61,7 @@ export default new Vuex.Store({
 		// * Global Actions
 		fetchScenes(context) {
 			for (let [key, value] of Object.entries(context.state.global.scenes)) {
-				ax.get(value.url)
+				axios.get(value.url)
 					.then(response => response.data)
 					.then(scenes => {
 						const payload = {
@@ -78,7 +76,7 @@ export default new Vuex.Store({
 			}
 		},
 		fetchGalleries(context) {
-			ax.get(context.state.global.galleries.url)
+			axios.get(context.state.global.galleries.url)
 				.then(response => response.data)
 				.then(galleries => {
 					context.commit("setGalleries", galleries)
@@ -88,7 +86,7 @@ export default new Vuex.Store({
 				});
 		},
 		fetchWeserWaterLevels({ commit }) {
-			ax.get('https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?waters=WESER&includeTimeseries=true&includeCurrentMeasurement=true')
+			axios.get('https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?waters=WESER&includeTimeseries=true&includeCurrentMeasurement=true')
 				.then(response => {
 					commit('setWeserWaterLevels', response.data)
 				})
