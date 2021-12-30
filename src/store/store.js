@@ -15,7 +15,7 @@ export default new Vuex.Store({
 		global: {
 			scenes: {
 				mainScenes: {
-					url: config.scenesURL,
+					url: config.scenesURL + "?is_main=true",
 					data: null,
 				},
 				subScenes: {

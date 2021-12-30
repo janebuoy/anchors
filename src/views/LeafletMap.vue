@@ -71,9 +71,10 @@
 
 <script>
 import axios from "axios";
-const ax = axios.create({
-  baseURL: process.env.BASE_URL,
-});
+const baseURL = process.env.BASE_URL;
+
+import { config } from "../../config.js";
+
 import { mapGetters } from "vuex";
 import { eventBus } from "../main.js";
 
@@ -211,17 +212,17 @@ export default {
       let result = [];
       const layerTypes = ["PointsLayer", "MultiPatternLayer", "PatternLayer"];
       for (const layer of active) {
-        if (layerTypes.includes(layer.type)) {
+        if (layerTypes.includes(layer.layerOptions.type)) {
           result.push({
-            type: layer.type,
-            source: layer.source,
-            data: this.JSONLayers[layer.short].data,
+            type: layer.layerOptions.type,
+            source: layer.layerOptions.source,
+            data: this.JSONLayers[layer.layerOptions.short].data,
           });
-        } else if (layer.type === "RasterLayer") {
+        } else if (layer.layerOptions.type === "RasterLayer") {
           result.push({
-            type: layer.type,
-            source: layer.source,
-            data: layer.url,
+            type: layer.layerOptions.type,
+            source: layer.layerOptions.source,
+            data: layer.layerOptions.url,
           });
         }
       }
@@ -233,10 +234,10 @@ export default {
       );
       let result = [];
       for (const layer of active) {
-        if (layer.info) {
+        if (layer.layerOptions.info) {
           result.push({
-            info: layer.info,
-            data: this.JSONLayers[layer.short].data,
+            info: layer.layerOptions.info,
+            data: this.JSONLayers[layer.layerOptions.short].data,
           });
         }
       }
@@ -248,14 +249,17 @@ export default {
       );
       let result = [];
       for (const layer of active) {
-        if (layer.selector && layer.selector !== "OpacityControl") {
+        if (
+          layer.layerOptions.selector &&
+          layer.layerOptions.selector !== "OpacityControl"
+        ) {
           result.push({
-            selector: layer.selector,
-            data: this.JSONLayers[layer.short].data,
+            selector: layer.layerOptions.selector,
+            data: this.JSONLayers[layer.layerOptions.short].data,
           });
-        } else if (layer.selector === "OpacityControl") {
+        } else if (layer.layerOptions.selector === "OpacityControl") {
           result.push({
-            data: layer.type,
+            data: layer.layerOptions.type,
           });
         }
       }
@@ -329,15 +333,26 @@ export default {
       this.setCoords(feature);
     },
     openSubscene(uuid) {
-      const feature = this.subScenes.features.filter((a) => a.uuid === uuid)[0];
-      const payload = {
-        title: feature.properties.title,
-        layers: feature.layers,
-        isSubscene: true,
-      };
-      this.$store.dispatch("updateState", payload);
-      this.applyOptions(feature);
-      this.setCoords(feature);
+      axios.get(config.scenesURL + "?id=" + uuid).then((response) => {
+        const feature = response.data.features[0];
+        const payload = {
+          title: feature.properties.title,
+          layers: feature.layers,
+          isSubscene: true,
+        };
+        this.$store.dispatch("updateState", payload);
+        this.applyOptions(feature);
+        this.setCoords(feature);
+      });
+      // const feature = this.subScenes.features.filter((a) => a.uuid === uuid)[0];
+      // const payload = {
+      //   title: feature.properties.title,
+      //   layers: feature.layers,
+      //   isSubscene: true,
+      // };
+      // this.$store.dispatch("updateState", payload);
+      // this.applyOptions(feature);
+      // this.setCoords(feature);
     },
     applyOptions(feature) {
       // Set feature settings
@@ -396,7 +411,8 @@ export default {
     },
     async fetchJSONLayers() {
       for (let layer in this.JSONLayers) {
-        ax.get(this.JSONLayers[layer].url)
+        axios
+          .get(baseURL + this.JSONLayers[layer].url)
           .then((response) => {
             this.JSONLayers[layer].data = response.data;
           })
