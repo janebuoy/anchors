@@ -145,11 +145,11 @@ export default new Vuex.Store({
 		},
 		setWeserWaterLevels: (state, data) => {
 			const features = data.filter((feature) =>
-				feature.agency === "WSA BREMEN" &&
+				feature.agency === "BREMEN" &&
 				feature.km < 40 &&
 				feature.latitude !== undefined &&
 				feature.timeseries[0].shortname === "W" ||
-				feature.agency === "WSA BREMERHAVEN" &&
+				feature.agency === "BREMERHAVEN" &&
 				feature.latitude !== undefined &&
 				feature.timeseries[0].shortname === "W" &&
 				feature.shortname !== "DWARSGAT" &&
@@ -197,6 +197,7 @@ export default new Vuex.Store({
 				}
 				jsonObj.features.push(item)
 			}
+			console.log(jsonObj);
 			state.global.waterLevels = jsonObj
 		},
 		bottomHeight: (state, payload) => {

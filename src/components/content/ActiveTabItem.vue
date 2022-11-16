@@ -100,13 +100,9 @@ export default {
         },
         values: ["value"],
         axis: {
-          xTicks: 4,
           yTicks: 4,
         },
         points: false,
-        tooltip: {
-          labels: true,
-        },
         color: {
           current: "#448AFF",
         },
