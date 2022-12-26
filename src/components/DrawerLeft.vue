@@ -83,15 +83,15 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
-import { VUE_APP_GIT_BRANCH } from "@/plugins/git-rev";
-import { VUE_APP_GIT_COMMIT_HASH } from "@/plugins/git-rev";
-import { eventBus } from "../main";
-import { config } from "../../config.js";
+import { VUE_APP_GIT_BRANCH } from '@/plugins/git-rev';
+import { VUE_APP_GIT_COMMIT_HASH } from '@/plugins/git-rev';
+import { eventBus } from '../main';
+import { config } from '../../config.js';
 
 export default {
-  name: "DrawerLeft",
+  name: 'DrawerLeft',
   data() {
     return {
       config: config,
@@ -100,13 +100,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["scenes", "currentUUID"]),
+    ...mapGetters(['scenes', 'currentUUID']),
     drawerLeft: {
       get() {
         return this.$store.getters.drawerLeft;
       },
       set(v) {
-        return this.$store.dispatch("toggleDrawerLeft", v);
+        return this.$store.dispatch('toggleDrawerLeft', v);
       },
     },
     activeItem() {
@@ -115,22 +115,26 @@ export default {
   },
   methods: {
     mapInvalidate() {
-      eventBus.$emit("mapInvalidate", { pan: false });
+      eventBus.$emit('mapInvalidate', { pan: false });
     },
     listIcon(index) {
-      return "mdi-numeric-" + (index + 1) + "-circle";
+      return 'mdi-numeric-' + (index + 1) + '-circle';
     },
     closeDrawer() {
-      this.$store.dispatch("toggleDrawerLeft", false);
+      this.$store.dispatch('toggleDrawerLeft', false);
     },
     openScene(uuid) {
-      eventBus.$emit("openScene", uuid);
+      eventBus.$emit('openScene', uuid);
       this.closeDrawer();
     },
   },
   created() {
-    console.log("Branch: ", this.branch);
-    console.log("Commit: ", this.config.repoLink + "/commit/" + this.revision);
+    console.log('Created with ♥ by:');
+    console.log('┌┬┐┬┌─┐┬─┐┌─┐┌─┐┬─┐┌─┐┌─┐┬ ┬ ┬┌─┐');
+    console.log('│││││  ├┬┘│ ││ ┬├┬┘├─┤├─┘├─┤ ││ │');
+    console.log('┴ ┴┴└─┘┴└─└─┘└─┘┴└─┴ ┴┴  ┴ ┴o┴└─┘');
+    console.log('Branch: ', this.branch);
+    console.log('Commit: ', this.config.repoLink + '/commit/' + this.revision);
   },
 };
 </script>

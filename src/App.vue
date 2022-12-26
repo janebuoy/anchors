@@ -23,14 +23,28 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
-import AppBar from "./components/AppBar";
-import DrawerLeft from "./components/DrawerLeft";
-import ContentDrawer from "./components/ContentDrawer";
+import AppBar from './components/AppBar';
+import DrawerLeft from './components/DrawerLeft';
+import ContentDrawer from './components/ContentDrawer';
 
 export default {
-  name: "App",
+  name: 'App',
+  head: {
+    title: 'Ankerpunkte der Verflechtung',
+    titleTemplate:
+      '%s | Ein postkolonialer Rundgang durch die Bremer Überseestadt',
+    htmlAttrs: {
+      lang: 'de-DE',
+    },
+    meta: [
+      {
+        name: 'description',
+        content: 'Ein postkolonialer Rundgang durch die Bremer Überseestadt',
+      },
+    ],
+  },
   components: {
     AppBar,
     DrawerLeft,
@@ -38,17 +52,17 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "bottomHeight",
-      "contentDrawer",
-      "drawerRightWidth",
-      "scenes",
-      "currentUUID",
+      'bottomHeight',
+      'contentDrawer',
+      'drawerRightWidth',
+      'scenes',
+      'currentUUID',
     ]),
   },
   created() {
     // Make store fetch the scenes
-    this.$store.dispatch("fetchScenes");
-    this.$store.dispatch("fetchGalleries");
+    this.$store.dispatch('fetchScenes');
+    this.$store.dispatch('fetchGalleries');
     //this.$store.dispatch("fetchWeserWaterLevels");
   },
 };
