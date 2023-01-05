@@ -71,38 +71,38 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 const ax = axios.create({
   baseURL: process.env.BASE_URL,
 });
-import { mapGetters } from "vuex";
-import { eventBus } from "../main.js";
+import { mapGetters } from 'vuex';
+import { eventBus } from '../main.js';
 
-import L from "leaflet";
-import { latLng } from "leaflet";
+import L from 'leaflet';
+import { latLng } from 'leaflet';
 
-import { LMap, LTileLayer, LControlZoom } from "vue2-leaflet";
+import { LMap, LTileLayer, LControlZoom } from 'vue2-leaflet';
 
-import ColoniesLayer from "@/components/map/layers/ColoniesLayer";
-import RiverCorrectionLayer from "@/components/map/layers/RiverCorrectionLayer";
-import RasterLayer from "@/components/map/layers/RasterLayer";
-import WaterLevelsLayer from "@/components/map/layers/WaterLevelsLayer";
-import PointsLayer from "@/components/map/layers/PointsLayer";
-import MultiPatternLayer from "@/components/map/layers/MultiPatternLayer";
-import PatternLayer from "@/components/map/layers/PatternLayer";
-import RouteLayer from "@/components/map/layers/RouteLayer";
-import BoundsLayer from "@/components/map/layers/BoundsLayer";
-import StopsLayer from "@/components/map/layers/StopsLayer";
+import ColoniesLayer from '@/components/map/layers/ColoniesLayer';
+import RiverCorrectionLayer from '@/components/map/layers/RiverCorrectionLayer';
+import RasterLayer from '@/components/map/layers/RasterLayer';
+import WaterLevelsLayer from '@/components/map/layers/WaterLevelsLayer';
+import PointsLayer from '@/components/map/layers/PointsLayer';
+import MultiPatternLayer from '@/components/map/layers/MultiPatternLayer';
+import PatternLayer from '@/components/map/layers/PatternLayer';
+import RouteLayer from '@/components/map/layers/RouteLayer';
+import BoundsLayer from '@/components/map/layers/BoundsLayer';
+import StopsLayer from '@/components/map/layers/StopsLayer';
 
-import LocateControl from "@/components/map/controls/LocateControl";
-import OpacitySlider from "@/components/map/controls/OpacitySlider";
-import PointsLayerSelector from "@/components/map/controls/PointsLayerSelector";
-import LayerSelector from "@/components/map/controls/LayerSelector";
-import LayerInfo from "@/components/map/info/LayerInfo";
-import ToggleContentDrawerBtn from "@/components/ToggleContentDrawerBtn";
+import LocateControl from '@/components/map/controls/LocateControl';
+import OpacitySlider from '@/components/map/controls/OpacitySlider';
+import PointsLayerSelector from '@/components/map/controls/PointsLayerSelector';
+import LayerSelector from '@/components/map/controls/LayerSelector';
+import LayerInfo from '@/components/map/info/LayerInfo';
+import ToggleContentDrawerBtn from '@/components/ToggleContentDrawerBtn';
 
 export default {
-  name: "LeafletMap",
+  name: 'LeafletMap',
   components: {
     LMap,
     LTileLayer,
@@ -138,45 +138,45 @@ export default {
       baseLayer: {
         zoom: 16,
         center: latLng(53.095, 8.7707),
-        url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+        url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
         attribution:
           '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
       },
       JSONLayers: {
         route: {
-          url: "data/json/route.json",
+          url: 'data/json/route.json',
           data: null,
         },
         speicherXI: {
-          url: "data/json/speicherXI.json",
+          url: 'data/json/speicherXI.json',
           data: null,
         },
         colonies: {
-          url: "data/json/countries.json",
+          url: 'data/json/countries.json',
           data: null,
         },
         cotton: {
-          url: "data/json/cotton.json",
+          url: 'data/json/cotton.json',
           data: null,
         },
         coffeeBremen: {
-          url: "data/json/coffeeBremen.json",
+          url: 'data/json/coffeeBremen.json',
           data: null,
         },
         coffeeWorld: {
-          url: "data/json/coffeeWorld.json",
+          url: 'data/json/coffeeWorld.json',
           data: null,
         },
         streets: {
-          url: "data/json/streets.json",
+          url: 'data/json/streets.json',
           data: null,
         },
         ports: {
-          url: "data/json/ports.json",
+          url: 'data/json/ports.json',
           data: null,
         },
         river: {
-          url: "data/json/river.json",
+          url: 'data/json/river.json',
           data: null,
         },
       },
@@ -186,9 +186,9 @@ export default {
           keepCurrentZoomLevel: true,
           returnToPrevBounds: false,
           drawCircle: true,
-          color: "secondary",
-          icon: "mdi mdi-map-marker",
-          iconLoading: "mdi mdi-loading mdi-spin",
+          color: 'secondary',
+          icon: 'mdi mdi-map-marker',
+          iconLoading: 'mdi mdi-loading mdi-spin',
         },
       },
       thisYear: new Date().getFullYear(),
@@ -196,22 +196,22 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "scenes",
-      "subScenes",
-      "activeLayers",
-      "currentUUID",
-      "currentItem",
-      "bottomHeight",
-      "contentDrawer",
-      "useActionBounds",
-      "waterLevels",
+      'scenes',
+      'subScenes',
+      'activeLayers',
+      'currentUUID',
+      'currentItem',
+      'bottomHeight',
+      'contentDrawer',
+      'useActionBounds',
+      'waterLevels',
     ]),
     currentLayers() {
       const active = this.activeLayers.filter(
-        (e) => e.name !== "route" && e.name !== "scenes"
+        (e) => e.name !== 'route' && e.name !== 'scenes'
       );
       let result = [];
-      const layerTypes = ["PointsLayer", "MultiPatternLayer", "PatternLayer"];
+      const layerTypes = ['PointsLayer', 'MultiPatternLayer', 'PatternLayer'];
       for (const layer of active) {
         if (layerTypes.includes(layer.type)) {
           result.push({
@@ -219,7 +219,7 @@ export default {
             source: layer.source,
             data: this.JSONLayers[layer.short].data,
           });
-        } else if (layer.type === "RasterLayer") {
+        } else if (layer.type === 'RasterLayer') {
           result.push({
             type: layer.type,
             source: layer.source,
@@ -231,7 +231,7 @@ export default {
     },
     currentInfo() {
       const active = this.activeLayers.filter(
-        (e) => e.name !== "route" && e.name !== "scenes"
+        (e) => e.name !== 'route' && e.name !== 'scenes'
       );
       let result = [];
       for (const layer of active) {
@@ -246,16 +246,16 @@ export default {
     },
     currentControls() {
       const active = this.activeLayers.filter(
-        (e) => e.name !== "route" && e.name !== "scenes"
+        (e) => e.name !== 'route' && e.name !== 'scenes'
       );
       let result = [];
       for (const layer of active) {
-        if (layer.selector && layer.selector !== "OpacityControl") {
+        if (layer.selector && layer.selector !== 'OpacityControl') {
           result.push({
             selector: layer.selector,
             data: this.JSONLayers[layer.short].data,
           });
-        } else if (layer.selector === "OpacityControl") {
+        } else if (layer.selector === 'OpacityControl') {
           result.push({
             data: layer.type,
           });
@@ -312,10 +312,10 @@ export default {
         content: feature.content,
         tab: 0,
       };
-      this.$store.dispatch("updateState", payload);
-      eventBus.$emit("updateMarkerColors", feature.uuid);
+      this.$store.dispatch('updateState', payload);
+      eventBus.$emit('updateMarkerColors', feature.uuid);
       this.$nextTick(() => {
-        this.$store.dispatch("toggleContentDrawer", true);
+        this.$store.dispatch('toggleContentDrawer', true);
       });
       this.applyOptions(feature);
       this.setCoords(feature);
@@ -326,7 +326,7 @@ export default {
         layers: feature.layers,
         isSubscene: false,
       };
-      this.$store.dispatch("updateState", payload);
+      this.$store.dispatch('updateState', payload);
       this.applyOptions(feature);
       this.setCoords(feature);
     },
@@ -337,7 +337,7 @@ export default {
         layers: feature.layers,
         isSubscene: true,
       };
-      this.$store.dispatch("updateState", payload);
+      this.$store.dispatch('updateState', payload);
       this.applyOptions(feature);
       this.setCoords(feature);
     },
@@ -367,7 +367,7 @@ export default {
       if (this.isMobile && feature.properties.zoom) {
         zoom = feature.properties.zoom - 1;
       } else {
-        zoom = feature.properties.zoom;
+        zoom = this.baseLayer.zoom;
       }
       const lat = feature.geometry.coordinates[1];
       const lng = feature.geometry.coordinates[0];
@@ -386,7 +386,7 @@ export default {
       };
       const center = this.map.getCenter();
       let zoom = this.map.getZoom();
-      if (!this.isActiveLayer(this.activeLayers, "correctionLayer")) {
+      if (!this.isActiveLayer(this.activeLayers, 'correctionLayer')) {
         if (this.isMobile) {
           zoom--;
         } else {
@@ -424,14 +424,14 @@ export default {
   },
   created() {
     this.fetchJSONLayers();
-    eventBus.$on("openScene", this.openScene);
-    eventBus.$on("openSceneDefaults", this.openSceneDefaults);
-    eventBus.$on("openSubscene", this.openSubscene);
-    eventBus.$on("openNextScene", () => {
+    eventBus.$on('openScene', this.openScene);
+    eventBus.$on('openSceneDefaults', this.openSceneDefaults);
+    eventBus.$on('openSubscene', this.openSubscene);
+    eventBus.$on('openNextScene', () => {
       this.openScene(this.nextUUID);
     });
-    eventBus.$on("setCoords", this.setCoords);
-    eventBus.$on("mapInvalidate", this.mapInvalidate);
+    eventBus.$on('setCoords', this.setCoords);
+    eventBus.$on('mapInvalidate', this.mapInvalidate);
   },
   watch: {
     // Watch for map height size changes
