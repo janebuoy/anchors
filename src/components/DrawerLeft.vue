@@ -9,17 +9,15 @@
     <div class="nav-wrapper">
       <v-card
         tile
-        dark
-        color="neutral darken-4"
         style="font-size: 0.9em"
-        elevation="1"
+				flat
       >
         <v-img
           src="data/images/title_img_001.jpg"
           aspect-ratio="1.7"
           height="160px"
         >
-          <div class="fill-height bottom-gradient"></div>
+          <div class="fill-height"></div>
         </v-img>
         <v-card-title style="font-size: 1.1em">
           {{ config.app.title }}
@@ -54,15 +52,13 @@
           </v-list-item>
         </v-list-item-group>
       </v-list>
-      <v-divider></v-divider>
       <!-- <span class="px-4 caption font-weight-bold mt-auto">Dev Info</span>
       <span class="px-4 caption">Branch: {{ branch }}</span>
       <span class="px-4 caption">Commit: {{ revision }}</span> -->
       <v-card
-        dark
         tile
-        elevation="12"
-        color="py-2 neutral darken-4"
+				flat
+        color="py-2"
         class="nav-actions"
         style="width: 100%"
       >

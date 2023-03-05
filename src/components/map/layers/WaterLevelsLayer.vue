@@ -54,8 +54,8 @@ export default {
       return (_, latlng) => {
         const style = {
           radius: 12,
-          fillColor: this.$vuetify.theme.themes.light.secondary.lighten3,
-          color: this.$vuetify.theme.themes.light.secondary.base,
+          fillColor: this.$vuetify.theme.themes.light.tertiary.lighten3,
+          color: this.$vuetify.theme.themes.light.tertiary.base,
           fillOpacity: 0.8,
           opacity: 1,
           weight: 1,

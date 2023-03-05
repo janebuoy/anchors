@@ -33,8 +33,8 @@ export default {
       return (_, latlng) => {
         const style = {
           radius: this.actionBoundsRadius,
-          fillColor: this.colors.primary.lighten3,
-          color: this.colors.primary.darken3,
+          fillColor: this.colors.secondary.lighten3,
+          color: this.colors.secondary.darken3,
           fillOpacity: 0.2,
           opacity: 0.1,
           weight: 1,

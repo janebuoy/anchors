@@ -2,23 +2,27 @@
   <v-app style="overflow: hidden">
     <v-main
       :style="[
+        contentDrawer && $vuetify.breakpoint.mdAndUp
+          ? { paddingRight: drawerRightWidth + 'px' }
+          : null,
+      ]"
+    >
+				<AppBar v-if="scenes" :style="[
         contentDrawer && $vuetify.breakpoint.smAndDown
           ? { paddingBottom: bottomHeight + 'px' }
           : null,
-        !contentDrawer && currentUUID ? { paddingBottom: '144px' } : null,
+        !contentDrawer && currentUUID ? { paddingBottom: '160px' } : null,
         !contentDrawer && $vuetify.breakpoint.mdAndUp
           ? { paddingBottom: '0px' }
           : null,
         contentDrawer && $vuetify.breakpoint.mdAndUp
           ? { paddingRight: drawerRightWidth + 'px' }
           : null,
-      ]"
-    >
+      ]"/>
       <router-view />
     </v-main>
-    <AppBar v-if="scenes" />
     <DrawerLeft v-if="scenes" />
-    <ContentDrawer v-if="currentUUID" />
+    <ContentDrawer />
   </v-app>
 </template>
 

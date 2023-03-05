@@ -2,10 +2,10 @@
   <div>
     <v-toolbar
       bottom
-      dark
       dense
-      color="primary darken-1"
       flat
+			dark
+			class="secondary"
       style="position: relative; z-index: 300"
     >
       <v-btn icon small @click.native="toggleContentDrawer()" class="ml-0">
@@ -38,7 +38,7 @@
         <v-btn
           fab
           large
-          color="secondary"
+          color="tertiary"
           class="mt-n2"
           @click.stop="toggleAudio()"
           :title="!isPlaying ? config.player.play : config.player.pause"
@@ -69,9 +69,9 @@
       </v-row>
     </v-toolbar>
     <v-toolbar
-      dark
       dense
-      color="primary darken-1"
+			dark
+			class="secondary"
       style="position: relative; z-index: 200"
       flat
     >
@@ -91,8 +91,8 @@
           style="max-width: 500px"
           color="primary"
           track-color="grey lighten-2"
-          track-fill-color="secondary lighten-1"
-          thumb-color="secondary lighten-1"
+          track-fill-color="tertiary lighten-1"
+          thumb-color="tertiary lighten-1"
           :label="elaspedTime"
           :disabled="!localSrc"
         />

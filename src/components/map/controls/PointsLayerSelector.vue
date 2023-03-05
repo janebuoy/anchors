@@ -14,7 +14,7 @@
                 <v-checkbox
                   :input-value="active"
                   :true-value="item"
-                  color="secondary"
+                  color="tertiary"
                   @click.stop="
                     toggle();
                     viewSelected(item);
@@ -35,8 +35,6 @@
     <div class="d-flex">
       <v-btn
         :fab="$vuetify.breakpoint.smAndDown"
-        dark
-        color="secondary"
         class="ml-auto mb-auto"
         @click.stop="toggleSlider"
         :title="show ? 'Close Layer Selector' : 'Open Layer Selector'"

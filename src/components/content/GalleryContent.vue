@@ -22,7 +22,7 @@
             "
           />
           <div style="position: absolute; bottom: 0; width: 100%">
-            <v-card dark tile class="caption" style="width: 100%">
+            <v-card tile class="caption" style="width: 100%">
               <v-card-title
                 class="subtitle-1 elevation-25"
                 style="word-break: normal !important"

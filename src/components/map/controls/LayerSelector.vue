@@ -35,8 +35,6 @@
     <div class="d-flex">
       <v-btn
         :fab="$vuetify.breakpoint.smAndDown"
-        dark
-        color="secondary"
         class="ml-auto mb-auto"
         @click.stop="toggleSlider"
         :title="show ? 'Close Layer Selector' : 'Open Layer Selector'"

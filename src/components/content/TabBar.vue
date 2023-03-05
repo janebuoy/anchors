@@ -2,10 +2,9 @@
   <div id="tabsWrapper" class="d-flex tabs-wrapper">
     <v-tabs
       :value="pinned"
-      dark
-      background-color="secondary"
       optional
-      style="max-width: 90px, height: 48px"
+			background-color="tertiary"
+      style="max-width: 90px; height: 64px"
     >
       <v-tabs-slider color="accent darken-1" ref="pinnedTabsSlider" />
       <!-- extended v-tab -->
@@ -15,19 +14,17 @@
         :color="pinned === 0 ? 'white' : 'rgba(255, 255, 255, 0.6)'"
         :class="{ 'v-tab--active': pinned === 0 }"
         :aria-selected="pinned === 0 ? 'true' : 'false'"
-        style="height: 48px"
+        style="height: 64px"
       >
         <v-icon>mdi-view-list</v-icon>
       </single-tab>
     </v-tabs>
     <v-tabs
+			background-color="tertiary"
       :value="active"
-      dark
-      background-color="secondary"
       optional
       center-active
       right
-      style="height: 48px"
       class="shrunk-tabs"
     >
       <v-tabs-slider color="accent darken-1" ref="tabsSlider" />
@@ -36,7 +33,7 @@
         :key="(item.id + 1) * count"
         class="px-1"
         @click.stop="openTab(item.id, $event)"
-        style="min-width: 60px; height: 48px"
+        style="min-width: 60px; height: 64px"
         :class="{ 'v-tab--active': active === item.id }"
         :aria-selected="active === item.id ? 'true' : 'false'"
         :title="
@@ -59,11 +56,7 @@
               >mdi-play</v-icon
             >
           </template>
-          <span class="pl-2">{{ item.id + 1 + "." }}</span>
-          <v-icon
-            class="pr-2"
-            :color="active === item.id ? 'white' : 'rgba(255, 255, 255, 0.6)'"
-          >
+          <v-icon>
             {{ icon(item) }}
           </v-icon>
         </v-badge>
@@ -219,7 +212,7 @@ export default {
 
 <style scoped>
 .tabs-wrapper {
-  height: 48px;
+  height: 70px;
 }
 .shrunk-tabs {
   width: calc(100% - 90px);

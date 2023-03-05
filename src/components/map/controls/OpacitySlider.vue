@@ -23,8 +23,6 @@
         </div>
         <v-btn
           :fab="$vuetify.breakpoint.smAndDown"
-          dark
-          color="secondary"
           @click.stop="toggleSlider"
           :title="show ? 'Close Control Opacity' : 'Open Control Opacity'"
         >

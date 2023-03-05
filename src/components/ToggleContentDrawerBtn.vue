@@ -4,8 +4,6 @@
       v-if="$vuetify.breakpoint.mdAndUp"
       elevation="3"
       class="ml-2"
-      color="neutral darken-3"
-      dark
       small
       @click.stop="toggleContentDrawer()"
       :title="

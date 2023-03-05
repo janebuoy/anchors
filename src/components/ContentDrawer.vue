@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <v-navigation-drawer
       @transitionend.self="mapInvalidate({ pan: true })"
       v-if="!$vuetify.breakpoint.smAndDown"
@@ -9,10 +9,9 @@
       :width="drawerRightWidth"
       :permanent="contentDrawer"
       :bottom="$vuetify.breakpoint.smAndDown"
-      class="pt-16"
     >
       <div class="nav-wrapper overflow-hidden">
-        <TabBar class="flex-grow-0" v-if="currentUUID" />
+        <TabBar class="flex-grow-0" v-if="currentUUID"/>
         <content-windows class="overflow-y-auto" v-if="currentUUID" />
         <keep-alive>
           <AudioPlayer class="mt-auto" v-if="currentUUID" />
@@ -104,7 +103,7 @@ export default {
       return this.windowHeight * 0.5 - this.bottomHeight;
     },
     max() {
-      return this.bottomHeight - 144;
+      return this.bottomHeight - 160;
     },
     allowedDiff() {
       if (this.diff < this.max && this.diff > this.min) {
