@@ -18,8 +18,8 @@
           </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title v-text="item.title"></v-list-item-title>
-          <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+          <v-list-item-title>{{item.title}}</v-list-item-title>
+          <v-list-item-subtitle>{{item.subtitle}}</v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-icon>
           <!-- Show play icon on all non-playing audio Item -->

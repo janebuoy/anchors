@@ -367,7 +367,7 @@ export default {
       if (this.isMobile && feature.properties.zoom) {
         zoom = feature.properties.zoom - 1;
       } else {
-        zoom = this.baseLayer.zoom;
+        zoom = feature.properties.zoom;
       }
       const lat = feature.geometry.coordinates[1];
       const lng = feature.geometry.coordinates[0];
