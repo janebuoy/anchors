@@ -12,10 +12,8 @@
         >
           {{ event.properties.name }}
         </v-card-title>
-        <v-card-text
-          v-if="event !== null && event.properties"
-          class="event-links"
-        >{{ event.properties.description }}</v-card-text>
+        <v-card-text v-if="event !== null && event.properties" class="event-links"
+        ><span v-html="event.properties.description"></span></v-card-text>
         <v-divider v-if="event !== null && event.properties" />
         <v-card-actions>
           <v-slider
