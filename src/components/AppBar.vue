@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app class="white">
+  <v-app-bar app class="white" flat>
     <v-app-bar-nav-icon @click="toggleDrawerLeft()" class="grey--text text--darken-4"></v-app-bar-nav-icon>
     <v-toolbar-title style="cursor: default" class="grey--text text--darken-4">
       <v-icon class="mt-n1 pr-2 secondary--text">

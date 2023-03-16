@@ -18,14 +18,14 @@
         :class="$vuetify.breakpoint.smAndDown ? 'ml-n6' : null"
         no-gutters
       >
-        <v-btn
+        <!-- <v-btn
           icon
           @click.stop="prevAudio()"
           :title="config.player.prevAudio"
           :disabled="prevAudioID === false || !localSrc"
         >
           <v-icon>mdi-skip-previous</v-icon>
-        </v-btn>
+        </v-btn> -->
         <v-btn
           icon
           class="mr-1"
@@ -58,14 +58,14 @@
         >
           <v-icon class="mirror">mdi-replay</v-icon>
         </v-btn>
-        <v-btn
+        <!-- <v-btn
           icon
           @click.stop="nextAudio()"
           :title="config.player.nextAudio"
           :disabled="nextAudioID === false || !localSrc"
         >
           <v-icon>mdi-skip-next</v-icon>
-        </v-btn>
+        </v-btn> -->
       </v-row>
     </v-toolbar>
     <v-toolbar
@@ -275,12 +275,12 @@ export default {
       window.player.currentTime -= 10;
       this.progress = (window.player.currentTime / this.duration) * 100;
     },
-    prevAudio() {
-      eventBus.$emit("prevAudio");
-    },
-    nextAudio() {
-      eventBus.$emit("nextAudio");
-    },
+    // prevAudio() {
+    //   eventBus.$emit("prevAudio");
+    // },
+    // nextAudio() {
+    //   eventBus.$emit("nextAudio");
+    // },
     startTimer(delay) {
       const vm = this;
       vm.timer = setTimeout(function () {
