@@ -22,7 +22,7 @@
       <router-view />
     </v-main>
     <DrawerLeft v-if="scenes" />
-    <ContentDrawer />
+    <ContentDrawer v-if="currentUUID"/>
   </v-app>
 </template>
 

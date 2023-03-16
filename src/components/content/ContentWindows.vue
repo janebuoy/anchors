@@ -15,7 +15,7 @@
       v-if="pinned !== 0"
       :value="active"
       class="full-height"
-      style="overflow-y: auto"
+      style="overflow-y: auto; background-color: white"
       :touch="{ left: onSwipeLeft, right: onSwipeRight }"
     >
       <v-window-item
@@ -82,8 +82,10 @@ export default {
     },
   },
   mounted() {
-    this.active = this.tabs[this.currentUUID].active;
-    this.pinned = this.tabs[this.currentUUID].pinned;
+		if (this.currentUUID) {
+			this.active = this.tabs[this.currentUUID].active;
+			this.pinned = this.tabs[this.currentUUID].pinned;
+		}
     this.mounted = true;
     this.$nextTick(() => {
       this.$store.commit(

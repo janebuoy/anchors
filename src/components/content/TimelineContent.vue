@@ -6,16 +6,7 @@
     <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
     <v-card-text>
       <v-card color="grey lighten-4" rounded flat class="mx-1">
-        <v-card-title
-          class="headline"
-          v-if="event !== null && event.properties"
-        >
-          {{ event.properties.name }}
-        </v-card-title>
-        <v-card-text v-if="event !== null && event.properties" class="event-links"
-        ><span v-html="event.properties.description"></span></v-card-text>
-        <v-divider v-if="event !== null && event.properties" />
-        <v-card-actions>
+				<v-card-actions>
           <v-slider
             v-if="timeline"
             v-model="year"
@@ -105,6 +96,15 @@
             </template>
           </v-slider>
         </v-card-actions>
+        <v-divider v-if="event !== null && event.properties" />
+        <v-card-title
+          class="headline"
+          v-if="event !== null && event.properties"
+        >
+          {{ event.properties.name }}
+        </v-card-title>
+        <v-card-text v-if="event !== null && event.properties" class="event-links"
+        ><span v-html="event.properties.description"></span></v-card-text>        
       </v-card>
     </v-card-text>
   </v-card>
@@ -205,7 +205,7 @@ export default {
           this.playAnimation("begin");
         }
       }
-    },
+    }
   },
   created() {
     axios.get(this.currentItem.src).then((response) => {

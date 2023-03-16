@@ -82,7 +82,7 @@ export default {
       active: null,
       pinned: 0,
       pinnedSliderWidth: "90px",
-      sliderWidth: "63px",
+      sliderWidth: "60px",
       count: 100,
       selected: null,
     };

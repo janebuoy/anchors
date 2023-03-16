@@ -15,8 +15,8 @@
               >
                 {{
                   active === item.props.categoryID
-                    ? "mdi-checkbox-marked"
-                    : "mdi-checkbox-blank-outline"
+                    ? "mdi-radiobox-marked"
+                    : "mdi-radiobox-blank"
                 }}</v-icon
               >
             </v-list-item-icon>

@@ -1,5 +1,5 @@
 <template>
-  <v-list three-line class="white mb-16">
+  <v-list three-line class="white">
     <v-list-item-group color="secondary" mandatory :value="resourceID">
       <v-list-item
         v-for="item in resources"

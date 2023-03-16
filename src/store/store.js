@@ -197,7 +197,6 @@ export default new Vuex.Store({
 				}
 				jsonObj.features.push(item)
 			}
-			console.log(jsonObj);
 			state.global.waterLevels = jsonObj
 		},
 		bottomHeight: (state, payload) => {
