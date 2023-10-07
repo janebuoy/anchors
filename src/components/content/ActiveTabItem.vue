@@ -4,6 +4,7 @@
       {{ currentItem.title }}
     </v-card-title>
     <v-card-subtitle>{{ currentItem.subtitle }}</v-card-subtitle>
+		<v-card-text>{{currentItem.transcript}}</v-card-text>
     <v-card-text
       v-if="currentItem.target === '8808cb18-8334-11eb-8dcd-0242ac130003'"
     >

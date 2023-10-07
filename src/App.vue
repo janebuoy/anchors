@@ -60,6 +60,9 @@ export default {
       'contentDrawer',
       'drawerRightWidth',
       'scenes',
+			'scenesIsSet',
+			'subScenes',
+			'subScenesIsSet',
       'currentUUID',
     ]),
   },
@@ -67,6 +70,7 @@ export default {
     // Make store fetch the scenes
     this.$store.dispatch('fetchScenes');
     this.$store.dispatch('fetchGalleries');
+		this.$store.dispatch('fetchJSONLayers')
     //this.$store.dispatch("fetchWeserWaterLevels");
   },
 };

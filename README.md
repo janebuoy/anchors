@@ -1,5 +1,5 @@
 # Anchors
-Anchors is a tool to create and publish self-hosted, geo-located audio walks.
+Anchors is a tool to create and self-publish, geo-located audio walks.
 
 ## Features
 
@@ -12,13 +12,15 @@ Anchors is a tool to create and publish self-hosted, geo-located audio walks.
 - [x] animated timelines
 - [x] galleries
 - [x] responsive layout
-- [ ] sane data structure
+- [ ] sane data model
 - [ ] proper routing
 - [ ] creator mode
 
 ## Limitations
 
 - number of stations must be less than 10 as to the [material design icons](https://materialdesignicons.com).
+- See [anchors-maplibre-gl](https://github.com/mugraph/anchors-maplibre-gl) for
+  an improved draft version.
 
 ## Screenshots
 
@@ -43,6 +45,3 @@ Anchors is a tool to create and publish self-hosted, geo-located audio walks.
   <figcaption>Gallery chapter example</figcaption>
 </figure>
 
-## Demo
-
-Coming soon...

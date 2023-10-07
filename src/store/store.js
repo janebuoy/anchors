@@ -6,6 +6,8 @@ import icons from "@/assets/icons.json"
 
 import axios from "axios";
 import { eventBus } from "../main";
+import { validate as isValidUUID } from 'uuid';
+
 const ax = axios.create({
 	baseURL: process.env.BASE_URL,
 });
@@ -14,15 +16,18 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
+		route: null,
 		global: {
 			scenes: {
 				mainScenes: {
 					url: "data/json/scenes.json",
 					data: null,
+					set: false,
 				},
 				subScenes: {
 					url: "data/json/subScenes.json",
 					data: null,
+					set: false,
 				},
 			},
 			galleries: {
@@ -48,6 +53,44 @@ export default new Vuex.Store({
 			colSliderStart: null,
 			colEventPoint: null
 		},
+		JSONLayers: {
+			route: {
+				url: 'data/json/route.json',
+				data: null,
+			},
+			speicherXI: {
+				url: 'data/json/speicherXI.json',
+				data: null,
+			},
+			colonies: {
+				url: 'data/json/countries.json',
+				data: null,
+			},
+			cotton: {
+				url: 'data/json/cotton.json',
+				data: null,
+			},
+			coffeeBremen: {
+				url: 'data/json/coffeeBremen.json',
+				data: null,
+			},
+			coffeeWorld: {
+				url: 'data/json/coffeeWorld.json',
+				data: null,
+			},
+			streets: {
+				url: 'data/json/streets.json',
+				data: null,
+			},
+			ports: {
+				url: 'data/json/ports.json',
+				data: null,
+			},
+			river: {
+				url: 'data/json/river.json',
+				data: null,
+			},
+		},
 		content: {
 			object: null,
 			tabs: {},
@@ -60,21 +103,38 @@ export default new Vuex.Store({
 		}
 	},
 	actions: {
-		// * Global Actions
-		fetchScenes(context) {
-			for (let [key, value] of Object.entries(context.state.global.scenes)) {
-				ax.get(value.url)
-					.then(response => response.data)
-					.then(scenes => {
-						const payload = {
-							scenes,
-							key
-						}
-						context.commit("setScenes", payload)
-					})
-					.catch((err) => {
-						console.log(err);
-					});
+		async fetchScenes({ dispatch }) {
+			// Use Object.entries to iterate through the data object
+			const requests = Object.entries(this.state.global.scenes).map(([key, value]) => {
+				const url = value.url;
+				// Dispatch Axios requests for each entry
+				return dispatch('fetchData', { key, url });
+			});
+
+			// Wait for all Axios requests to complete
+			await Promise.all(requests)
+
+			if (isValidUUID(this.state.route.params.uuid))
+				eventBus.$emit('openScene', this.state.route.params.uuid)
+			// else if (this.state.route.params.uuid) {
+			// 	const feature = this.state.global.scenes.mainScenes.data.features.find(e => e.common_name === this.state.route.params.uuid)
+			// 	console.log(feature);
+			// 	eventBus.$emit('openScene', feature.uuid)
+			// }
+
+
+			// All requests are finished, your state is ready
+			// console.log('All Axios requests completed.');
+		},
+		async fetchData({ commit }, { key, url }) {
+			try {
+				const response = await ax.get(url);
+				// Handle the response as needed, e.g., commit to mutations
+				const fc = response.data
+				commit('setScenes', { key, fc });
+			} catch (error) {
+				// Handle errors here
+				console.error(`Error fetching data for ${key}: ${error.message}`);
 			}
 		},
 		fetchGalleries(context) {
@@ -92,6 +152,26 @@ export default new Vuex.Store({
 				.then(response => {
 					commit('setWeserWaterLevels', response.data)
 				})
+		},
+		async fetchJSONLayers({ commit }) {
+			try {
+				const requests = [];
+
+				for (let key in this.state.JSONLayers) {
+					const response = await ax.get(this.state.JSONLayers[key].url);
+					const fc = response.data
+					commit('setJSONLayers', {key, fc});
+					requests.push(response);
+				}
+
+				// Wait for all Axios requests to complete
+				await Promise.all(requests);
+
+				// console.log('All Axios requests for JSONLayers completed.');
+			} catch (error) {
+				// Handle errors here
+				console.error('Error fetching JSONLayers:', error);
+			}
 		},
 		bottomHeight(context, payload) {
 			context.commit("bottomHeight", payload)
@@ -136,12 +216,19 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
+		setRoute(state, route) {
+			state.route = route;
+		},
 		// * Global Mutations
 		setScenes: (state, payload) => {
-			state.global.scenes[payload.key].data = payload.scenes
+			state.global.scenes[payload.key].data = payload.fc
+			state.global.scenes[payload.key].set = true
 		},
 		setGalleries: (state, payload) => {
 			state.global.galleries.data = payload
+		},
+		setJSONLayers: (state, payload) => {
+			state.JSONLayers[payload.key].data = payload.fc
 		},
 		setWeserWaterLevels: (state, data) => {
 			const features = data.filter((feature) =>
@@ -303,14 +390,23 @@ export default new Vuex.Store({
 		scenes: state => {
 			return state.global.scenes.mainScenes.data
 		},
+		scenesIsSet: state => {
+			return state.global.scenes.mainScenes.set
+		},
 		subScenes: state => {
 			return state.global.scenes.subScenes.data
+		},
+		subScenesIsSet: state => {
+			return state.global.scenes.subScenes.set
 		},
 		galleries: state => {
 			return state.global.galleries.data
 		},
 		waterLevels: state => {
 			return state.global.waterLevels
+		},
+		JSONLayers: state => {
+			return state.JSONLayers
 		},
 		bottomHeight: state => {
 			return state.global.bottomHeight

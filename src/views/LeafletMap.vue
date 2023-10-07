@@ -71,12 +71,13 @@
 </template>
 
 <script>
-import axios from 'axios';
-const ax = axios.create({
-  baseURL: process.env.BASE_URL,
-});
+// import axios from 'axios';
+// const ax = axios.create({
+//   baseURL: process.env.BASE_URL,
+// });
 import { mapGetters } from 'vuex';
 import { eventBus } from '../main.js';
+import router from '../router/router.js';
 
 import L from 'leaflet';
 import { latLng } from 'leaflet';
@@ -142,44 +143,6 @@ export default {
         attribution:
           '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
       },
-      JSONLayers: {
-        route: {
-          url: 'data/json/route.json',
-          data: null,
-        },
-        speicherXI: {
-          url: 'data/json/speicherXI.json',
-          data: null,
-        },
-        colonies: {
-          url: 'data/json/countries.json',
-          data: null,
-        },
-        cotton: {
-          url: 'data/json/cotton.json',
-          data: null,
-        },
-        coffeeBremen: {
-          url: 'data/json/coffeeBremen.json',
-          data: null,
-        },
-        coffeeWorld: {
-          url: 'data/json/coffeeWorld.json',
-          data: null,
-        },
-        streets: {
-          url: 'data/json/streets.json',
-          data: null,
-        },
-        ports: {
-          url: 'data/json/ports.json',
-          data: null,
-        },
-        river: {
-          url: 'data/json/river.json',
-          data: null,
-        },
-      },
       locateControl: {
         object: Object,
         options: {
@@ -205,6 +168,7 @@ export default {
       'contentDrawer',
       'useActionBounds',
       'waterLevels',
+			'JSONLayers'
     ]),
     currentLayers() {
       const active = this.activeLayers.filter(
@@ -319,7 +283,10 @@ export default {
       });
       this.applyOptions(feature);
       this.setCoords(feature);
-    },
+			if (this.$route.params.uuid != uuid) {
+				router.replace(`/${uuid}`)
+			}
+		},
     openSceneDefaults(uuid) {
       const feature = this.scenes.features.filter((a) => a.uuid === uuid)[0];
       const payload = {
@@ -404,17 +371,6 @@ export default {
         debounceMoveend: true,
       });
     },
-    async fetchJSONLayers() {
-      for (let layer in this.JSONLayers) {
-        ax.get(this.JSONLayers[layer].url)
-          .then((response) => {
-            this.JSONLayers[layer].data = response.data;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    },
   },
   mounted() {
     // Assign the Leaflet mapObject to map
@@ -423,7 +379,6 @@ export default {
     }
   },
   created() {
-    this.fetchJSONLayers();
     eventBus.$on('openScene', this.openScene);
     eventBus.$on('openSceneDefaults', this.openSceneDefaults);
     eventBus.$on('openSubscene', this.openSubscene);
