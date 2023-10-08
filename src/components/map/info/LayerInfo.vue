@@ -1,5 +1,5 @@
 <template>
-  <l-control position="topright">
+  <l-control position="topright" v-if="properties">
     <span class="info-text mr-1">
       {{ items[this.active].props.categoryName }}
     </span>

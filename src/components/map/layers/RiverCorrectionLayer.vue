@@ -1,5 +1,5 @@
 <template>
-  <l-tile-layer ref="RiverCorrectionLayer" :url="url" :options="options" />
+  <l-tile-layer ref="RiverCorrectionLayer" :url="url" :options="options" v-if="data" />
 </template>
 
 <script>

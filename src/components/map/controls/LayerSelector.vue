@@ -1,5 +1,5 @@
 <template>
-  <l-control position="bottomright">
+  <l-control position="bottomright" v-if="properties">
     <div v-if="show" class="custom-control pa-0 mb-2">
       <v-list class="py-0">
         <v-list-item-group v-model="active" mandatory>

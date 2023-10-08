@@ -1,5 +1,5 @@
 <template>
-  <l-geo-json :geojson="data" :options="options" />
+  <l-geo-json :geojson="data" :options="options" v-if="data" />
 </template>
 
 <script>
@@ -33,6 +33,7 @@ export default {
       }
     },
     patterns() {
+			if (this.uniqueColors) {
       let result = {};
       for (let i = 0; i < this.uniqueColors.length; i++) {
         const vm = this;
@@ -44,6 +45,9 @@ export default {
         result[this.uniqueColors[i].name] = pattern;
       }
       return result;
+			} else {
+				return undefined
+			}
     },
     options() {
       return {
@@ -81,16 +85,29 @@ export default {
   },
   mounted() {
     // Add patterns to map Object
-    for (let value of Object.values(this.patterns)) {
-      value.addTo(this.map);
-    }
+		if (this.data) {
+			for (let value of Object.values(this.patterns)) {
+        value.addTo(this.map);
+      }
+		}
   },
   beforeDestroy() {
     // Remove patterns to map Object
-    for (let value of Object.values(this.patterns)) {
-      this.map.removeLayer(value);
-    }
+		if (this.data) {
+			for (let value of Object.values(this.patterns)) {
+				this.map.removeLayer(value);
+			}
+		}
   },
+	watch: {
+		data(val) {
+			if (val) {
+				for (let value of Object.values(this.patterns)) {
+					value.addTo(this.map);
+				}
+			}
+		}
+	}
 };
 </script>
 

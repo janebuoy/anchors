@@ -13,7 +13,7 @@
 				flat
       >
         <v-img
-          src="data/images/title_img_001.jpg"
+          src="/data/images/title_img_001.jpg"
           aspect-ratio="1.7"
           height="160px"
         >

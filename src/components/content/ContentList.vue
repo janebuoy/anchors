@@ -49,6 +49,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { eventBus } from "@/main";
+import router from '../../router/router.js';
 
 export default {
   name: "ContentList",
@@ -101,11 +102,15 @@ export default {
       }
     },
     openItemByID(id, string) {
-      const item = this.resources.filter((a) => a.id === id)[0];
+      const item = this.resources.find((a) => a.id == id);
       if (item !== this.currentItem) {
         this.$store.commit("updateContentItem", item);
       }
       eventBus.$emit("updateTab", item.id);
+
+			if (this.$route.params.id != id) {
+				router.replace(`/${this.$route.params.uuid}/${id}`)
+			}
 
       switch (item.type) {
         case "audio":

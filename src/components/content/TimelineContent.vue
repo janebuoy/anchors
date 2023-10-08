@@ -115,6 +115,10 @@ import { mapGetters } from "vuex";
 import axios from "axios";
 import { replaceWikiLinks } from "@/plugins/renderWikiText.js";
 
+const ax = axios.create({
+	baseURL: process.env.BASE_URL,
+});
+
 export default {
   name: "TimelineContent",
   data() {
@@ -208,7 +212,7 @@ export default {
     }
   },
   created() {
-    axios.get(this.currentItem.src).then((response) => {
+    ax.get(this.currentItem.src).then((response) => {
       const resp = response.data;
       let timelineArr = [];
       for (let [key, value] of Object.entries(resp)) {

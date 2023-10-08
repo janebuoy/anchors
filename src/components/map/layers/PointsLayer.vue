@@ -1,5 +1,5 @@
 <template>
-  <l-layer-group>
+  <l-layer-group v-if="data">
     <l-geo-json
       v-for="(feature, key) in activeFeatures"
       :key="key"

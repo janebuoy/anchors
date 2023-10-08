@@ -1,5 +1,5 @@
 <template>
-  <l-layer-group>
+  <l-layer-group :key="componentKey">
     <l-geo-json
       v-for="(feature, key) in activeFeatures"
       :key="key"
@@ -31,36 +31,46 @@ export default {
           hex: "#7986CB",
         },
       ],
+			componentKey: 0,
     };
   },
   computed: {
     activeFeatures() {
-      const features = this.data.features.filter(
-        (e) => e.properties.categoryID === this.active
-      );
-      return { features };
+			if (this.data) {
+				const features = this.data.features.filter(
+					(e) => e.properties.categoryID === this.active
+				);
+				return { features };
+			} else {
+				return undefined
+			}
     },
-    uniqueColors() {
+		uniqueColors() {
       let colors = [];
-      for (const feature of this.data.features) {
-        colors.push({
-          color: feature.meta.color,
-        });
-      }
-      const unique = [...new Set(colors.map(JSON.stringify))].map(JSON.parse);
-      return unique;
+			if (this.data) {
+				for (const feature of this.data.features) {
+					colors.push({
+						color: feature.meta.color,
+					});
+				}
+				return [...new Set(colors.map(JSON.stringify))].map(JSON.parse);
+			} else {
+				return undefined
+			}
     },
-    patterns() {
+		patterns() {
       let result = {};
-      for (let color of this.uniqueColors) {
-        const pattern = new L.StripePattern({
-          color: color.color.hex,
-          opacity: 1,
-          angle: -10,
-        });
-        result[color.color.hex] = pattern;
-      }
-      return result;
+			if (this.uniqueColors) {
+				for (let color of this.uniqueColors) {
+					const pattern = new L.StripePattern({
+						color: color.color.hex,
+						opacity: 1,
+						angle: -10,
+					});
+					result[color.color.hex] = pattern;
+				}
+				return result;
+			} else return undefined
     },
     options() {
       return {
@@ -106,9 +116,12 @@ export default {
   },
   mounted() {
     // Add patterns to map Object
-    for (let value of Object.values(this.patterns)) {
-      value.addTo(this.map);
-    }
+		if (this.data) {
+			for (let value of Object.values(this.patterns)) {
+				value.addTo(this.map);
+			}
+		}
+
   },
   beforeDestroy() {
     // Remove patterns to map Object
@@ -116,5 +129,14 @@ export default {
       this.map.removeLayer(value);
     }
   },
+	watch: {
+		data(val) {
+			if (val) {
+				for (let value of Object.values(this.patterns)) {
+					value.addTo(this.map);
+				}
+			}
+		}
+	}
 };
 </script>

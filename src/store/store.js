@@ -116,15 +116,6 @@ export default new Vuex.Store({
 
 			if (isValidUUID(this.state.route.params.uuid))
 				eventBus.$emit('openScene', this.state.route.params.uuid)
-			// else if (this.state.route.params.uuid) {
-			// 	const feature = this.state.global.scenes.mainScenes.data.features.find(e => e.common_name === this.state.route.params.uuid)
-			// 	console.log(feature);
-			// 	eventBus.$emit('openScene', feature.uuid)
-			// }
-
-
-			// All requests are finished, your state is ready
-			// console.log('All Axios requests completed.');
 		},
 		async fetchData({ commit }, { key, url }) {
 			try {
@@ -167,7 +158,6 @@ export default new Vuex.Store({
 				// Wait for all Axios requests to complete
 				await Promise.all(requests);
 
-				// console.log('All Axios requests for JSONLayers completed.');
 			} catch (error) {
 				// Handle errors here
 				console.error('Error fetching JSONLayers:', error);

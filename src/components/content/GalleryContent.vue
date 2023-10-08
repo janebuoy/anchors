@@ -65,7 +65,7 @@ export default {
         )[0].sources;
         return images;
       } else {
-        return undefined;
+        return null;
       }
     },
   },

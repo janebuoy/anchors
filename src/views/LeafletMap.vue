@@ -71,10 +71,6 @@
 </template>
 
 <script>
-// import axios from 'axios';
-// const ax = axios.create({
-//   baseURL: process.env.BASE_URL,
-// });
 import { mapGetters } from 'vuex';
 import { eventBus } from '../main.js';
 import router from '../router/router.js';
@@ -263,7 +259,7 @@ export default {
       const result = array.map((e) => e.name);
       return result.includes(payload);
     },
-    openScene(uuid) {
+    async openScene(uuid) {
       // Filter out single feature per UUID from scenes
       const feature = this.scenes.features.filter((a) => a.uuid === uuid)[0];
       const payload = {
@@ -276,7 +272,14 @@ export default {
         content: feature.content,
         tab: 0,
       };
-      this.$store.dispatch('updateState', payload);
+
+      const request = this.$store.dispatch('updateState', payload);
+			await Promise.resolve(request)
+
+			if (this.$route.params.id) {
+				eventBus.$emit("openItemByID", this.$route.params.id, "no-toggle");
+			}
+
       eventBus.$emit('updateMarkerColors', feature.uuid);
       this.$nextTick(() => {
         this.$store.dispatch('toggleContentDrawer', true);
